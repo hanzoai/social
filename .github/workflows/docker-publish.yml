@@ -1,0 +1,28 @@
+---
+name: docker-publish
+
+# Build and push ghcr.io/hanzoai/social. amd64 only — arm64 ARC pool is paused
+# on DOKS until DigitalOcean ships arm64 droplets (see hanzoai/.github RUNNERS.md).
+#
+# Semver-only publish policy: v* tags produce a published image; branch pushes
+# only produce sha-<sha7>. No floating tags.
+
+on:
+  push:
+    branches: [main]
+    tags: ["v*"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  docker:
+    uses: hanzoai/.github/.github/workflows/docker-build.yml@main
+    with:
+      image: ghcr.io/hanzoai/social
+      dockerfile: Dockerfile.dev
+      platforms: linux/amd64
+      runner-amd64: hanzo-build-linux-amd64
+      build-args: |
+        NEXT_PUBLIC_VERSION=${{ github.sha }}
+      push: ${{ github.event_name != 'pull_request' }}
+    secrets: inherit
