@@ -16,10 +16,20 @@ on:
 
 jobs:
   docker:
+    strategy:
+      matrix:
+        include:
+          - image: ghcr.io/hanzoai/social-backend
+            target: backend
+          - image: ghcr.io/hanzoai/social-frontend
+            target: frontend
+          - image: ghcr.io/hanzoai/social-orchestrator
+            target: orchestrator
     uses: hanzoai/.github/.github/workflows/docker-build.yml@main
     with:
-      image: ghcr.io/hanzoai/social
-      dockerfile: Dockerfile.dev
+      image: ${{ matrix.image }}
+      dockerfile: Dockerfile
+      target: ${{ matrix.target }}
       platforms: linux/amd64
       runner-amd64: hanzo-build-linux-amd64
       build-args: |
