@@ -1,4 +1,4 @@
-This project is Postiz, a tool to schedule social media and chat posts to 28+ channels.
+This project is Hanzo Social (a hard fork of gitroomhq/postiz-app, AGPL-3.0), a tool to schedule social media and chat posts to 28+ channels. Deployed at https://social.hanzo.ai and integrated with Hanzo IAM (hanzo.id), Hanzo KMS, Hanzo S3, and ~/work/hanzo/bot. Upstream identifiers (env vars like `postiz-*`, package paths, internal symbols) are preserved verbatim; only user-facing brand surfaces are rebranded.
 You can add posts to the calendar, they will be added into a workflow and posted at the right time.
 You can find things like:
 - Schedule posts
