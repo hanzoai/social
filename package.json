@@ -1,11 +1,21 @@
 {
-  "name": "gitroom",
+  "name": "hanzo-social",
   "version": "1.0.0",
-  "description": "",
+  "description": "Hanzo Social — agentic social media scheduling. Forked from gitroomhq/postiz-app under AGPL-3.0.",
   "main": "index.js",
   "license": "AGPL-3.0",
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "hanzo",
+    "social",
+    "scheduling",
+    "agentic"
+  ],
+  "author": "Hanzo AI, Inc.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hanzoai/social.git"
+  },
+  "homepage": "https://social.hanzo.ai",
   "engines": {
     "node": ">=22.12.0 <23.0.0"
   },
