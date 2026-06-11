@@ -19,6 +19,7 @@ import { useVariables } from '@gitroom/react/helpers/variable.context';
 import { useTrack } from '@gitroom/react/helpers/use.track';
 import { TrackEnum } from '@gitroom/nestjs-libraries/user/track.enum';
 import { FarcasterProvider } from '@gitroom/frontend/components/auth/providers/farcaster.provider';
+import { HanzoProvider } from '@gitroom/frontend/components/auth/providers/hanzo.provider';
 import dynamic from 'next/dynamic';
 import { WalletUiProvider } from '@gitroom/frontend/components/auth/providers/placeholder/wallet.ui.provider';
 import { useT } from '@gitroom/react/translation/get.transation.service.client';
@@ -157,7 +158,8 @@ export function RegisterAfter({
           <div className="text-[14px] mt-[32px] mb-[12px]">
             {t('continue_with', 'Continue With')}
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-[8px]">
+            {!isAfterProvider && <HanzoProvider />}
             {!isAfterProvider &&
               (!isGeneral ? (
                 <GithubProvider />

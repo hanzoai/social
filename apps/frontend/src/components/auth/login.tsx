@@ -13,6 +13,7 @@ import { OauthProvider } from '@gitroom/frontend/components/auth/providers/oauth
 import { GoogleProvider } from '@gitroom/frontend/components/auth/providers/google.provider';
 import { useVariables } from '@gitroom/react/helpers/variable.context';
 import { FarcasterProvider } from '@gitroom/frontend/components/auth/providers/farcaster.provider';
+import { HanzoProvider } from '@gitroom/frontend/components/auth/providers/hanzo.provider';
 import WalletProvider from '@gitroom/frontend/components/auth/providers/wallet.provider';
 import { useT } from '@gitroom/react/translation/get.transation.service.client';
 type Inputs = {
@@ -72,7 +73,8 @@ export function Login() {
           <div className="text-[14px] mt-[32px] mb-[12px]">
             {t('continue_with', 'Continue With')}
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col gap-[8px]">
+            <HanzoProvider />
             {isGeneral && genericOauth ? (
               <OauthProvider />
             ) : !isGeneral ? (
