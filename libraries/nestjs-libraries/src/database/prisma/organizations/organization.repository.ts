@@ -164,6 +164,16 @@ export class OrganizationRepository {
     });
   }
 
+  // Hanzo IAM federation: rename the auto-created Postiz organization
+  // after first IAM login so it tracks the JWT `owner` claim
+  // (the IAM org slug). Called by HanzoIamProvider.postRegistration.
+  updateOrgName(orgId: string, name: string) {
+    return this._organization.model.organization.update({
+      where: { id: orgId },
+      data: { name },
+    });
+  }
+
   async getOrgsByUserId(userId: string) {
     return this._organization.model.organization.findMany({
       where: {
