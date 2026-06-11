@@ -1,10 +1,9 @@
 'use client';
 
-import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { FC, useCallback, useMemo, useState } from 'react';
 import useSWR from 'swr';
 import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
 import { useVariables } from '@gitroom/react/helpers/variable.context';
-import { loadStripe, Stripe } from '@stripe/stripe-js';
 import { OrganizationSelector } from '@gitroom/frontend/components/layout/organization.selector';
 import { LanguageComponent } from '@gitroom/frontend/components/layout/language.component';
 import { AttachToFeedbackIcon } from '@gitroom/frontend/components/new-layout/sentry.feedback.component';
@@ -47,10 +46,9 @@ const EmbeddedBilling = dynamic(
 );
 
 export const FirstBillingComponent = () => {
-  const { stripeClient } = useVariables();
+  useVariables();
   const user = useUser();
   const dub = useDubClickId();
-  const [stripe, setStripe] = useState<null | Promise<Stripe>>(null);
   const [tier, setTier] = useState('STANDARD');
   const [period, setPeriod] = useState('MONTHLY');
   const fetch = useFetch();
@@ -58,10 +56,6 @@ export const FirstBillingComponent = () => {
   const t = useT();
   const [datafast_visitor_id] = useCookie('datafast_visitor_id', '');
   const [datafast_session_id] = useCookie('datafast_session_id', '');
-
-  useEffect(() => {
-    setStripe(loadStripe(stripeClient));
-  }, []);
 
   const loadCheckout = useCallback(async () => {
     return (
@@ -205,10 +199,9 @@ export const FirstBillingComponent = () => {
           <div className="block tablet:hidden">
             <JoinOver />
           </div>
-          {!isLoading && data && stripe ? (
+          {!isLoading && data?.portal ? (
             <EmbeddedBilling
-              stripe={stripe}
-              secret={data.client_secret}
+              portal={data.portal}
               showCoupon={period === 'MONTHLY'}
               autoApplyCoupon={data.auto_apply_coupon}
             />

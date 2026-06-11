@@ -24,7 +24,7 @@ export class PermissionsService {
 
     const tier =
       subscription?.subscriptionTier ||
-      (!process.env.STRIPE_PUBLISHABLE_KEY ? 'PRO' : 'FREE');
+      (!process.env.BILLING_ENABLED ? 'PRO' : 'FREE');
 
     const { channel, ...all } = pricing[tier];
     return {
@@ -49,7 +49,7 @@ export class PermissionsService {
 
     if (
       requestedPermission.length === 0 ||
-      !process.env.STRIPE_PUBLISHABLE_KEY
+      !process.env.BILLING_ENABLED
     ) {
       for (const [action, section] of requestedPermission) {
         can(action, section);
