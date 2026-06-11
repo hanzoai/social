@@ -21,7 +21,7 @@ ENV NEXT_PUBLIC_VERSION=$NEXT_PUBLIC_VERSION
 WORKDIR /app
 
 RUN apt-get update \
- && apt-get install -y --no-install-recommends g++ make python3-pip \
+ && apt-get install -y --no-install-recommends g++ make python3-pip openssl \
  && rm -rf /var/lib/apt/lists/*
 
 RUN npm --no-update-notifier --no-fund --global install pnpm@10.6.1
@@ -34,7 +34,8 @@ RUN NODE_OPTIONS="--max-old-space-size=4096" pnpm run build
 FROM node:${NODE_VERSION} AS backend
 ENV NODE_ENV=production
 WORKDIR /app
-RUN npm --no-update-notifier --no-fund --global install pnpm@10.6.1
+RUN apt-get update && apt-get install -y --no-install-recommends openssl && rm -rf /var/lib/apt/lists/* \
+ && npm --no-update-notifier --no-fund --global install pnpm@10.6.1
 COPY --from=build /app /app
 EXPOSE 3000
 # Run prisma db push on startup so schema drift is reconciled before serving.
@@ -45,7 +46,8 @@ CMD ["sh", "-c", "pnpm run prisma-db-push && pnpm --filter ./apps/backend start"
 FROM node:${NODE_VERSION} AS frontend
 ENV NODE_ENV=production
 WORKDIR /app
-RUN npm --no-update-notifier --no-fund --global install pnpm@10.6.1
+RUN apt-get update && apt-get install -y --no-install-recommends openssl && rm -rf /var/lib/apt/lists/* \
+ && npm --no-update-notifier --no-fund --global install pnpm@10.6.1
 COPY --from=build /app /app
 EXPOSE 4200
 CMD ["sh", "-c", "pnpm --filter ./apps/frontend start"]
@@ -54,6 +56,7 @@ CMD ["sh", "-c", "pnpm --filter ./apps/frontend start"]
 FROM node:${NODE_VERSION} AS orchestrator
 ENV NODE_ENV=production
 WORKDIR /app
-RUN npm --no-update-notifier --no-fund --global install pnpm@10.6.1
+RUN apt-get update && apt-get install -y --no-install-recommends openssl && rm -rf /var/lib/apt/lists/* \
+ && npm --no-update-notifier --no-fund --global install pnpm@10.6.1
 COPY --from=build /app /app
 CMD ["sh", "-c", "pnpm --filter ./apps/orchestrator start"]

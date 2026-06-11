@@ -1,6 +1,9 @@
 generator client {
-  provider = "prisma-client-js"
-  runtime  = "nodejs"
+  provider      = "prisma-client-js"
+  runtime       = "nodejs"
+  // node:*-slim has no openssl CLI, so Prisma's platform guess falls back
+  // to openssl-1.1.x which doesn't exist on bookworm. Pin the real target.
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
