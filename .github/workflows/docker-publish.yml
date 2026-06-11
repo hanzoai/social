@@ -31,7 +31,7 @@ jobs:
       dockerfile: Dockerfile
       target: ${{ matrix.target }}
       platforms: linux/amd64
-      runner-amd64: hanzo-build-linux-amd64
+      runner-amd64: '["self-hosted","linux","amd64"]'
       build-args: |
         NEXT_PUBLIC_VERSION=${{ github.sha }}
       push: ${{ github.event_name != 'pull_request' }}
