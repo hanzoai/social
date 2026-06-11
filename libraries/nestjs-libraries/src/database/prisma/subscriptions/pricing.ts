@@ -1,3 +1,23 @@
+// Hanzo Social pricing — derived from @hanzo/plans (~/work/hanzo/plans)
+// at module load. The canonical Hanzo plans file is the single source of
+// truth and is also what pricing.hanzo.ai/v1/pricing/subscriptions serves.
+//
+// We adapt the canonical Hanzo plan shape (id="social-*", limits.{channels,
+// postsPerMonth,ai,…}) onto the upstream Postiz PricingInnerInterface so
+// downstream consumers (subscription.service, permissions.service,
+// integrations.controller, users.controller, public.controller,
+// impersonate.tsx) compile and run unchanged.
+//
+// Legacy tier names (FREE/STANDARD/TEAM/PRO/ULTIMATE) map to Hanzo plan
+// ids:
+//   FREE      → social-free
+//   STANDARD  → social-pro
+//   TEAM      → social-team
+//   PRO       → social-team-max
+//   ULTIMATE  → social-enterprise
+
+import { subscriptionPlans } from '@hanzo/plans';
+
 export interface PricingInnerInterface {
   current: string;
   month_price: number;
@@ -19,95 +39,77 @@ export interface PricingInnerInterface {
 export interface PricingInterface {
   [key: string]: PricingInnerInterface;
 }
-export const pricing: PricingInterface = {
-  FREE: {
-    current: 'FREE',
-    month_price: 0,
-    year_price: 0,
-    channel: 0,
-    image_generation_count: 0,
-    posts_per_month: 0,
-    team_members: false,
-    community_features: false,
-    featured_by_gitroom: false,
-    ai: false,
-    import_from_channels: false,
-    image_generator: false,
-    public_api: false,
-    webhooks: 0,
-    autoPost: false,
-    generate_videos: 0,
-  },
-  STANDARD: {
-    current: 'STANDARD',
-    month_price: 29,
-    year_price: 278,
-    channel: 5,
-    posts_per_month: 400,
-    image_generation_count: 20,
-    team_members: false,
-    ai: true,
-    community_features: false,
-    featured_by_gitroom: false,
-    import_from_channels: true,
-    image_generator: false,
-    public_api: true,
-    webhooks: 2,
-    autoPost: false,
-    generate_videos: 3,
-  },
-  TEAM: {
-    current: 'TEAM',
-    month_price: 39,
-    year_price: 374,
-    channel: 10,
-    posts_per_month: 1000000,
-    image_generation_count: 100,
-    community_features: true,
-    team_members: true,
-    featured_by_gitroom: true,
-    ai: true,
-    import_from_channels: true,
-    image_generator: true,
-    public_api: true,
-    webhooks: 10,
-    autoPost: true,
-    generate_videos: 10,
-  },
-  PRO: {
-    current: 'PRO',
-    month_price: 49,
-    year_price: 470,
-    channel: 30,
-    posts_per_month: 1000000,
-    image_generation_count: 300,
-    community_features: true,
-    team_members: true,
-    featured_by_gitroom: true,
-    ai: true,
-    import_from_channels: true,
-    image_generator: true,
-    public_api: true,
-    webhooks: 30,
-    autoPost: true,
-    generate_videos: 30,
-  },
-  ULTIMATE: {
-    current: 'ULTIMATE',
-    month_price: 99,
-    year_price: 950,
-    channel: 100,
-    posts_per_month: 1000000,
-    image_generation_count: 500,
-    community_features: true,
-    team_members: true,
-    featured_by_gitroom: true,
-    ai: true,
-    import_from_channels: true,
-    image_generator: true,
-    public_api: true,
-    webhooks: 10000,
-    autoPost: true,
-    generate_videos: 60,
-  },
+
+interface HanzoSocialPlan {
+  id: string;
+  name: string;
+  priceMonthly: number;
+  priceAnnual: number;
+  category: string;
+  limits: {
+    channels: number;
+    postsPerMonth: number;
+    imageGenerationCount: number;
+    generateVideos: number;
+    teamMembers: number;
+    webhooks: number;
+    ai: boolean;
+    autoPost: boolean;
+    publicApi: boolean;
+    communityFeatures: boolean;
+  };
+}
+
+const LEGACY_TO_HANZO: Record<string, string> = {
+  FREE: 'social-free',
+  STANDARD: 'social-pro',
+  TEAM: 'social-team',
+  PRO: 'social-team-max',
+  ULTIMATE: 'social-enterprise',
 };
+
+function findSocialPlan(id: string): HanzoSocialPlan {
+  const plan = (subscriptionPlans as HanzoSocialPlan[]).find(
+    (p) => p.id === id && p.category === 'social'
+  );
+  if (!plan) {
+    throw new Error(
+      `@hanzo/plans is missing required social plan "${id}". Expected the social-* tiers shipped in plans@1.1.2+.`
+    );
+  }
+  return plan;
+}
+
+function toPostiz(
+  legacyName: string,
+  plan: HanzoSocialPlan
+): PricingInnerInterface {
+  const unlimited = (n: number) => (n === -1 ? 1_000_000 : n);
+  return {
+    current: legacyName,
+    month_price: plan.priceMonthly,
+    year_price: plan.priceAnnual,
+    channel: plan.limits.channels,
+    posts_per_month: unlimited(plan.limits.postsPerMonth),
+    image_generation_count: plan.limits.imageGenerationCount,
+    generate_videos: plan.limits.generateVideos,
+    team_members: plan.limits.teamMembers !== 0,
+    community_features: plan.limits.communityFeatures,
+    // featured_by_gitroom is a legacy upstream flag — true when the tier
+    // grants community features in our shape.
+    featured_by_gitroom: plan.limits.communityFeatures,
+    ai: plan.limits.ai,
+    import_from_channels: plan.limits.ai,
+    image_generator: plan.limits.imageGenerationCount > 0,
+    public_api: plan.limits.publicApi,
+    webhooks: plan.limits.webhooks,
+    autoPost: plan.limits.autoPost,
+  };
+}
+
+export const pricing: PricingInterface = Object.fromEntries(
+  Object.entries(LEGACY_TO_HANZO).map(([legacy, hanzoId]) => [
+    legacy,
+    toPostiz(legacy, findSocialPlan(hanzoId)),
+  ])
+);
