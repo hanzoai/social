@@ -9,7 +9,7 @@ import {
   useState,
 } from 'react';
 import { customFetch, Params } from './custom.fetch.func';
-import { useVariables } from '@gitroom/react/helpers/variable.context';
+import { useVariables } from '@social/react/helpers/variable.context';
 
 const FetchProvider = createContext(
   customFetch(

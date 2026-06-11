@@ -1,22 +1,22 @@
-import { internalFetch } from '@gitroom/helpers/utils/internal.fetch';
-import { sanitizePostContent } from '@gitroom/helpers/utils/sanitize.post.content';
+import { internalFetch } from '@social/helpers/utils/internal.fetch';
+import { sanitizePostContent } from '@social/helpers/utils/sanitize.post.content';
 export const dynamic = 'force-dynamic';
 import { Metadata } from 'next';
-import { isGeneralServerSide } from '@gitroom/helpers/utils/is.general.server.side';
-import SafeImage from '@gitroom/react/helpers/safe.image';
+import { isGeneralServerSide } from '@social/helpers/utils/is.general.server.side';
+import SafeImage from '@social/react/helpers/safe.image';
 import Link from 'next/link';
-import { CommentsComponents } from '@gitroom/frontend/components/preview/comments.components';
+import { CommentsComponents } from '@social/frontend/components/preview/comments.components';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
-import { VideoOrImage } from '@gitroom/react/helpers/video.or.image';
-import { CopyClient } from '@gitroom/frontend/components/preview/copy.client';
-import { getT } from '@gitroom/react/translation/get.translation.service.backend';
-import { RenderPreviewDateClient } from '@gitroom/frontend/components/preview/render.preview.date.client';
-import { CreationMethodBadge } from '@gitroom/frontend/components/launches/creation.method.badge';
+import { VideoOrImage } from '@social/react/helpers/video.or.image';
+import { CopyClient } from '@social/frontend/components/preview/copy.client';
+import { getT } from '@social/react/translation/get.translation.service.backend';
+import { RenderPreviewDateClient } from '@social/frontend/components/preview/render.preview.date.client';
+import { CreationMethodBadge } from '@social/frontend/components/launches/creation.method.badge';
 
 dayjs.extend(utc);
 export const metadata: Metadata = {
-  title: `${isGeneralServerSide() ? 'Hanzo Social' : 'Gitroom'} Preview`,
+  title: `${isGeneralServerSide() ? 'Hanzo Social' : 'Hanzo Social'} Preview`,
   description: '',
 };
 export default async function Auth(
@@ -58,7 +58,7 @@ export default async function Auth(
                 >
                   <div className="max-w-[55px]">
                     <SafeImage
-                      src={'/postiz.svg'}
+                      src={'/social.svg'}
                       width={55}
                       height={55}
                       alt="Logo"

@@ -1,11 +1,11 @@
 'use client';
 
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { LoadingComponent } from '@gitroom/frontend/components/layout/loading';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { LoadingComponent } from '@social/frontend/components/layout/loading';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { useT } from '@social/react/translation/get.transation.service.client';
 import useCookie from 'react-use-cookie';
 export const AfterActivate = () => {
   const fetch = useFetch();

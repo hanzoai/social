@@ -1,9 +1,9 @@
 import { FC, ReactNode, useCallback, useEffect, useState } from 'react';
-import Loading from '@gitroom/frontend/components/layout/loading';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { timer } from '@gitroom/helpers/utils/timer';
-import { useToaster } from '@gitroom/react/toaster/toaster';
-import { useDecisionModal } from '@gitroom/frontend/components/layout/new-modal';
+import Loading from '@social/frontend/components/layout/loading';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { timer } from '@social/helpers/utils/timer';
+import { useToaster } from '@social/react/toaster/toaster';
+import { useDecisionModal } from '@social/frontend/components/layout/new-modal';
 export const CheckPayment: FC<{
   check: string;
   mutate: () => void;

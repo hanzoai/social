@@ -1,9 +1,9 @@
-import { SettingsPopup } from '@gitroom/frontend/components/layout/settings.component';
+import { SettingsPopup } from '@social/frontend/components/layout/settings.component';
 export const dynamic = 'force-dynamic';
 import { Metadata } from 'next';
-import { isGeneralServerSide } from '@gitroom/helpers/utils/is.general.server.side';
+import { isGeneralServerSide } from '@social/helpers/utils/is.general.server.side';
 export const metadata: Metadata = {
-  title: `${isGeneralServerSide() ? 'Hanzo Social' : 'Gitroom'} Settings`,
+  title: `${isGeneralServerSide() ? 'Hanzo Social' : 'Hanzo Social'} Settings`,
   description: '',
 };
 export default async function Index(props: {

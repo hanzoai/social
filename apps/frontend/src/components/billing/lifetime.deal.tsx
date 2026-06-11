@@ -1,16 +1,16 @@
 'use client';
 
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { useUser } from '@gitroom/frontend/components/layout/user.context';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { useUser } from '@social/frontend/components/layout/user.context';
 import { useCallback, useMemo, useState } from 'react';
-import { pricing } from '@gitroom/nestjs-libraries/database/prisma/subscriptions/pricing';
-import { Input } from '@gitroom/react/form/input';
-import { Button } from '@gitroom/react/form/button';
+import { pricing } from '@social/nestjs-libraries/database/prisma/subscriptions/pricing';
+import { Input } from '@social/react/form/input';
+import { Button } from '@social/react/form/button';
 import { useSWRConfig } from 'swr';
-import { useToaster } from '@gitroom/react/toaster/toaster';
+import { useToaster } from '@social/react/toaster/toaster';
 import { useRouter } from 'next/navigation';
-import { useFireEvents } from '@gitroom/helpers/utils/use.fire.events';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { useFireEvents } from '@social/helpers/utils/use.fire.events';
+import { useT } from '@social/react/translation/get.transation.service.client';
 export const LifetimeDeal = () => {
   const t = useT();
   const fetch = useFetch();

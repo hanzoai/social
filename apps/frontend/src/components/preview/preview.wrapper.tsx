@@ -1,14 +1,14 @@
 'use client';
 
 import useSWR from 'swr';
-import { ContextWrapper } from '@gitroom/frontend/components/layout/user.context';
+import { ContextWrapper } from '@social/frontend/components/layout/user.context';
 import { ReactNode, useCallback } from 'react';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { Toaster } from '@gitroom/react/toaster/toaster';
-import { MantineWrapper } from '@gitroom/react/helpers/mantine.wrapper';
-import { useVariables } from '@gitroom/react/helpers/variable.context';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { Toaster } from '@social/react/toaster/toaster';
+import { MantineWrapper } from '@social/react/helpers/mantine.wrapper';
+import { useVariables } from '@social/react/helpers/variable.context';
 import { CopilotKit } from '@copilotkit/react-core';
-import { ToolTip } from '@gitroom/frontend/components/layout/top.tip';
+import { ToolTip } from '@social/frontend/components/layout/top.tip';
 export const PreviewWrapper = ({ children }: { children: ReactNode }) => {
   const fetch = useFetch();
   const { backendUrl } = useVariables();

@@ -1,4 +1,4 @@
-import { makeId } from '@gitroom/nestjs-libraries/services/make.is';
+import { makeId } from '@social/nestjs-libraries/services/make.is';
 import { SocialAbstract } from '../social.abstract';
 import {
   AuthTokenDetails,
@@ -9,9 +9,9 @@ import {
 } from './social.integrations.interface';
 import dayjs from 'dayjs';
 import { Integration } from '@prisma/client';
-import { Tool } from '@gitroom/nestjs-libraries/integrations/tool.decorator';
-import { SkoolDto } from '@gitroom/nestjs-libraries/dtos/posts/providers-settings/skool.dto';
-import { AuthService } from '@gitroom/helpers/auth/auth.service';
+import { Tool } from '@social/nestjs-libraries/integrations/tool.decorator';
+import { SkoolDto } from '@social/nestjs-libraries/dtos/posts/providers-settings/skool.dto';
+import { AuthService } from '@social/helpers/auth/auth.service';
 
 export class SkoolProvider extends SocialAbstract implements SocialProvider {
   identifier = 'skool';

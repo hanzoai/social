@@ -8,16 +8,16 @@ import {
   useState,
   useTransition,
 } from 'react';
-import { UtcToLocalDateRender } from '@gitroom/react/helpers/utc.date.render';
-import { Button } from '@gitroom/react/form/button';
+import { UtcToLocalDateRender } from '@social/react/helpers/utc.date.render';
+import { Button } from '@social/react/form/button';
 import dayjs from 'dayjs';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import useSWR from 'swr';
 import clsx from 'clsx';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import ReactLoading from '@gitroom/frontend/components/layout/loading';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import ReactLoading from '@social/frontend/components/layout/loading';
+import { useT } from '@social/react/translation/get.transation.service.client';
 
 export const UpDown: FC<{
   name: string;

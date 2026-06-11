@@ -2,16 +2,16 @@ import { FC, useEffect, useState } from 'react';
 import {
   Integrations,
   useCalendar,
-} from '@gitroom/frontend/components/launches/calendar.context';
-import { PickPlatforms } from '@gitroom/frontend/components/launches/helpers/pick.platform.component';
-import { useIntegration } from '@gitroom/frontend/components/launches/helpers/use.integration';
-import { Select } from '@gitroom/react/form/select';
-import { Slider } from '@gitroom/react/form/slider';
-import { Input } from '@gitroom/react/form/input';
-import { Textarea } from '@gitroom/react/form/textarea';
-import { useSettings } from '@gitroom/frontend/components/launches/helpers/use.values';
+} from '@social/frontend/components/launches/calendar.context';
+import { PickPlatforms } from '@social/frontend/components/launches/helpers/pick.platform.component';
+import { useIntegration } from '@social/frontend/components/launches/helpers/use.integration';
+import { Select } from '@social/react/form/select';
+import { Slider } from '@social/react/form/slider';
+import { Input } from '@social/react/form/input';
+import { Textarea } from '@social/react/form/textarea';
+import { useSettings } from '@social/frontend/components/launches/helpers/use.values';
 import clsx from 'clsx';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { useT } from '@social/react/translation/get.transation.service.client';
 const delayOptions = [
   {
     name: 'Immediately',

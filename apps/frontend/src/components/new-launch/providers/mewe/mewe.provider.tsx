@@ -3,12 +3,12 @@
 import {
   PostComment,
   withProvider,
-} from '@gitroom/frontend/components/new-launch/providers/high.order.provider';
+} from '@social/frontend/components/new-launch/providers/high.order.provider';
 import { FC } from 'react';
-import { MeweDto } from '@gitroom/nestjs-libraries/dtos/posts/providers-settings/mewe.dto';
-import { MeweGroupSelect } from '@gitroom/frontend/components/new-launch/providers/mewe/mewe.group.select';
-import { useSettings } from '@gitroom/frontend/components/launches/helpers/use.values';
-import { Select } from '@gitroom/react/form/select';
+import { MeweDto } from '@social/nestjs-libraries/dtos/posts/providers-settings/mewe.dto';
+import { MeweGroupSelect } from '@social/frontend/components/new-launch/providers/mewe/mewe.group.select';
+import { useSettings } from '@social/frontend/components/launches/helpers/use.values';
+import { Select } from '@social/react/form/select';
 import { useWatch } from 'react-hook-form';
 
 const MeweComponent: FC = () => {

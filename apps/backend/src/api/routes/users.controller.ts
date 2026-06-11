@@ -8,29 +8,29 @@ import {
   Req,
   Res,
 } from '@nestjs/common';
-import { GetUserFromRequest } from '@gitroom/nestjs-libraries/user/user.from.request';
+import { GetUserFromRequest } from '@social/nestjs-libraries/user/user.from.request';
 import { sign } from 'jsonwebtoken';
 import { Organization, User } from '@prisma/client';
-import { SubscriptionService } from '@gitroom/nestjs-libraries/database/prisma/subscriptions/subscription.service';
-import { GetOrgFromRequest } from '@gitroom/nestjs-libraries/user/org.from.request';
-import { BillingService } from '@gitroom/nestjs-libraries/services/billing.service';
+import { SubscriptionService } from '@social/nestjs-libraries/database/prisma/subscriptions/subscription.service';
+import { GetOrgFromRequest } from '@social/nestjs-libraries/user/org.from.request';
+import { BillingService } from '@social/nestjs-libraries/services/billing.service';
 import { Response, Request } from 'express';
-import { AuthService } from '@gitroom/backend/services/auth/auth.service';
-import { OrganizationService } from '@gitroom/nestjs-libraries/database/prisma/organizations/organization.service';
-import { CheckPolicies } from '@gitroom/backend/services/auth/permissions/permissions.ability';
-import { getCookieUrlFromDomain } from '@gitroom/helpers/subdomain/subdomain.management';
-import { pricing } from '@gitroom/nestjs-libraries/database/prisma/subscriptions/pricing';
+import { AuthService } from '@social/backend/services/auth/auth.service';
+import { OrganizationService } from '@social/nestjs-libraries/database/prisma/organizations/organization.service';
+import { CheckPolicies } from '@social/backend/services/auth/permissions/permissions.ability';
+import { getCookieUrlFromDomain } from '@social/helpers/subdomain/subdomain.management';
+import { pricing } from '@social/nestjs-libraries/database/prisma/subscriptions/pricing';
 import { ApiTags } from '@nestjs/swagger';
-import { UsersService } from '@gitroom/nestjs-libraries/database/prisma/users/users.service';
-import { UserDetailDto } from '@gitroom/nestjs-libraries/dtos/users/user.details.dto';
-import { EmailNotificationsDto } from '@gitroom/nestjs-libraries/dtos/users/email-notifications.dto';
-import { HttpForbiddenException } from '@gitroom/nestjs-libraries/services/exception.filter';
+import { UsersService } from '@social/nestjs-libraries/database/prisma/users/users.service';
+import { UserDetailDto } from '@social/nestjs-libraries/dtos/users/user.details.dto';
+import { EmailNotificationsDto } from '@social/nestjs-libraries/dtos/users/email-notifications.dto';
+import { HttpForbiddenException } from '@social/nestjs-libraries/services/exception.filter';
 import { RealIP } from 'nestjs-real-ip';
-import { UserAgent } from '@gitroom/nestjs-libraries/user/user.agent';
-import { TrackEnum } from '@gitroom/nestjs-libraries/user/track.enum';
-import { TrackService } from '@gitroom/nestjs-libraries/track/track.service';
-import { makeId } from '@gitroom/nestjs-libraries/services/make.is';
-import { AuthorizationActions, Sections } from '@gitroom/backend/services/auth/permissions/permission.exception.class';
+import { UserAgent } from '@social/nestjs-libraries/user/user.agent';
+import { TrackEnum } from '@social/nestjs-libraries/user/track.enum';
+import { TrackService } from '@social/nestjs-libraries/track/track.service';
+import { makeId } from '@social/nestjs-libraries/services/make.is';
+import { AuthorizationActions, Sections } from '@social/backend/services/auth/permissions/permission.exception.class';
 
 @ApiTags('User')
 @Controller('/user')

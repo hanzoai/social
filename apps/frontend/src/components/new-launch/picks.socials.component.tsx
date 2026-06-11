@@ -2,12 +2,12 @@
 
 import { FC } from 'react';
 import clsx from 'clsx';
-import SafeImage from '@gitroom/react/helpers/safe.image';
-import { useLaunchStore } from '@gitroom/frontend/components/new-launch/store';
+import SafeImage from '@social/react/helpers/safe.image';
+import { useLaunchStore } from '@social/frontend/components/new-launch/store';
 import { useShallow } from 'zustand/react/shallow';
-import { useExistingData } from '@gitroom/frontend/components/launches/helpers/use.existing.data';
-import { makeId } from '@gitroom/nestjs-libraries/services/make.is';
-import ImageWithFallback from '@gitroom/react/helpers/image.with.fallback';
+import { useExistingData } from '@social/frontend/components/launches/helpers/use.existing.data';
+import { makeId } from '@social/nestjs-libraries/services/make.is';
+import ImageWithFallback from '@social/react/helpers/image.with.fallback';
 
 export const PicksSocialsComponent: FC<{ toolTip?: boolean }> = ({
   toolTip,

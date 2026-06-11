@@ -2,11 +2,11 @@
 
 import { EventEmitter } from 'events';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { TopTitle } from '@gitroom/frontend/components/launches/helpers/top.title.component';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { hasExtension } from '@gitroom/helpers/utils/has.extension';
-import { useLaunchStore } from '@gitroom/frontend/components/new-launch/store';
-import { useVariables } from '@gitroom/react/helpers/variable.context';
+import { TopTitle } from '@social/frontend/components/launches/helpers/top.title.component';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { hasExtension } from '@social/helpers/utils/has.extension';
+import { useLaunchStore } from '@social/frontend/components/new-launch/store';
+import { useVariables } from '@social/react/helpers/variable.context';
 const postUrlEmitter = new EventEmitter();
 
 export const MediaSettingsLayout = () => {
