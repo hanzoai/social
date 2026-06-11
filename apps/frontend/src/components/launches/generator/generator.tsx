@@ -1,26 +1,26 @@
 'use client';
 
 import React, { FC, useCallback, useMemo, useState } from 'react';
-import { useUser } from '@gitroom/frontend/components/layout/user.context';
+import { useUser } from '@social/frontend/components/layout/user.context';
 import { useRouter } from 'next/navigation';
-import { deleteDialog } from '@gitroom/react/helpers/delete.dialog';
-import { useModals } from '@gitroom/frontend/components/layout/new-modal';
+import { deleteDialog } from '@social/react/helpers/delete.dialog';
+import { useModals } from '@social/frontend/components/layout/new-modal';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { GeneratorDto } from '@gitroom/nestjs-libraries/dtos/generator/generator.dto';
-import { Button } from '@gitroom/react/form/button';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { Textarea } from '@gitroom/react/form/textarea';
-import { Checkbox } from '@gitroom/react/form/checkbox';
+import { GeneratorDto } from '@social/nestjs-libraries/dtos/generator/generator.dto';
+import { Button } from '@social/react/form/button';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { Textarea } from '@social/react/form/textarea';
+import { Checkbox } from '@social/react/form/checkbox';
 import clsx from 'clsx';
 import {
   CalendarWeekProvider,
   useCalendar,
-} from '@gitroom/frontend/components/launches/calendar.context';
+} from '@social/frontend/components/launches/calendar.context';
 import dayjs from 'dayjs';
-import { Select } from '@gitroom/react/form/select';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { AddEditModal } from '@gitroom/frontend/components/new-launch/add.edit.modal';
+import { Select } from '@social/react/form/select';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { AddEditModal } from '@social/frontend/components/new-launch/add.edit.modal';
 
 const FirstStep: FC = (props) => {
   const { integrations, reloadCalendarView } = useCalendar();

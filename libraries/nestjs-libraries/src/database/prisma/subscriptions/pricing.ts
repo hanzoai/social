@@ -3,7 +3,7 @@
 // truth and is also what pricing.hanzo.ai/v1/pricing/subscriptions serves.
 //
 // We adapt the canonical Hanzo plan shape (id="social-*", limits.{channels,
-// postsPerMonth,ai,…}) onto the upstream Postiz PricingInnerInterface so
+// postsPerMonth,ai,…}) onto the upstream Hanzo Social PricingInnerInterface so
 // downstream consumers (subscription.service, permissions.service,
 // integrations.controller, users.controller, public.controller,
 // impersonate.tsx) compile and run unchanged.
@@ -26,7 +26,7 @@ export interface PricingInnerInterface {
   posts_per_month: number;
   team_members: boolean;
   community_features: boolean;
-  featured_by_gitroom: boolean;
+  featured_by_social: boolean;
   ai: boolean;
   import_from_channels: boolean;
   image_generator?: boolean;
@@ -80,7 +80,7 @@ function findSocialPlan(id: string): HanzoSocialPlan {
   return plan;
 }
 
-function toPostiz(
+function toSocial(
   legacyName: string,
   plan: HanzoSocialPlan
 ): PricingInnerInterface {
@@ -95,9 +95,9 @@ function toPostiz(
     generate_videos: plan.limits.generateVideos,
     team_members: plan.limits.teamMembers !== 0,
     community_features: plan.limits.communityFeatures,
-    // featured_by_gitroom is a legacy upstream flag — true when the tier
+    // featured_by_social is a legacy upstream flag — true when the tier
     // grants community features in our shape.
-    featured_by_gitroom: plan.limits.communityFeatures,
+    featured_by_social: plan.limits.communityFeatures,
     ai: plan.limits.ai,
     import_from_channels: plan.limits.ai,
     image_generator: plan.limits.imageGenerationCount > 0,
@@ -110,6 +110,6 @@ function toPostiz(
 export const pricing: PricingInterface = Object.fromEntries(
   Object.entries(LEGACY_TO_HANZO).map(([legacy, hanzoId]) => [
     legacy,
-    toPostiz(legacy, findSocialPlan(hanzoId)),
+    toSocial(legacy, findSocialPlan(hanzoId)),
   ])
 );

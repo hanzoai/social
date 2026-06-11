@@ -1,8 +1,8 @@
 'use client';
 
 import { FC, useCallback, useEffect, useState } from 'react';
-import { AddProviderComponent } from '@gitroom/frontend/components/launches/add.provider.component';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
+import { AddProviderComponent } from '@social/frontend/components/launches/add.provider.component';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
 
 export const MobileIntegration: FC = () => {
   const [integrations, setIntegrations] = useState(null as any);

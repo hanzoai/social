@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ThirdPartyRepository } from '@gitroom/nestjs-libraries/database/prisma/third-party/third-party.repository';
+import { ThirdPartyRepository } from '@social/nestjs-libraries/database/prisma/third-party/third-party.repository';
 
 @Injectable()
 export class ThirdPartyService {

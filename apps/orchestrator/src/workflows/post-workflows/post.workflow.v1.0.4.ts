@@ -1,4 +1,4 @@
-import { PostActivity } from '@gitroom/orchestrator/activities/post.activity';
+import { PostActivity } from '@social/orchestrator/activities/post.activity';
 import {
   ActivityFailure,
   ApplicationFailure,
@@ -11,10 +11,10 @@ import {
 import dayjs from 'dayjs';
 import { Integration } from '@prisma/client';
 import { capitalize, sortBy } from 'lodash';
-import { PostResponse } from '@gitroom/nestjs-libraries/integrations/social/social.integrations.interface';
-import { makeId } from '@gitroom/nestjs-libraries/services/make.is';
+import { PostResponse } from '@social/nestjs-libraries/integrations/social/social.integrations.interface';
+import { makeId } from '@social/nestjs-libraries/services/make.is';
 import { TypedSearchAttributes } from '@temporalio/common';
-import { postId as postIdSearchParam } from '@gitroom/nestjs-libraries/temporal/temporal.search.attribute';
+import { postId as postIdSearchParam } from '@social/nestjs-libraries/temporal/temporal.search.attribute';
 
 const proxyTaskQueue = (taskQueue: string) => {
   return proxyActivities<PostActivity>({

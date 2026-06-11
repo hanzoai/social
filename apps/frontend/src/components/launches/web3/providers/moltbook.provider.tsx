@@ -1,14 +1,14 @@
 'use client';
 
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { Web3ProviderInterface } from '@gitroom/frontend/components/launches/web3/web3.provider.interface';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { timer } from '@gitroom/helpers/utils/timer';
-import { Input } from '@gitroom/react/form/input';
-import { Button } from '@gitroom/react/form/button';
+import { Web3ProviderInterface } from '@social/frontend/components/launches/web3/web3.provider.interface';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { timer } from '@social/helpers/utils/timer';
+import { Input } from '@social/react/form/input';
+import { Button } from '@social/react/form/button';
 import copy from 'copy-to-clipboard';
-import { useToaster } from '@gitroom/react/toaster/toaster';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { useToaster } from '@social/react/toaster/toaster';
+import { useT } from '@social/react/translation/get.transation.service.client';
 
 export const MoltbookProvider: FC<Web3ProviderInterface> = (props) => {
   const { onComplete, nonce } = props;
@@ -105,7 +105,7 @@ export const MoltbookProvider: FC<Web3ProviderInterface> = (props) => {
               name="agentName"
               disableForm={true}
               onChange={(e) => setAgentName(e.target.value)}
-              placeholder="MyHanzo SocialAgent"
+              placeholder="MySocialAgent"
             />
             <Input
               label={t('description_optional', 'Description (optional)')}

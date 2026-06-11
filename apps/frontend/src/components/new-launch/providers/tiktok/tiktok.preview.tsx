@@ -1,11 +1,11 @@
-import { useIntegration } from '@gitroom/frontend/components/launches/helpers/use.integration';
-import { useLaunchStore } from '@gitroom/frontend/components/new-launch/store';
-import { useMediaDirectory } from '@gitroom/react/helpers/use.media.directory';
-import { stripHtmlValidation } from '@gitroom/helpers/utils/strip.html.validation';
-import { textSlicer } from '@gitroom/helpers/utils/count.length';
+import { useIntegration } from '@social/frontend/components/launches/helpers/use.integration';
+import { useLaunchStore } from '@social/frontend/components/new-launch/store';
+import { useMediaDirectory } from '@social/react/helpers/use.media.directory';
+import { stripHtmlValidation } from '@social/helpers/utils/strip.html.validation';
+import { textSlicer } from '@social/helpers/utils/count.length';
 import { FC, ReactNode } from 'react';
-import { SliderComponent } from '@gitroom/frontend/components/third-parties/slider.component';
-import { VideoOrImage } from '@gitroom/react/helpers/video.or.image';
+import { SliderComponent } from '@social/frontend/components/third-parties/slider.component';
+import { VideoOrImage } from '@social/react/helpers/video.or.image';
 
 const TikTokItem: FC<{ icon: ReactNode; num: string }> = ({ icon, num }) => {
   return (

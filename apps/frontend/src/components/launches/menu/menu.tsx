@@ -10,26 +10,26 @@ import React, {
   useState,
 } from 'react';
 import { useClickOutside } from '@mantine/hooks';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { deleteDialog } from '@gitroom/react/helpers/delete.dialog';
-import { useToaster } from '@gitroom/react/toaster/toaster';
-import { useModals } from '@gitroom/frontend/components/layout/new-modal';
-import { TimeTable } from '@gitroom/frontend/components/launches/time.table';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { deleteDialog } from '@social/react/helpers/delete.dialog';
+import { useToaster } from '@social/react/toaster/toaster';
+import { useModals } from '@social/frontend/components/layout/new-modal';
+import { TimeTable } from '@social/frontend/components/launches/time.table';
 import {
   Integrations,
   useCalendar,
-} from '@gitroom/frontend/components/launches/calendar.context';
-import { BotPicture } from '@gitroom/frontend/components/launches/bot.picture';
-import { CustomerModal } from '@gitroom/frontend/components/launches/customer.modal';
+} from '@social/frontend/components/launches/calendar.context';
+import { BotPicture } from '@social/frontend/components/launches/bot.picture';
+import { CustomerModal } from '@social/frontend/components/launches/customer.modal';
 import { Integration } from '@prisma/client';
-import { SettingsModal } from '@gitroom/frontend/components/launches/settings.modal';
-import { CustomVariables } from '@gitroom/frontend/components/launches/add.provider.component';
+import { SettingsModal } from '@social/frontend/components/launches/settings.modal';
+import { CustomVariables } from '@social/frontend/components/launches/add.provider.component';
 import { useRouter } from 'next/navigation';
-import { useVariables } from '@gitroom/react/helpers/variable.context';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { AddEditModal } from '@gitroom/frontend/components/new-launch/add.edit.modal';
+import { useVariables } from '@social/react/helpers/variable.context';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { AddEditModal } from '@social/frontend/components/new-launch/add.edit.modal';
 import dayjs from 'dayjs';
-import { ModalWrapperComponent } from '@gitroom/frontend/components/new-launch/modal.wrapper.component';
+import { ModalWrapperComponent } from '@social/frontend/components/new-launch/modal.wrapper.component';
 import copy from 'copy-to-clipboard';
 
 export const Menu: FC<{

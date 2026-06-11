@@ -1,9 +1,9 @@
-import { PrismaRepository } from '@gitroom/nestjs-libraries/database/prisma/prisma.service';
+import { PrismaRepository } from '@social/nestjs-libraries/database/prisma/prisma.service';
 import { Role, ShortLinkPreference, SubscriptionTier } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
-import { AuthService } from '@gitroom/helpers/auth/auth.service';
-import { CreateOrgUserDto } from '@gitroom/nestjs-libraries/dtos/auth/create.org.user.dto';
-import { makeId } from '@gitroom/nestjs-libraries/services/make.is';
+import { AuthService } from '@social/helpers/auth/auth.service';
+import { CreateOrgUserDto } from '@social/nestjs-libraries/dtos/auth/create.org.user.dto';
+import { makeId } from '@social/nestjs-libraries/services/make.is';
 
 @Injectable()
 export class OrganizationRepository {
@@ -39,7 +39,7 @@ export class OrganizationRepository {
                 activated: true,
                 email: email
                   ? email.split('@').join(`+${saasName}@`)
-                  : `${saasName}+` + makeId(10) + '@postiz.com',
+                  : `${saasName}+` + makeId(10) + '@social.com',
                 name: name ? `${name}###${id}` : `Unnamed User###${id}`,
                 providerName: 'LOCAL',
                 password: AuthService.hashPassword(makeId(500)),
@@ -164,7 +164,7 @@ export class OrganizationRepository {
     });
   }
 
-  // Hanzo IAM federation: rename the auto-created Postiz organization
+  // Hanzo IAM federation: rename the auto-created Hanzo Social organization
   // after first IAM login so it tracks the JWT `owner` claim
   // (the IAM org slug). Called by HanzoIamProvider.postRegistration.
   updateOrgName(orgId: string, name: string) {

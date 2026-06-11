@@ -8,7 +8,7 @@ import {
   useMemo,
   useState,
 } from 'react';
-import { TopTitle } from '@gitroom/frontend/components/launches/helpers/top.title.component';
+import { TopTitle } from '@social/frontend/components/launches/helpers/top.title.component';
 import 'polotno/polotno.blueprint.css';
 import { createStore } from 'polotno/model/store';
 import Workspace from 'polotno/canvas/workspace';
@@ -16,13 +16,13 @@ import { PolotnoContainer, SidePanelWrap, WorkspaceWrap } from 'polotno';
 import { SidePanel, DEFAULT_SECTIONS } from 'polotno/side-panel';
 import Toolbar from 'polotno/toolbar/toolbar';
 import ZoomButtons from 'polotno/toolbar/zoom-buttons';
-import { Button } from '@gitroom/react/form/button';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { PictureGeneratorSection } from '@gitroom/frontend/components/launches/polonto/polonto.picture.generation';
-import { useUser } from '@gitroom/frontend/components/layout/user.context';
-import { loadVars } from '@gitroom/react/helpers/variable.context';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { useLaunchStore } from '@gitroom/frontend/components/new-launch/store';
+import { Button } from '@social/react/form/button';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { PictureGeneratorSection } from '@social/frontend/components/launches/polonto/polonto.picture.generation';
+import { useUser } from '@social/frontend/components/layout/user.context';
+import { loadVars } from '@social/react/helpers/variable.context';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { useLaunchStore } from '@social/frontend/components/new-launch/store';
 const store = createStore({
   get key() {
     return loadVars().plontoKey;

@@ -1,10 +1,10 @@
-import { getT } from '@gitroom/react/translation/get.translation.service.backend';
+import { getT } from '@social/react/translation/get.translation.service.backend';
 
 export const dynamic = 'force-dynamic';
 import { ReactNode } from 'react';
 import loadDynamic from 'next/dynamic';
-import { TestimonialComponent } from '@gitroom/frontend/components/auth/testimonial.component';
-import { LogoTextComponent } from '@gitroom/frontend/components/ui/logo-text.component';
+import { TestimonialComponent } from '@social/frontend/components/auth/testimonial.component';
+import { LogoTextComponent } from '@social/frontend/components/ui/logo-text.component';
 const ReturnUrlComponent = loadDynamic(() => import('./return.url.component'));
 export default async function AuthLayout({
   children,

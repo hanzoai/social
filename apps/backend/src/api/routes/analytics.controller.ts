@@ -1,9 +1,9 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
 import { Organization } from '@prisma/client';
-import { GetOrgFromRequest } from '@gitroom/nestjs-libraries/user/org.from.request';
+import { GetOrgFromRequest } from '@social/nestjs-libraries/user/org.from.request';
 import { ApiTags } from '@nestjs/swagger';
-import { IntegrationService } from '@gitroom/nestjs-libraries/database/prisma/integrations/integration.service';
-import { PostsService } from '@gitroom/nestjs-libraries/database/prisma/posts/posts.service';
+import { IntegrationService } from '@social/nestjs-libraries/database/prisma/integrations/integration.service';
+import { PostsService } from '@social/nestjs-libraries/database/prisma/posts/posts.service';
 
 @ApiTags('Analytics')
 @Controller('/analytics')

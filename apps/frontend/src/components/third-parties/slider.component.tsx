@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
-} from '@gitroom/frontend/components/ui/icons';
+} from '@social/frontend/components/ui/icons';
 
 export const SliderComponent: FC<{
   className: string;

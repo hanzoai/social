@@ -1,11 +1,11 @@
 'use client';
 
 import React, { FC, useCallback, useEffect, useState } from 'react';
-import { DelayIcon, DropdownArrowIcon } from '@gitroom/frontend/components/ui/icons';
+import { DelayIcon, DropdownArrowIcon } from '@social/frontend/components/ui/icons';
 import clsx from 'clsx';
-import { useLaunchStore } from '@gitroom/frontend/components/new-launch/store';
+import { useLaunchStore } from '@social/frontend/components/new-launch/store';
 import { useShallow } from 'zustand/react/shallow';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { useT } from '@social/react/translation/get.transation.service.client';
 import { useClickOutside } from '@mantine/hooks';
 
 const delayOptions = [

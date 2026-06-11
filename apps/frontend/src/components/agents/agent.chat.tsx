@@ -13,8 +13,8 @@ import {
   InputProps,
   UserMessageProps,
 } from '@copilotkit/react-ui/dist/components/chat/props';
-import { Input } from '@gitroom/frontend/components/agents/agent.input';
-import { useModals } from '@gitroom/frontend/components/layout/new-modal';
+import { Input } from '@social/frontend/components/agents/agent.input';
+import { useModals } from '@social/frontend/components/layout/new-modal';
 import {
   CopilotKit,
   useCopilotAction,
@@ -23,17 +23,17 @@ import {
 import {
   MediaPortal,
   PropertiesContext,
-} from '@gitroom/frontend/components/agents/agent';
-import { useVariables } from '@gitroom/react/helpers/variable.context';
+} from '@social/frontend/components/agents/agent';
+import { useVariables } from '@social/react/helpers/variable.context';
 import { useParams } from 'next/navigation';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
 import { TextMessage } from '@copilotkit/runtime-client-gql';
-import { AddEditModal } from '@gitroom/frontend/components/new-launch/add.edit.modal';
+import { AddEditModal } from '@social/frontend/components/new-launch/add.edit.modal';
 import dayjs from 'dayjs';
-import { makeId } from '@gitroom/nestjs-libraries/services/make.is';
-import { ExistingDataContextProvider } from '@gitroom/frontend/components/launches/helpers/use.existing.data';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { hasExtension } from '@gitroom/helpers/utils/has.extension';
+import { makeId } from '@social/nestjs-libraries/services/make.is';
+import { ExistingDataContextProvider } from '@social/frontend/components/launches/helpers/use.existing.data';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { hasExtension } from '@social/helpers/utils/has.extension';
 
 export const AgentChat: FC = () => {
   const { backendUrl } = useVariables();
@@ -47,7 +47,7 @@ export const AgentChat: FC = () => {
       credentials="include"
       runtimeUrl={backendUrl + '/copilot/agent'}
       showDevConsole={false}
-      agent="postiz"
+      agent="social"
       properties={{
         integrations: properties,
       }}

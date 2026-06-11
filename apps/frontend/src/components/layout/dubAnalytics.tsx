@@ -1,6 +1,6 @@
 'use client';
 
-import { useVariables } from '@gitroom/react/helpers/variable.context';
+import { useVariables } from '@social/react/helpers/variable.context';
 import { Analytics as DubAnalyticsIn } from '@dub/analytics/react';
 import { getCookie } from 'react-use-cookie';
 
@@ -10,7 +10,7 @@ export const DubAnalytics = () => {
   return (
     <DubAnalyticsIn
       domainsConfig={{
-        refer: 'postiz.pro',
+        refer: 'social.pro',
       }}
     />
   );

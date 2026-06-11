@@ -3,13 +3,13 @@
 import {
   PostComment,
   withProvider,
-} from '@gitroom/frontend/components/new-launch/providers/high.order.provider';
-import { FacebookDto } from '@gitroom/nestjs-libraries/dtos/posts/providers-settings/facebook.dto';
-import { Input } from '@gitroom/react/form/input';
-import { Select } from '@gitroom/react/form/select';
-import { useSettings } from '@gitroom/frontend/components/launches/helpers/use.values';
-import { FacebookPreview } from '@gitroom/frontend/components/new-launch/providers/facebook/facebook.preview';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+} from '@social/frontend/components/new-launch/providers/high.order.provider';
+import { FacebookDto } from '@social/nestjs-libraries/dtos/posts/providers-settings/facebook.dto';
+import { Input } from '@social/react/form/input';
+import { Select } from '@social/react/form/select';
+import { useSettings } from '@social/frontend/components/launches/helpers/use.values';
+import { FacebookPreview } from '@social/frontend/components/new-launch/providers/facebook/facebook.preview';
+import { useT } from '@social/react/translation/get.transation.service.client';
 
 const postType = [
   {

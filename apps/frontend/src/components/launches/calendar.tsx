@@ -13,7 +13,7 @@ import {
   CalendarContext,
   Integrations,
   useCalendar,
-} from '@gitroom/frontend/components/launches/calendar.context';
+} from '@social/frontend/components/launches/calendar.context';
 import dayjs from 'dayjs';
 import 'dayjs/locale/en';
 import 'dayjs/locale/he';
@@ -30,34 +30,34 @@ import 'dayjs/locale/ar';
 import 'dayjs/locale/tr';
 import 'dayjs/locale/vi';
 import localizedFormat from 'dayjs/plugin/localizedFormat';
-import { useModals } from '@gitroom/frontend/components/layout/new-modal';
+import { useModals } from '@social/frontend/components/layout/new-modal';
 import clsx from 'clsx';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { ExistingDataContextProvider } from '@gitroom/frontend/components/launches/helpers/use.existing.data';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { ExistingDataContextProvider } from '@social/frontend/components/launches/helpers/use.existing.data';
 import { useDrag, useDrop } from 'react-dnd';
 import { Integration, Post, State, Tags } from '@prisma/client';
-import { useAddProvider } from '@gitroom/frontend/components/launches/add.provider.component';
-import { useToaster } from '@gitroom/react/toaster/toaster';
-import { useUser } from '@gitroom/frontend/components/layout/user.context';
+import { useAddProvider } from '@social/frontend/components/launches/add.provider.component';
+import { useToaster } from '@social/react/toaster/toaster';
+import { useUser } from '@social/frontend/components/layout/user.context';
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter';
 import isSameOrBefore from 'dayjs/plugin/isSameOrBefore';
 import { groupBy, random, sortBy } from 'lodash';
-import SafeImage from '@gitroom/react/helpers/safe.image';
+import SafeImage from '@social/react/helpers/safe.image';
 import { extend } from 'dayjs';
 import { isUSCitizen } from './helpers/isuscitizen.utils';
 import { useInterval } from '@mantine/hooks';
-import { StatisticsModal } from '@gitroom/frontend/components/launches/statistics';
-import { MissingReleaseModal } from '@gitroom/frontend/components/launches/missing-release.modal';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { StatisticsModal } from '@social/frontend/components/launches/statistics';
+import { MissingReleaseModal } from '@social/frontend/components/launches/missing-release.modal';
+import { useT } from '@social/react/translation/get.transation.service.client';
 import i18next from 'i18next';
-import { AddEditModal } from '@gitroom/frontend/components/new-launch/add.edit.modal';
-import { CreationMethodBadge } from '@gitroom/frontend/components/launches/creation.method.badge';
-import { deleteDialog } from '@gitroom/react/helpers/delete.dialog';
-import { useVariables } from '@gitroom/react/helpers/variable.context';
+import { AddEditModal } from '@social/frontend/components/new-launch/add.edit.modal';
+import { CreationMethodBadge } from '@social/frontend/components/launches/creation.method.badge';
+import { deleteDialog } from '@social/react/helpers/delete.dialog';
+import { useVariables } from '@social/react/helpers/variable.context';
 import copy from 'copy-to-clipboard';
-import { stripHtmlValidation } from '@gitroom/helpers/utils/strip.html.validation';
-import { newDayjs } from '@gitroom/frontend/components/layout/set.timezone';
-import { Button } from '@gitroom/react/form/button';
+import { stripHtmlValidation } from '@social/helpers/utils/strip.html.validation';
+import { newDayjs } from '@social/frontend/components/layout/set.timezone';
+import { Button } from '@social/react/form/button';
 
 // Extend dayjs with necessary plugins
 extend(isSameOrAfter);

@@ -1,14 +1,14 @@
 import { S3Client, PutObjectCommand } from '@aws-sdk/client-s3';
 import 'multer';
-import { makeId } from '@gitroom/nestjs-libraries/services/make.is';
+import { makeId } from '@social/nestjs-libraries/services/make.is';
 import mime from 'mime-types';
 // @ts-ignore
 import { getExtension } from 'mime';
 import { IUploadProvider } from './upload.interface';
 import axios from 'axios';
-import { isSafePublicHttpsUrl } from '@gitroom/nestjs-libraries/dtos/webhooks/webhook.url.validator';
-import { ssrfSafeDispatcher } from '@gitroom/nestjs-libraries/dtos/webhooks/ssrf.safe.dispatcher';
-import { parseDataUrl } from '@gitroom/nestjs-libraries/upload/data.url';
+import { isSafePublicHttpsUrl } from '@social/nestjs-libraries/dtos/webhooks/webhook.url.validator';
+import { ssrfSafeDispatcher } from '@social/nestjs-libraries/dtos/webhooks/ssrf.safe.dispatcher';
+import { parseDataUrl } from '@social/nestjs-libraries/upload/data.url';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { fromBuffer } = require('file-type');
 

@@ -5,7 +5,7 @@ import {
   type ProviderPreviewHandle,
   type ProviderPreviewProps,
   type ProviderPreviewValidation,
-} from '@gitroom/frontend/components/provider-preview/preview.provider.component';
+} from '@social/frontend/components/provider-preview/preview.provider.component';
 
 type InitPayload = {
   value?: Record<string, unknown>;

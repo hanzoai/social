@@ -1,31 +1,31 @@
 'use client';
 
-import { AddProviderButton } from '@gitroom/frontend/components/launches/add.provider.component';
+import { AddProviderButton } from '@social/frontend/components/launches/add.provider.component';
 import { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import SafeImage from '@gitroom/react/helpers/safe.image';
+import SafeImage from '@social/react/helpers/safe.image';
 import { capitalize, groupBy, orderBy } from 'lodash';
-import { CalendarWeekProvider } from '@gitroom/frontend/components/launches/calendar.context';
-import { Filters } from '@gitroom/frontend/components/launches/filters';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { LoadingComponent } from '@gitroom/frontend/components/layout/loading';
+import { CalendarWeekProvider } from '@social/frontend/components/launches/calendar.context';
+import { Filters } from '@social/frontend/components/launches/filters';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { LoadingComponent } from '@social/frontend/components/layout/loading';
 import clsx from 'clsx';
 import { useUser } from '../layout/user.context';
-import { Menu } from '@gitroom/frontend/components/launches/menu/menu';
+import { Menu } from '@social/frontend/components/launches/menu/menu';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Integration } from '@prisma/client';
-import ImageWithFallback from '@gitroom/react/helpers/image.with.fallback';
-import { useToaster } from '@gitroom/react/toaster/toaster';
-import { useFireEvents } from '@gitroom/helpers/utils/use.fire.events';
+import ImageWithFallback from '@social/react/helpers/image.with.fallback';
+import { useToaster } from '@social/react/toaster/toaster';
+import { useFireEvents } from '@social/helpers/utils/use.fire.events';
 import { Calendar } from './calendar';
 import { useDrag, useDrop } from 'react-dnd';
-import { DNDProvider } from '@gitroom/frontend/components/launches/helpers/dnd.provider';
+import { DNDProvider } from '@social/frontend/components/launches/helpers/dnd.provider';
 import { GeneratorComponent } from './generator/generator';
-import { useVariables } from '@gitroom/react/helpers/variable.context';
-import { NewPost } from '@gitroom/frontend/components/launches/new.post';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { useIntegrationList } from '@gitroom/frontend/components/launches/helpers/use.integration.list';
+import { useVariables } from '@social/react/helpers/variable.context';
+import { NewPost } from '@social/frontend/components/launches/new.post';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { useIntegrationList } from '@social/frontend/components/launches/helpers/use.integration.list';
 import useCookie from 'react-use-cookie';
-import { Onboarding } from '@gitroom/frontend/components/onboarding/onboarding';
+import { Onboarding } from '@social/frontend/components/onboarding/onboarding';
 
 export const SVGLine = () => {
   return (

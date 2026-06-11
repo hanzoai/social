@@ -1,7 +1,7 @@
 import {
   ThirdParty,
   ThirdPartyAbstract,
-} from '@gitroom/nestjs-libraries/3rdparties/thirdparty.interface';
+} from '@social/nestjs-libraries/3rdparties/thirdparty.interface';
 
 const BASE_URL = 'https://reel.farm/api/v1';
 

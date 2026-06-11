@@ -1,7 +1,7 @@
 {
   "name": "hanzo-social",
   "version": "1.0.0",
-  "description": "Hanzo Social \u2014 agentic social media scheduling. Forked from gitroomhq/postiz-app under AGPL-3.0.",
+  "description": "Hanzo Social \u2014 agentic social media scheduling. Forked from hanzoai/social under AGPL-3.0.",
   "main": "index.js",
   "license": "AGPL-3.0",
   "keywords": [
@@ -90,7 +90,7 @@
     "@neynar/nodejs-sdk": "^3.112.0",
     "@neynar/react": "^1.2.22",
     "@pigment-css/react": "^0.0.30",
-    "@postiz/wallets": "^0.0.1",
+    "@social/wallets": "^0.0.1",
     "@prisma/client": "6.5.0",
     "@sentry/nestjs": "^10.26.0",
     "@sentry/nextjs": "^10.26.0",

@@ -9,40 +9,40 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { AddEditModalProps } from '@gitroom/frontend/components/new-launch/add.edit.modal';
+import { AddEditModalProps } from '@social/frontend/components/new-launch/add.edit.modal';
 import clsx from 'clsx';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { PicksSocialsComponent } from '@gitroom/frontend/components/new-launch/picks.socials.component';
-import { EditorWrapper } from '@gitroom/frontend/components/new-launch/editor';
-import { SelectCurrent } from '@gitroom/frontend/components/new-launch/select.current';
-import { ShowAllProviders } from '@gitroom/frontend/components/new-launch/providers/show.all.providers';
-import { useExistingData } from '@gitroom/frontend/components/launches/helpers/use.existing.data';
-import { useLaunchStore } from '@gitroom/frontend/components/new-launch/store';
-import { DatePicker } from '@gitroom/frontend/components/launches/helpers/date.picker';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { PicksSocialsComponent } from '@social/frontend/components/new-launch/picks.socials.component';
+import { EditorWrapper } from '@social/frontend/components/new-launch/editor';
+import { SelectCurrent } from '@social/frontend/components/new-launch/select.current';
+import { ShowAllProviders } from '@social/frontend/components/new-launch/providers/show.all.providers';
+import { useExistingData } from '@social/frontend/components/launches/helpers/use.existing.data';
+import { useLaunchStore } from '@social/frontend/components/new-launch/store';
+import { DatePicker } from '@social/frontend/components/launches/helpers/date.picker';
 import { useShallow } from 'zustand/react/shallow';
-import { RepeatComponent } from '@gitroom/frontend/components/launches/repeat.component';
-import { TagsComponent } from '@gitroom/frontend/components/launches/tags.component';
-import { useToaster } from '@gitroom/react/toaster/toaster';
-import { deleteDialog } from '@gitroom/react/helpers/delete.dialog';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { makeId } from '@gitroom/nestjs-libraries/services/make.is';
-import { useModals } from '@gitroom/frontend/components/layout/new-modal';
+import { RepeatComponent } from '@social/frontend/components/launches/repeat.component';
+import { TagsComponent } from '@social/frontend/components/launches/tags.component';
+import { useToaster } from '@social/react/toaster/toaster';
+import { deleteDialog } from '@social/react/helpers/delete.dialog';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { makeId } from '@social/nestjs-libraries/services/make.is';
+import { useModals } from '@social/frontend/components/layout/new-modal';
 import { capitalize } from 'lodash';
-import { SelectCustomer } from '@gitroom/frontend/components/launches/select.customer';
+import { SelectCustomer } from '@social/frontend/components/launches/select.customer';
 import { CopilotPopup } from '@copilotkit/react-ui';
-import { DummyCodeComponent } from '@gitroom/frontend/components/new-launch/dummy.code.component';
-import { CreationMethodBadge } from '@gitroom/frontend/components/launches/creation.method.badge';
+import { DummyCodeComponent } from '@social/frontend/components/new-launch/dummy.code.component';
+import { CreationMethodBadge } from '@social/frontend/components/launches/creation.method.badge';
 import {
   SettingsIcon,
   ChevronDownIcon,
   CloseIcon,
   TrashIcon,
   DropdownArrowSmallIcon,
-} from '@gitroom/frontend/components/ui/icons';
-import { useHasScroll } from '@gitroom/frontend/components/ui/is.scroll.hook';
-import { useShortlinkPreference } from '@gitroom/frontend/components/settings/shortlink-preference.component';
+} from '@social/frontend/components/ui/icons';
+import { useHasScroll } from '@social/frontend/components/ui/is.scroll.hook';
+import { useShortlinkPreference } from '@social/frontend/components/settings/shortlink-preference.component';
 import dayjs from 'dayjs';
-import { Button } from '@gitroom/react/form/button';
+import { Button } from '@social/react/form/button';
 
 export const ManageModal: FC<AddEditModalProps> = (props) => {
   const t = useT();

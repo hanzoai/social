@@ -2,34 +2,34 @@
 
 import React, { FC, useCallback, useMemo, useState } from 'react';
 import useSWR from 'swr';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { useVariables } from '@gitroom/react/helpers/variable.context';
-import { OrganizationSelector } from '@gitroom/frontend/components/layout/organization.selector';
-import { LanguageComponent } from '@gitroom/frontend/components/layout/language.component';
-import { AttachToFeedbackIcon } from '@gitroom/frontend/components/new-layout/sentry.feedback.component';
-import NotificationComponent from '@gitroom/frontend/components/notifications/notification.component';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { useVariables } from '@social/react/helpers/variable.context';
+import { OrganizationSelector } from '@social/frontend/components/layout/organization.selector';
+import { LanguageComponent } from '@social/frontend/components/layout/language.component';
+import { AttachToFeedbackIcon } from '@social/frontend/components/new-layout/sentry.feedback.component';
+import NotificationComponent from '@social/frontend/components/notifications/notification.component';
 import dynamic from 'next/dynamic';
-import { LogoTextComponent } from '@gitroom/frontend/components/ui/logo-text.component';
-import { pricing } from '@gitroom/nestjs-libraries/database/prisma/subscriptions/pricing';
+import { LogoTextComponent } from '@social/frontend/components/ui/logo-text.component';
+import { pricing } from '@social/nestjs-libraries/database/prisma/subscriptions/pricing';
 import { capitalize } from 'lodash';
 import clsx from 'clsx';
-import { LoadingComponent } from '@gitroom/frontend/components/layout/loading';
-import { CheckIconComponent } from '@gitroom/frontend/components/ui/check.icon.component';
+import { LoadingComponent } from '@social/frontend/components/layout/loading';
+import { CheckIconComponent } from '@social/frontend/components/ui/check.icon.component';
 import {
   FAQComponent,
   FAQSection,
-} from '@gitroom/frontend/components/billing/faq.component';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { useUser } from '@gitroom/frontend/components/layout/user.context';
-import { useDubClickId } from '@gitroom/frontend/components/layout/dubAnalytics';
-import SafeImage from '@gitroom/react/helpers/safe.image';
-import { useModals } from '@gitroom/frontend/components/layout/new-modal';
+} from '@social/frontend/components/billing/faq.component';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { useUser } from '@social/frontend/components/layout/user.context';
+import { useDubClickId } from '@social/frontend/components/layout/dubAnalytics';
+import SafeImage from '@social/react/helpers/safe.image';
+import { useModals } from '@social/frontend/components/layout/new-modal';
 import useCookie from 'react-use-cookie';
-import { LogoutComponent } from '@gitroom/frontend/components/layout/logout.component';
-import { DeveloperIconComponent } from '@gitroom/frontend/components/developer/developer.icon.component';
+import { LogoutComponent } from '@social/frontend/components/layout/logout.component';
+import { DeveloperIconComponent } from '@social/frontend/components/developer/developer.icon.component';
 
 const ModeComponent = dynamic(
-  () => import('@gitroom/frontend/components/layout/mode.component'),
+  () => import('@social/frontend/components/layout/mode.component'),
   {
     ssr: false,
   }
@@ -37,7 +37,7 @@ const ModeComponent = dynamic(
 
 const EmbeddedBilling = dynamic(
   () =>
-    import('@gitroom/frontend/components/billing/embedded.billing').then(
+    import('@social/frontend/components/billing/embedded.billing').then(
       (mod) => mod.EmbeddedBilling
     ),
   {
@@ -115,7 +115,7 @@ export const FirstBillingComponent = () => {
           </span>{' '}
           {t('billing_who_use', 'who use')}{' '}
           {t(
-            'billing_postiz_grow_social',
+            'billing_social_grow_social',
             'Hanzo Social To Grow Their Social Presence'
           )}
         </div>

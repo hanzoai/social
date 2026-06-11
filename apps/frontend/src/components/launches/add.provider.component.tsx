@@ -1,21 +1,21 @@
 'use client';
 
-import { useModals } from '@gitroom/frontend/components/layout/new-modal';
+import { useModals } from '@social/frontend/components/layout/new-modal';
 import React, { FC, useCallback, useMemo } from 'react';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { Input } from '@gitroom/react/form/input';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { Input } from '@social/react/form/input';
 import { FieldValues, FormProvider, useForm } from 'react-hook-form';
-import { Button } from '@gitroom/react/form/button';
+import { Button } from '@social/react/form/button';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { ApiKeyDto } from '@gitroom/nestjs-libraries/dtos/integrations/api.key.dto';
+import { ApiKeyDto } from '@social/nestjs-libraries/dtos/integrations/api.key.dto';
 import { useRouter } from 'next/navigation';
-import { TopTitle } from '@gitroom/frontend/components/launches/helpers/top.title.component';
-import { useVariables } from '@gitroom/react/helpers/variable.context';
-import { useToaster } from '@gitroom/react/toaster/toaster';
+import { TopTitle } from '@social/frontend/components/launches/helpers/top.title.component';
+import { useVariables } from '@social/react/helpers/variable.context';
+import { useToaster } from '@social/react/toaster/toaster';
 import { object, string } from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { web3List } from '@gitroom/frontend/components/launches/web3/web3.list';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { web3List } from '@social/frontend/components/launches/web3/web3.list';
+import { useT } from '@social/react/translation/get.transation.service.client';
 import clsx from 'clsx';
 import copy from 'copy-to-clipboard';
 import { capitalize } from 'lodash';
@@ -268,7 +268,7 @@ const ExtensionNotFound: FC = () => {
           className="flex-1"
           onClick={() => {
             window.open(
-              'https://chromewebstore.google.com/detail/postiz/cidhffagahknaeodkplfbcpfeielnkjl?hl=en',
+              'https://chromewebstore.google.com/detail/social/cidhffagahknaeodkplfbcpfeielnkjl?hl=en',
               '_blank'
             );
             modals.closeCurrent();
@@ -443,14 +443,14 @@ export const AddProviderComponent: FC<{
         };
         const gotoIntegration = async (externalUrl?: string) => {
           // Mobile WebView: reuse the existing `externalUrl` param to
-          // carry the `postiz://` deep link so the backend redirects
+          // carry the `social://` deep link so the backend redirects
           // back to the iOS/Android app after OAuth completes, instead
           // of the default web redirect.
           const params = [
             `externalUrl=${encodeURIComponent(externalUrl)}`,
             onboardingParam,
             isMobile
-              ? `redirectUrl=${encodeURIComponent('postiz://integrations')}`
+              ? `redirectUrl=${encodeURIComponent('social://integrations')}`
               : '',
           ]
             .filter(Boolean)
@@ -488,7 +488,7 @@ export const AddProviderComponent: FC<{
             // `window.open`/`location.href` aren't reliable here because
             // RN WebView doesn't always route them through the native
             // navigation intercept. The backend redirects back to the
-            // app via `postiz://` once OAuth completes.
+            // app via `social://` once OAuth completes.
             const rn = (window as any).ReactNativeWebView;
             if (rn && typeof rn.postMessage === 'function') {
               rn.postMessage(JSON.stringify({ type: 'open-external', url }));

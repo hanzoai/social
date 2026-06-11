@@ -3,9 +3,9 @@ import {
   PostDetails,
   PostResponse,
   SocialProvider,
-} from '@gitroom/nestjs-libraries/integrations/social/social.integrations.interface';
-import { makeId } from '@gitroom/nestjs-libraries/services/make.is';
-import { SocialAbstract } from '@gitroom/nestjs-libraries/integrations/social.abstract';
+} from '@social/nestjs-libraries/integrations/social/social.integrations.interface';
+import { makeId } from '@social/nestjs-libraries/services/make.is';
+import { SocialAbstract } from '@social/nestjs-libraries/integrations/social.abstract';
 import dayjs from 'dayjs';
 import { Integration } from '@prisma/client';
 import { number, string } from 'yup';

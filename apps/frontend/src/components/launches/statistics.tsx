@@ -1,11 +1,11 @@
 import React, { FC, Fragment, useCallback, useMemo, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { ChartSocial } from '@gitroom/frontend/components/analytics/chart-social';
-import { Select } from '@gitroom/react/form/select';
-import { LoadingComponent } from '@gitroom/frontend/components/layout/loading';
-import { MissingReleaseModal } from '@gitroom/frontend/components/launches/missing-release.modal';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { ChartSocial } from '@social/frontend/components/analytics/chart-social';
+import { Select } from '@social/react/form/select';
+import { LoadingComponent } from '@social/frontend/components/layout/loading';
+import { MissingReleaseModal } from '@social/frontend/components/launches/missing-release.modal';
 
 interface AnalyticsData {
   label: string;

@@ -1,11 +1,11 @@
-import { AgentToolInterface } from '@gitroom/nestjs-libraries/chat/agent.tool.interface';
+import { AgentToolInterface } from '@social/nestjs-libraries/chat/agent.tool.interface';
 import { createTool } from '@mastra/core/tools';
 import { z } from 'zod';
 import { Injectable } from '@nestjs/common';
-import { MediaService } from '@gitroom/nestjs-libraries/database/prisma/media/media.service';
-import { UploadFactory } from '@gitroom/nestjs-libraries/upload/upload.factory';
-import { checkAuth } from '@gitroom/nestjs-libraries/chat/auth.context';
-import { ssrfSafeDispatcher } from '@gitroom/nestjs-libraries/dtos/webhooks/ssrf.safe.dispatcher';
+import { MediaService } from '@social/nestjs-libraries/database/prisma/media/media.service';
+import { UploadFactory } from '@social/nestjs-libraries/upload/upload.factory';
+import { checkAuth } from '@social/nestjs-libraries/chat/auth.context';
+import { ssrfSafeDispatcher } from '@social/nestjs-libraries/dtos/webhooks/ssrf.safe.dispatcher';
 import { Readable } from 'stream';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { fromBuffer } = require('file-type');

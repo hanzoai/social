@@ -6,7 +6,7 @@ import {
   Req,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { BillingService } from '@gitroom/nestjs-libraries/services/billing.service';
+import { BillingService } from '@social/nestjs-libraries/services/billing.service';
 
 // Webhook receiver for commerce.hanzo.ai → POST /commerce
 //

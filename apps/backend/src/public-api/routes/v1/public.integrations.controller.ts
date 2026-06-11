@@ -12,29 +12,29 @@ import {
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
-import { CustomFileValidationPipe } from '@gitroom/nestjs-libraries/upload/custom.upload.validation';
+import { CustomFileValidationPipe } from '@social/nestjs-libraries/upload/custom.upload.validation';
 import { ApiTags } from '@nestjs/swagger';
-import { GetOrgFromRequest } from '@gitroom/nestjs-libraries/user/org.from.request';
+import { GetOrgFromRequest } from '@social/nestjs-libraries/user/org.from.request';
 import { Organization } from '@prisma/client';
-import { IntegrationService } from '@gitroom/nestjs-libraries/database/prisma/integrations/integration.service';
-import { CheckPolicies } from '@gitroom/backend/services/auth/permissions/permissions.ability';
-import { PostsService } from '@gitroom/nestjs-libraries/database/prisma/posts/posts.service';
+import { IntegrationService } from '@social/nestjs-libraries/database/prisma/integrations/integration.service';
+import { CheckPolicies } from '@social/backend/services/auth/permissions/permissions.ability';
+import { PostsService } from '@social/nestjs-libraries/database/prisma/posts/posts.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UploadFactory } from '@gitroom/nestjs-libraries/upload/upload.factory';
-import { MediaService } from '@gitroom/nestjs-libraries/database/prisma/media/media.service';
-import { GetPostsDto } from '@gitroom/nestjs-libraries/dtos/posts/get.posts.dto';
-import { ChangePostStatusDto } from '@gitroom/nestjs-libraries/dtos/posts/change.post.status.dto';
+import { UploadFactory } from '@social/nestjs-libraries/upload/upload.factory';
+import { MediaService } from '@social/nestjs-libraries/database/prisma/media/media.service';
+import { GetPostsDto } from '@social/nestjs-libraries/dtos/posts/get.posts.dto';
+import { ChangePostStatusDto } from '@social/nestjs-libraries/dtos/posts/change.post.status.dto';
 import {
   AuthorizationActions,
   Sections,
-} from '@gitroom/backend/services/auth/permissions/permission.exception.class';
-import { VideoDto } from '@gitroom/nestjs-libraries/dtos/videos/video.dto';
-import { VideoFunctionDto } from '@gitroom/nestjs-libraries/dtos/videos/video.function.dto';
-import { UploadDto } from '@gitroom/nestjs-libraries/dtos/media/upload.dto';
-import { NotificationService } from '@gitroom/nestjs-libraries/database/prisma/notifications/notification.service';
-import { GetNotificationsDto } from '@gitroom/nestjs-libraries/dtos/notifications/get.notifications.dto';
+} from '@social/backend/services/auth/permissions/permission.exception.class';
+import { VideoDto } from '@social/nestjs-libraries/dtos/videos/video.dto';
+import { VideoFunctionDto } from '@social/nestjs-libraries/dtos/videos/video.function.dto';
+import { UploadDto } from '@social/nestjs-libraries/dtos/media/upload.dto';
+import { NotificationService } from '@social/nestjs-libraries/database/prisma/notifications/notification.service';
+import { GetNotificationsDto } from '@social/nestjs-libraries/dtos/notifications/get.notifications.dto';
 import { Readable } from 'stream';
-import { ssrfSafeDispatcher } from '@gitroom/nestjs-libraries/dtos/webhooks/ssrf.safe.dispatcher';
+import { ssrfSafeDispatcher } from '@social/nestjs-libraries/dtos/webhooks/ssrf.safe.dispatcher';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { fromBuffer } = require('file-type');
 
@@ -52,13 +52,13 @@ import * as Sentry from '@sentry/nestjs';
 import {
   socialIntegrationList,
   IntegrationManager,
-} from '@gitroom/nestjs-libraries/integrations/integration.manager';
-import { getValidationSchemas } from '@gitroom/nestjs-libraries/chat/validation.schemas.helper';
-import { RefreshIntegrationService } from '@gitroom/nestjs-libraries/integrations/refresh.integration.service';
-import { RefreshToken } from '@gitroom/nestjs-libraries/integrations/social.abstract';
-import { PostValidationException } from '@gitroom/backend/api/routes/posts.validation.exception';
-import { timer } from '@gitroom/helpers/utils/timer';
-import { ioRedis } from '@gitroom/nestjs-libraries/redis/redis.service';
+} from '@social/nestjs-libraries/integrations/integration.manager';
+import { getValidationSchemas } from '@social/nestjs-libraries/chat/validation.schemas.helper';
+import { RefreshIntegrationService } from '@social/nestjs-libraries/integrations/refresh.integration.service';
+import { RefreshToken } from '@social/nestjs-libraries/integrations/social.abstract';
+import { PostValidationException } from '@social/backend/api/routes/posts.validation.exception';
+import { timer } from '@social/helpers/utils/timer';
+import { ioRedis } from '@social/nestjs-libraries/redis/redis.service';
 
 @ApiTags('Public API')
 @Controller('/public/v1')

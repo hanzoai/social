@@ -2,18 +2,18 @@
 import 'reflect-metadata';
 
 import React, { FC, Fragment, useCallback, useMemo, useState } from 'react';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
 import useSWR from 'swr';
-import { useUser } from '@gitroom/frontend/components/layout/user.context';
-import { Button } from '@gitroom/react/form/button';
-import { Input } from '@gitroom/react/form/input';
-import { useToaster } from '@gitroom/react/toaster/toaster';
+import { useUser } from '@social/frontend/components/layout/user.context';
+import { Button } from '@social/react/form/button';
+import { Input } from '@social/react/form/input';
+import { useToaster } from '@social/react/toaster/toaster';
 import clsx from 'clsx';
-import { deleteDialog } from '@gitroom/react/helpers/delete.dialog';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { AddEditModal } from '@gitroom/frontend/components/new-launch/add.edit.modal';
-import { newDayjs } from '@gitroom/frontend/components/layout/set.timezone';
-import { useModals } from '@gitroom/frontend/components/layout/new-modal';
+import { deleteDialog } from '@social/react/helpers/delete.dialog';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { AddEditModal } from '@social/frontend/components/new-launch/add.edit.modal';
+import { newDayjs } from '@social/frontend/components/layout/set.timezone';
+import { useModals } from '@social/frontend/components/layout/new-modal';
 
 const SaveSetModal: FC<{
   postData: any;

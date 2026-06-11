@@ -12,26 +12,26 @@ import React, {
   useImperativeHandle,
 } from 'react';
 import clsx from 'clsx';
-import { makeId } from '@gitroom/nestjs-libraries/services/make.is';
+import { makeId } from '@social/nestjs-libraries/services/make.is';
 import EmojiPicker from 'emoji-picker-react';
 import { Theme } from 'emoji-picker-react';
-import { BoldText } from '@gitroom/frontend/components/new-launch/bold.text';
-import { UText } from '@gitroom/frontend/components/new-launch/u.text';
-import { SignatureBox } from '@gitroom/frontend/components/signature';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { BoldText } from '@social/frontend/components/new-launch/bold.text';
+import { UText } from '@social/frontend/components/new-launch/u.text';
+import { SignatureBox } from '@social/frontend/components/signature';
+import { useT } from '@social/react/translation/get.transation.service.client';
 import {
   SelectedIntegrations,
   useLaunchStore,
-} from '@gitroom/frontend/components/new-launch/store';
+} from '@social/frontend/components/new-launch/store';
 import { useShallow } from 'zustand/react/shallow';
-import { AddPostButton } from '@gitroom/frontend/components/new-launch/add.post.button';
-import { MultiMediaComponent } from '@gitroom/frontend/components/media/media.component';
-import { UpDownArrow } from '@gitroom/frontend/components/launches/up.down.arrow';
-import { deleteDialog } from '@gitroom/react/helpers/delete.dialog';
-import { useExistingData } from '@gitroom/frontend/components/launches/helpers/use.existing.data';
+import { AddPostButton } from '@social/frontend/components/new-launch/add.post.button';
+import { MultiMediaComponent } from '@social/frontend/components/media/media.component';
+import { UpDownArrow } from '@social/frontend/components/launches/up.down.arrow';
+import { deleteDialog } from '@social/react/helpers/delete.dialog';
+import { useExistingData } from '@social/frontend/components/launches/helpers/use.existing.data';
 import { useCopilotAction, useCopilotReadable } from '@copilotkit/react-core';
 import { useDropzone } from 'react-dropzone';
-import { useUppyUploader } from '@gitroom/frontend/components/media/new.uploader';
+import { useUppyUploader } from '@social/frontend/components/media/new.uploader';
 import { Dashboard } from '@uppy/react';
 import Link from '@tiptap/extension-link';
 import {
@@ -45,19 +45,19 @@ import Bold from '@tiptap/extension-bold';
 import Text from '@tiptap/extension-text';
 import Paragraph from '@tiptap/extension-paragraph';
 import Underline from '@tiptap/extension-underline';
-import { stripHtmlValidation } from '@gitroom/helpers/utils/strip.html.validation';
+import { stripHtmlValidation } from '@social/helpers/utils/strip.html.validation';
 import { History } from '@tiptap/extension-history';
 import { BulletList, ListItem } from '@tiptap/extension-list';
-import { Bullets } from '@gitroom/frontend/components/new-launch/bullets.component';
+import { Bullets } from '@social/frontend/components/new-launch/bullets.component';
 import Heading from '@tiptap/extension-heading';
-import { HeadingComponent } from '@gitroom/frontend/components/new-launch/heading.component';
+import { HeadingComponent } from '@social/frontend/components/new-launch/heading.component';
 import Mention from '@tiptap/extension-mention';
-import { suggestion } from '@gitroom/frontend/components/new-launch/mention.component';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { AComponent } from '@gitroom/frontend/components/new-launch/a.component';
+import { suggestion } from '@social/frontend/components/new-launch/mention.component';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { AComponent } from '@social/frontend/components/new-launch/a.component';
 import { Placeholder } from '@tiptap/extensions';
-import { useToaster } from '@gitroom/react/toaster/toaster';
-import { InformationComponent } from '@gitroom/frontend/components/launches/information.component';
+import { useToaster } from '@social/react/toaster/toaster';
+import { InformationComponent } from '@social/frontend/components/launches/information.component';
 import {
   LockIcon,
   ConnectionLineIcon,
@@ -65,8 +65,8 @@ import {
   TrashIcon,
   EmojiIcon,
   DelayIcon,
-} from '@gitroom/frontend/components/ui/icons';
-import { DelayComponent } from '@gitroom/frontend/components/new-launch/delay.component';
+} from '@social/frontend/components/ui/icons';
+import { DelayComponent } from '@social/frontend/components/new-launch/delay.component';
 
 const MAX_UPLOAD_SIZE = 1024 * 1024 * 1024; // 1 GB
 

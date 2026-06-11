@@ -1,5 +1,5 @@
 {
-  "name": "postiz-extension",
+  "name": "social-extension",
   "version": "2.0.0",
   "description": "Hanzo Social browser extension for cookie-based platform authentication",
   "scripts": {

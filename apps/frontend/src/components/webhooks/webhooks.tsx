@@ -1,21 +1,21 @@
 'use client';
 
 import React, { FC, Fragment, useCallback, useState } from 'react';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
 import useSWR from 'swr';
-import { useUser } from '@gitroom/frontend/components/layout/user.context';
-import { Button } from '@gitroom/react/form/button';
-import { useModals } from '@gitroom/frontend/components/layout/new-modal';
-import { Input } from '@gitroom/react/form/input';
+import { useUser } from '@social/frontend/components/layout/user.context';
+import { Button } from '@social/react/form/button';
+import { useModals } from '@social/frontend/components/layout/new-modal';
+import { Input } from '@social/react/form/input';
 import { FormProvider, useForm } from 'react-hook-form';
 import { array, object, string } from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Select } from '@gitroom/react/form/select';
-import { PickPlatforms } from '@gitroom/frontend/components/launches/helpers/pick.platform.component';
-import { useToaster } from '@gitroom/react/toaster/toaster';
+import { Select } from '@social/react/form/select';
+import { PickPlatforms } from '@social/frontend/components/launches/helpers/pick.platform.component';
+import { useToaster } from '@social/react/toaster/toaster';
 import clsx from 'clsx';
-import { deleteDialog } from '@gitroom/react/helpers/delete.dialog';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { deleteDialog } from '@social/react/helpers/delete.dialog';
+import { useT } from '@social/react/translation/get.transation.service.client';
 
 export const Webhooks: FC = () => {
   const fetch = useFetch();
@@ -65,7 +65,7 @@ export const Webhooks: FC = () => {
       </h3>
       <div className="text-customColor18 mt-[4px]">
         {t(
-          'webhooks_are_a_way_to_get_notified_when_something_happens_in_postiz_via_an_http_request',
+          'webhooks_are_a_way_to_get_notified_when_something_happens_in_social_via_an_http_request',
           'Webhooks are a way to get notified when something happens in Hanzo Social via\n        an HTTP request.'
         )}
       </div>
@@ -216,7 +216,7 @@ export const AddOrEditWebhook: FC<{
               id: 'cm6s4uyou0001i2r47pxix6z1',
               name: 'test',
               providerIdentifier: 'instagram',
-              picture: 'https://uploads.gitroom.com/F6LSCD8wrrQ.jpeg',
+              picture: 'https://uploads.social.com/F6LSCD8wrrQ.jpeg',
               type: 'social',
             },
           },
@@ -230,7 +230,7 @@ export const AddOrEditWebhook: FC<{
               id: 'cm6s4uyou0001i2r47pxix6z1',
               name: 'test2',
               providerIdentifier: 'facebook',
-              picture: 'https://uploads.gitroom.com/F6LSCD8wrrQ.jpeg',
+              picture: 'https://uploads.social.com/F6LSCD8wrrQ.jpeg',
               type: 'social',
             },
           },

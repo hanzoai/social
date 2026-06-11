@@ -10,17 +10,17 @@ import {
 } from '@nestjs/common';
 import { Response, Request } from 'express';
 
-import { CreateOrgUserDto } from '@gitroom/nestjs-libraries/dtos/auth/create.org.user.dto';
-import { LoginUserDto } from '@gitroom/nestjs-libraries/dtos/auth/login.user.dto';
-import { AuthService } from '@gitroom/backend/services/auth/auth.service';
-import { ForgotReturnPasswordDto } from '@gitroom/nestjs-libraries/dtos/auth/forgot-return.password.dto';
-import { ForgotPasswordDto } from '@gitroom/nestjs-libraries/dtos/auth/forgot.password.dto';
-import { ResendActivationDto } from '@gitroom/nestjs-libraries/dtos/auth/resend-activation.dto';
+import { CreateOrgUserDto } from '@social/nestjs-libraries/dtos/auth/create.org.user.dto';
+import { LoginUserDto } from '@social/nestjs-libraries/dtos/auth/login.user.dto';
+import { AuthService } from '@social/backend/services/auth/auth.service';
+import { ForgotReturnPasswordDto } from '@social/nestjs-libraries/dtos/auth/forgot-return.password.dto';
+import { ForgotPasswordDto } from '@social/nestjs-libraries/dtos/auth/forgot.password.dto';
+import { ResendActivationDto } from '@social/nestjs-libraries/dtos/auth/resend-activation.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { getCookieUrlFromDomain } from '@gitroom/helpers/subdomain/subdomain.management';
-import { EmailService } from '@gitroom/nestjs-libraries/services/email.service';
+import { getCookieUrlFromDomain } from '@social/helpers/subdomain/subdomain.management';
+import { EmailService } from '@social/nestjs-libraries/services/email.service';
 import { RealIP } from 'nestjs-real-ip';
-import { UserAgent } from '@gitroom/nestjs-libraries/user/user.agent';
+import { UserAgent } from '@social/nestjs-libraries/user/user.agent';
 import { Provider } from '@prisma/client';
 import * as Sentry from '@sentry/nestjs';
 
@@ -205,7 +205,7 @@ export class AuthController {
     @Query('state') state: string,
     @Res({ passthrough: false }) response: Response
   ) {
-    const scheme = process.env.MOBILE_APP_SCHEME || 'postiz://auth/callback';
+    const scheme = process.env.MOBILE_APP_SCHEME || 'social://auth/callback';
     const params = new URLSearchParams();
     if (code) params.set('code', code);
     if (state) params.set('state', state);

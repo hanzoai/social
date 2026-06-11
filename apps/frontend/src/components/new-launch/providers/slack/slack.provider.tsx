@@ -3,11 +3,11 @@
 import {
   PostComment,
   withProvider,
-} from '@gitroom/frontend/components/new-launch/providers/high.order.provider';
+} from '@social/frontend/components/new-launch/providers/high.order.provider';
 import { FC } from 'react';
-import { useSettings } from '@gitroom/frontend/components/launches/helpers/use.values';
-import { SlackChannelSelect } from '@gitroom/frontend/components/new-launch/providers/slack/slack.channel.select';
-import { SlackDto } from '@gitroom/nestjs-libraries/dtos/posts/providers-settings/slack.dto';
+import { useSettings } from '@social/frontend/components/launches/helpers/use.values';
+import { SlackChannelSelect } from '@social/frontend/components/new-launch/providers/slack/slack.channel.select';
+import { SlackDto } from '@social/nestjs-libraries/dtos/posts/providers-settings/slack.dto';
 const SlackComponent: FC = () => {
   const form = useSettings();
   return (

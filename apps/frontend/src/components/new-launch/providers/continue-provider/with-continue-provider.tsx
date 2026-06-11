@@ -3,9 +3,9 @@
 import { FC, ReactNode, useCallback, useMemo, useState } from 'react';
 import useSWR from 'swr';
 import clsx from 'clsx';
-import { Button } from '@gitroom/react/form/button';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { useCustomProviderFunction } from '@gitroom/frontend/components/launches/helpers/use.custom.provider.function';
+import { Button } from '@social/react/form/button';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { useCustomProviderFunction } from '@social/frontend/components/launches/helpers/use.custom.provider.function';
 
 const SWR_OPTIONS = {
   refreshWhenHidden: false,

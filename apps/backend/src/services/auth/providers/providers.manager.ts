@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { ModuleRef } from '@nestjs/core';
-import { AuthProviderAbstract } from '@gitroom/backend/services/auth/providers.interface';
+import { AuthProviderAbstract } from '@social/backend/services/auth/providers.interface';
 
 @Injectable()
 export class AuthProviderManager {

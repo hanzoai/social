@@ -1,6 +1,6 @@
 {
 	"name": "Hanzo Social Dev Container",
-	"image": "localhost/postiz-devcontainer",
+	"image": "localhost/social-devcontainer",
 	"features": {},
 	"customizations": {
 		"vscode": {

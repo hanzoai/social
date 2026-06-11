@@ -1,4 +1,4 @@
-import { ShortLinking } from '@gitroom/nestjs-libraries/short-linking/short-linking.interface';
+import { ShortLinking } from '@social/nestjs-libraries/short-linking/short-linking.interface';
 
 export class Empty implements ShortLinking {
   shortLinkDomain = 'empty';

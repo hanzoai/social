@@ -1,10 +1,10 @@
 'use client';
 
 import { FC, useCallback, useState } from 'react';
-import { useModals } from '@gitroom/frontend/components/layout/new-modal';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { Button } from '@gitroom/react/form/button';
+import { useModals } from '@social/frontend/components/layout/new-modal';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { Button } from '@social/react/form/button';
 
 export const AgentMediaModal: FC = () => {
   const fetch = useFetch();

@@ -1,8 +1,8 @@
 import {
   AuthProvider,
   AuthProviderAbstract,
-} from '@gitroom/backend/services/auth/providers.interface';
-import { OrganizationService } from '@gitroom/nestjs-libraries/database/prisma/organizations/organization.service';
+} from '@social/backend/services/auth/providers.interface';
+import { OrganizationService } from '@social/nestjs-libraries/database/prisma/organizations/organization.service';
 
 // Hanzo IAM OAuth/OIDC provider (RFC 6749 + OIDC 1.0).
 //
@@ -17,7 +17,7 @@ import { OrganizationService } from '@gitroom/nestjs-libraries/database/prisma/o
 //   IAM_CLIENT_SECRET = <from KMS social-secrets/IAM_CLIENT_SECRET>
 //
 // The IAM `owner` claim (org slug) is exposed via the userinfo response and
-// used by the post-registration hook to federate the Postiz Organization
+// used by the post-registration hook to federate the Hanzo Social Organization
 // from the IAM org (see Task #36).
 
 const IAM_URL = () => process.env.IAM_URL || 'https://hanzo.id';
@@ -81,14 +81,14 @@ export class HanzoIamProvider extends AuthProviderAbstract {
     return { email: data.email, id: String(data.sub) };
   }
 
-  // Federate Postiz Organization from the IAM `owner` claim.
-  // After auth.service.ts createOrgAndUser auto-creates a Postiz org for
+  // Federate Hanzo Social Organization from the IAM `owner` claim.
+  // After auth.service.ts createOrgAndUser auto-creates a Hanzo Social org for
   // the new user, we rename it to match the IAM org slug so subsequent
-  // sign-ins from the same IAM org land in the SAME Postiz organization
+  // sign-ins from the same IAM org land in the SAME Hanzo Social organization
   // (lookup by name; team membership grows organically).
   //
   // Note: this is "first writer wins" — if two users from the same IAM
-  // org sign up concurrently, both will get their own Postiz org renamed
+  // org sign up concurrently, both will get their own Hanzo Social org renamed
   // to the IAM slug. The unique-name reconciliation (merge into single
   // org + move memberships) is a separate hardening task.
   async postRegistration(

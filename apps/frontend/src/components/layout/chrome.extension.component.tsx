@@ -1,4 +1,4 @@
-import { useVariables } from '@gitroom/react/helpers/variable.context';
+import { useVariables } from '@social/react/helpers/variable.context';
 export const ChromeExtensionComponent = () => {
   const { billingEnabled } = useVariables();
   if (!billingEnabled) {
@@ -6,7 +6,7 @@ export const ChromeExtensionComponent = () => {
   }
   return (
     <a
-      href="https://chromewebstore.google.com/detail/postiz/cidhffagahknaeodkplfbcpfeielnkjl"
+      href="https://chromewebstore.google.com/detail/social/cidhffagahknaeodkplfbcpfeielnkjl"
       target="_blank"
       className="hover:text-newTextColor"
     >

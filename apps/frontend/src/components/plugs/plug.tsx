@@ -4,28 +4,28 @@ import {
   PlugSettings,
   PlugsInterface,
   usePlugs,
-} from '@gitroom/frontend/components/plugs/plugs.context';
-import { Button } from '@gitroom/react/form/button';
+} from '@social/frontend/components/plugs/plugs.context';
+import { Button } from '@social/react/form/button';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
 import useSWR, { mutate } from 'swr';
-import { useModals } from '@gitroom/frontend/components/layout/new-modal';
-import { TopTitle } from '@gitroom/frontend/components/launches/helpers/top.title.component';
+import { useModals } from '@social/frontend/components/layout/new-modal';
+import { TopTitle } from '@social/frontend/components/launches/helpers/top.title.component';
 import {
   FormProvider,
   SubmitHandler,
   useForm,
   useFormContext,
 } from 'react-hook-form';
-import { Input } from '@gitroom/react/form/input';
+import { Input } from '@social/react/form/input';
 import { CopilotTextarea } from '@copilotkit/react-textarea';
 import clsx from 'clsx';
 import { string, object } from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Slider } from '@gitroom/react/form/slider';
-import { useToaster } from '@gitroom/react/toaster/toaster';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { ModalWrapperComponent } from '@gitroom/frontend/components/new-launch/modal.wrapper.component';
+import { Slider } from '@social/react/form/slider';
+import { useToaster } from '@social/react/toaster/toaster';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { ModalWrapperComponent } from '@social/frontend/components/new-launch/modal.wrapper.component';
 export function convertBackRegex(s: string) {
   const matches = s.match(/\/(.*)\/([a-z]*)/);
   const pattern = matches?.[1] || '';

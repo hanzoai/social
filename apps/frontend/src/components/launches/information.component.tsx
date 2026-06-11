@@ -1,13 +1,13 @@
 'use client';
 
 import React, { FC, Fragment, useMemo } from 'react';
-import { useLaunchStore } from '@gitroom/frontend/components/new-launch/store';
+import { useLaunchStore } from '@social/frontend/components/new-launch/store';
 import { useShallow } from 'zustand/react/shallow';
 import clsx from 'clsx';
-import SafeImage from '@gitroom/react/helpers/safe.image';
+import SafeImage from '@social/react/helpers/safe.image';
 import { capitalize } from 'lodash';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { hasLinks } from '@gitroom/helpers/utils/strip.links';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { hasLinks } from '@social/helpers/utils/strip.links';
 
 const Valid: FC = () => {
   return (

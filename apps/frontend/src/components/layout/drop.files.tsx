@@ -1,8 +1,8 @@
 import { useDropzone } from 'react-dropzone';
 import { FC, ReactNode } from 'react';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { useT } from '@social/react/translation/get.transation.service.client';
 import clsx from 'clsx';
-import { useToaster } from '@gitroom/react/toaster/toaster';
+import { useToaster } from '@social/react/toaster/toaster';
 export const DropFiles: FC<{
   children: ReactNode;
   className?: string;

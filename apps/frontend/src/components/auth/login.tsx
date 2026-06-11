@@ -1,21 +1,21 @@
 'use client';
 
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
 import Link from 'next/link';
-import { Button } from '@gitroom/react/form/button';
-import { Input } from '@gitroom/react/form/input';
+import { Button } from '@social/react/form/button';
+import { Input } from '@social/react/form/input';
 import { useMemo, useState } from 'react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { LoginUserDto } from '@gitroom/nestjs-libraries/dtos/auth/login.user.dto';
-import { GithubProvider } from '@gitroom/frontend/components/auth/providers/github.provider';
-import { OauthProvider } from '@gitroom/frontend/components/auth/providers/oauth.provider';
-import { GoogleProvider } from '@gitroom/frontend/components/auth/providers/google.provider';
-import { useVariables } from '@gitroom/react/helpers/variable.context';
-import { FarcasterProvider } from '@gitroom/frontend/components/auth/providers/farcaster.provider';
-import { HanzoProvider } from '@gitroom/frontend/components/auth/providers/hanzo.provider';
-import WalletProvider from '@gitroom/frontend/components/auth/providers/wallet.provider';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { LoginUserDto } from '@social/nestjs-libraries/dtos/auth/login.user.dto';
+import { GithubProvider } from '@social/frontend/components/auth/providers/github.provider';
+import { OauthProvider } from '@social/frontend/components/auth/providers/oauth.provider';
+import { GoogleProvider } from '@social/frontend/components/auth/providers/google.provider';
+import { useVariables } from '@social/react/helpers/variable.context';
+import { FarcasterProvider } from '@social/frontend/components/auth/providers/farcaster.provider';
+import { HanzoProvider } from '@social/frontend/components/auth/providers/hanzo.provider';
+import WalletProvider from '@social/frontend/components/auth/providers/wallet.provider';
+import { useT } from '@social/react/translation/get.transation.service.client';
 type Inputs = {
   email: string;
   password: string;

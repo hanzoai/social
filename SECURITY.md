@@ -8,7 +8,7 @@ Hanzo Social is a hard fork of [`gitroomhq/postiz-app`](https://github.com/gitro
 - Hanzo integration code (KMS sync, IAM client, bot `/social` surface)
 - Container images published under `ghcr.io/hanzoai/social-{backend,frontend,orchestrator}`
 
-For vulnerabilities in upstream Postiz code paths we have not modified, prefer reporting to gitroomhq upstream so the broader user base benefits, then notify us so we can patch.
+For vulnerabilities in upstream code paths we have not modified, prefer reporting to gitroomhq/postiz-app upstream so the broader user base benefits, then notify us so we can patch.
 
 ## Reporting
 

@@ -11,30 +11,30 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { Button } from '@gitroom/react/form/button';
+import { Button } from '@social/react/form/button';
 import useSWR from 'swr';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { hasExtension } from '@gitroom/helpers/utils/has.extension';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { hasExtension } from '@social/helpers/utils/has.extension';
 import { Media } from '@prisma/client';
-import { useMediaDirectory } from '@gitroom/react/helpers/use.media.directory';
-import { useSettings } from '@gitroom/frontend/components/launches/helpers/use.values';
+import { useMediaDirectory } from '@social/react/helpers/use.media.directory';
+import { useSettings } from '@social/frontend/components/launches/helpers/use.values';
 import EventEmitter from 'events';
-import { useToaster } from '@gitroom/react/toaster/toaster';
+import { useToaster } from '@social/react/toaster/toaster';
 import clsx from 'clsx';
-import { VideoFrame } from '@gitroom/react/helpers/video.frame';
-import { useUppyUploader } from '@gitroom/frontend/components/media/new.uploader';
+import { VideoFrame } from '@social/react/helpers/video.frame';
+import { useUppyUploader } from '@social/frontend/components/media/new.uploader';
 import dynamic from 'next/dynamic';
-import { useUser } from '@gitroom/frontend/components/layout/user.context';
-import { AiImage } from '@gitroom/frontend/components/launches/ai.image';
-import { DropFiles } from '@gitroom/frontend/components/layout/drop.files';
-import { deleteDialog } from '@gitroom/react/helpers/delete.dialog';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { ThirdPartyMedia } from '@gitroom/frontend/components/third-parties/third-party.media';
+import { useUser } from '@social/frontend/components/layout/user.context';
+import { AiImage } from '@social/frontend/components/launches/ai.image';
+import { DropFiles } from '@social/frontend/components/layout/drop.files';
+import { deleteDialog } from '@social/react/helpers/delete.dialog';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { ThirdPartyMedia } from '@social/frontend/components/third-parties/third-party.media';
 import { ReactSortable } from 'react-sortablejs';
-import { MediaComponentInner } from '@gitroom/frontend/components/launches/helpers/media.settings.component';
-import { AiVideo } from '@gitroom/frontend/components/launches/ai.video';
-import { useModals } from '@gitroom/frontend/components/layout/new-modal';
-import { ThirdPartyMediaLibrary } from '@gitroom/frontend/components/third-parties/third-party.media-library';
+import { MediaComponentInner } from '@social/frontend/components/launches/helpers/media.settings.component';
+import { AiVideo } from '@social/frontend/components/launches/ai.video';
+import { useModals } from '@social/frontend/components/layout/new-modal';
+import { ThirdPartyMediaLibrary } from '@social/frontend/components/third-parties/third-party.media-library';
 import { Dashboard } from '@uppy/react';
 import {
   ChevronLeftIcon,
@@ -48,13 +48,13 @@ import {
   DesignMediaIcon,
   VerticalDividerIcon,
   NoMediaIcon,
-} from '@gitroom/frontend/components/ui/icons';
-import { useLaunchStore } from '@gitroom/frontend/components/new-launch/store';
+} from '@social/frontend/components/ui/icons';
+import { useLaunchStore } from '@social/frontend/components/new-launch/store';
 import { useShallow } from 'zustand/react/shallow';
-import { LoadingComponent } from '@gitroom/frontend/components/layout/loading';
+import { LoadingComponent } from '@social/frontend/components/layout/loading';
 import { useDebounce } from 'use-debounce';
 const Polonto = dynamic(
-  () => import('@gitroom/frontend/components/launches/polonto')
+  () => import('@social/frontend/components/launches/polonto')
 );
 const showModalEmitter = new EventEmitter();
 export const Pagination: FC<{

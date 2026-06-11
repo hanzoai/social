@@ -2,12 +2,12 @@
 
 import { FC, useCallback, useState } from 'react';
 import useSWR from 'swr';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { useUser } from '@gitroom/frontend/components/layout/user.context';
-import { useModals } from '@gitroom/frontend/components/layout/new-modal';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { Button } from '@gitroom/react/form/button';
-import { deleteDialog } from '@gitroom/react/helpers/delete.dialog';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { useUser } from '@social/frontend/components/layout/user.context';
+import { useModals } from '@social/frontend/components/layout/new-modal';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { Button } from '@social/react/form/button';
+import { deleteDialog } from '@social/react/helpers/delete.dialog';
 
 type AnnouncementColor = 'INFO' | 'WARNING' | 'ERROR';
 
