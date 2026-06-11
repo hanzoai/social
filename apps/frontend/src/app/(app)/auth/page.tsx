@@ -1,13 +1,13 @@
-import { internalFetch } from '@gitroom/helpers/utils/internal.fetch';
+import { internalFetch } from '@social/helpers/utils/internal.fetch';
 export const dynamic = 'force-dynamic';
-import { Register } from '@gitroom/frontend/components/auth/register';
+import { Register } from '@social/frontend/components/auth/register';
 import { Metadata } from 'next';
-import { isGeneralServerSide } from '@gitroom/helpers/utils/is.general.server.side';
+import { isGeneralServerSide } from '@social/helpers/utils/is.general.server.side';
 import Link from 'next/link';
-import { getT } from '@gitroom/react/translation/get.translation.service.backend';
-import { LoginWithOidc } from '@gitroom/frontend/components/auth/login.with.oidc';
+import { getT } from '@social/react/translation/get.translation.service.backend';
+import { LoginWithOidc } from '@social/frontend/components/auth/login.with.oidc';
 export const metadata: Metadata = {
-  title: `${isGeneralServerSide() ? 'Hanzo Social' : 'Gitroom'} Register`,
+  title: `${isGeneralServerSide() ? 'Hanzo Social' : 'Hanzo Social'} Register`,
   description: '',
 };
 export default async function Auth(params: {searchParams: Promise<{provider: string}>}) {

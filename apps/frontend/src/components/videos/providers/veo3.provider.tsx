@@ -1,10 +1,10 @@
-import { videoWrapper } from '@gitroom/frontend/components/videos/video.wrapper';
+import { videoWrapper } from '@social/frontend/components/videos/video.wrapper';
 import { FC, useState } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useVideo } from '@gitroom/frontend/components/videos/video.context.wrapper';
-import { Textarea } from '@gitroom/react/form/textarea';
-import { MultiMediaComponent } from '@gitroom/frontend/components/media/media.component';
-import { hasExtension } from '@gitroom/helpers/utils/has.extension';
+import { useVideo } from '@social/frontend/components/videos/video.context.wrapper';
+import { Textarea } from '@social/react/form/textarea';
+import { MultiMediaComponent } from '@social/frontend/components/media/media.component';
+import { hasExtension } from '@social/helpers/utils/has.extension';
 
 export interface Voice {
   id: string;

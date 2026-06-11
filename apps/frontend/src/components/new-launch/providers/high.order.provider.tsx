@@ -11,25 +11,25 @@ import React, {
 import { useForm, FormProvider } from 'react-hook-form';
 import { IsOptional } from 'class-validator';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { useLaunchStore } from '@gitroom/frontend/components/new-launch/store';
+import { useLaunchStore } from '@social/frontend/components/new-launch/store';
 import { useShallow } from 'zustand/react/shallow';
-import { GeneralPreviewComponent } from '@gitroom/frontend/components/launches/general.preview.component';
-import { IntegrationContext } from '@gitroom/frontend/components/launches/helpers/use.integration';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
+import { GeneralPreviewComponent } from '@social/frontend/components/launches/general.preview.component';
+import { IntegrationContext } from '@social/frontend/components/launches/helpers/use.integration';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
 import useSWR from 'swr';
-import { InternalChannels } from '@gitroom/frontend/components/launches/internal.channels';
+import { InternalChannels } from '@social/frontend/components/launches/internal.channels';
 import { createPortal } from 'react-dom';
 import clsx from 'clsx';
-import SafeImage from '@gitroom/react/helpers/safe.image';
+import SafeImage from '@social/react/helpers/safe.image';
 
 class Empty {
   @IsOptional()
   empty: string;
 }
 
-export { PostComment } from '@gitroom/frontend/components/new-launch/providers/post-comment.enum';
-import { PostComment } from '@gitroom/frontend/components/new-launch/providers/post-comment.enum';
+export { PostComment } from '@social/frontend/components/new-launch/providers/post-comment.enum';
+import { PostComment } from '@social/frontend/components/new-launch/providers/post-comment.enum';
 
 interface CharacterCondition {
   format: 'no-pictures' | 'with-pictures';

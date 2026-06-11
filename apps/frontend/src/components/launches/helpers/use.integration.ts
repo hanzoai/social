@@ -1,9 +1,9 @@
 'use client';
 
 import { createContext, useContext } from 'react';
-import { Integrations } from '@gitroom/frontend/components/launches/calendar.context';
+import { Integrations } from '@social/frontend/components/launches/calendar.context';
 import dayjs from 'dayjs';
-import { newDayjs } from '@gitroom/frontend/components/layout/set.timezone';
+import { newDayjs } from '@social/frontend/components/layout/set.timezone';
 export type IntegrationContextType = {
   date: dayjs.Dayjs;
   integration: Integrations | undefined;

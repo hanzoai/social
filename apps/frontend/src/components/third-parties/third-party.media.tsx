@@ -1,8 +1,8 @@
 'use client';
 
-import { Button } from '@gitroom/react/form/button';
+import { Button } from '@social/react/form/button';
 import clsx from 'clsx';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { useT } from '@social/react/translation/get.transation.service.client';
 import React, {
   createContext,
   FC,
@@ -12,13 +12,13 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
 import useSWR from 'swr';
-import { TopTitle } from '@gitroom/frontend/components/launches/helpers/top.title.component';
+import { TopTitle } from '@social/frontend/components/launches/helpers/top.title.component';
 import './providers/heygen.provider';
-import { thirdPartyList } from '@gitroom/frontend/components/third-parties/third-party.wrapper';
-import { useLaunchStore } from '@gitroom/frontend/components/new-launch/store';
-import { useModals } from '@gitroom/frontend/components/layout/new-modal';
+import { thirdPartyList } from '@social/frontend/components/third-parties/third-party.wrapper';
+import { useLaunchStore } from '@social/frontend/components/new-launch/store';
+import { useModals } from '@social/frontend/components/layout/new-modal';
 
 const ThirdPartyContext = createContext({
   id: '',

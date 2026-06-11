@@ -2,16 +2,16 @@
 
 import '@neynar/react/dist/style.css';
 import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
-import { Web3ProviderInterface } from '@gitroom/frontend/components/launches/web3/web3.provider.interface';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { timer } from '@gitroom/helpers/utils/timer';
-import { makeId } from '@gitroom/nestjs-libraries/services/make.is';
-import { Input } from '@gitroom/react/form/input';
-import { Button } from '@gitroom/react/form/button';
+import { Web3ProviderInterface } from '@social/frontend/components/launches/web3/web3.provider.interface';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { timer } from '@social/helpers/utils/timer';
+import { makeId } from '@social/nestjs-libraries/services/make.is';
+import { Input } from '@social/react/form/input';
+import { Button } from '@social/react/form/button';
 import copy from 'copy-to-clipboard';
-import { useToaster } from '@gitroom/react/toaster/toaster';
-import { useVariables } from '@gitroom/react/helpers/variable.context';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { useToaster } from '@social/react/toaster/toaster';
+import { useVariables } from '@social/react/helpers/variable.context';
+import { useT } from '@social/react/translation/get.transation.service.client';
 export const TelegramProvider: FC<Web3ProviderInterface> = (props) => {
   const { onComplete, nonce } = props;
   const { telegramBotName } = useVariables();

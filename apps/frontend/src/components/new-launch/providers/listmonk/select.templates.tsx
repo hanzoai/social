@@ -1,10 +1,10 @@
 'use client';
 
 import { FC, useEffect, useState } from 'react';
-import { Select } from '@gitroom/react/form/select';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { useCustomProviderFunction } from '@gitroom/frontend/components/launches/helpers/use.custom.provider.function';
-import { useSettings } from '@gitroom/frontend/components/launches/helpers/use.values';
+import { Select } from '@social/react/form/select';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { useCustomProviderFunction } from '@social/frontend/components/launches/helpers/use.custom.provider.function';
+import { useSettings } from '@social/frontend/components/launches/helpers/use.values';
 export const SelectTemplates: FC<{
   name: string;
   onChange: (event: {

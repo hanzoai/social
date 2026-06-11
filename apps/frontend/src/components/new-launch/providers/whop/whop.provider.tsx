@@ -3,12 +3,12 @@
 import {
   PostComment,
   withProvider,
-} from '@gitroom/frontend/components/new-launch/providers/high.order.provider';
-import { WhopDto } from '@gitroom/nestjs-libraries/dtos/posts/providers-settings/whop.dto';
-import { Input } from '@gitroom/react/form/input';
-import { useSettings } from '@gitroom/frontend/components/launches/helpers/use.values';
-import { WhopCompanySelect } from '@gitroom/frontend/components/new-launch/providers/whop/whop.company.select';
-import { WhopExperienceSelect } from '@gitroom/frontend/components/new-launch/providers/whop/whop.experience.select';
+} from '@social/frontend/components/new-launch/providers/high.order.provider';
+import { WhopDto } from '@social/nestjs-libraries/dtos/posts/providers-settings/whop.dto';
+import { Input } from '@social/react/form/input';
+import { useSettings } from '@social/frontend/components/launches/helpers/use.values';
+import { WhopCompanySelect } from '@social/frontend/components/new-launch/providers/whop/whop.company.select';
+import { WhopExperienceSelect } from '@social/frontend/components/new-launch/providers/whop/whop.experience.select';
 import { FC, useState } from 'react';
 
 const WhopSettings: FC = () => {

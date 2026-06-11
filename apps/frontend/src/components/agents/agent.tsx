@@ -12,16 +12,16 @@ import clsx from 'clsx';
 import useCookie from 'react-use-cookie';
 import useSWR from 'swr';
 import { orderBy } from 'lodash';
-import { SVGLine } from '@gitroom/frontend/components/launches/launches.component';
-import ImageWithFallback from '@gitroom/react/helpers/image.with.fallback';
-import SafeImage from '@gitroom/react/helpers/safe.image';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { useWaitForClass } from '@gitroom/helpers/utils/use.wait.for.class';
-import { MultiMediaComponent } from '@gitroom/frontend/components/media/media.component';
+import { SVGLine } from '@social/frontend/components/launches/launches.component';
+import ImageWithFallback from '@social/react/helpers/image.with.fallback';
+import SafeImage from '@social/react/helpers/safe.image';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { useWaitForClass } from '@social/helpers/utils/use.wait.for.class';
+import { MultiMediaComponent } from '@social/frontend/components/media/media.component';
 import { Integration } from '@prisma/client';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { useT } from '@social/react/translation/get.transation.service.client';
 
 export const MediaPortal: FC<{
   media: { path: string; id: string }[];

@@ -1,8 +1,8 @@
 import { IUploadProvider } from './upload.interface';
 import { mkdirSync, unlink, writeFileSync } from 'fs';
-import { isSafePublicHttpsUrl } from '@gitroom/nestjs-libraries/dtos/webhooks/webhook.url.validator';
-import { ssrfSafeDispatcher } from '@gitroom/nestjs-libraries/dtos/webhooks/ssrf.safe.dispatcher';
-import { parseDataUrl } from '@gitroom/nestjs-libraries/upload/data.url';
+import { isSafePublicHttpsUrl } from '@social/nestjs-libraries/dtos/webhooks/webhook.url.validator';
+import { ssrfSafeDispatcher } from '@social/nestjs-libraries/dtos/webhooks/ssrf.safe.dispatcher';
+import { parseDataUrl } from '@social/nestjs-libraries/upload/data.url';
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const { fromBuffer } = require('file-type');
 

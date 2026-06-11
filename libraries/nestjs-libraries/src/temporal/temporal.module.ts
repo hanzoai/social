@@ -1,5 +1,5 @@
 import { TemporalModule } from 'nestjs-temporal-core';
-import { socialIntegrationList } from '@gitroom/nestjs-libraries/integrations/integration.manager';
+import { socialIntegrationList } from '@social/nestjs-libraries/integrations/integration.manager';
 
 export const getTemporalModule = (
   isWorkers: boolean,

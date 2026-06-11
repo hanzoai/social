@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { useT } from '@social/react/translation/get.transation.service.client';
 
 // "Sign in with Hanzo" button — triggers the HANZO OAuth provider in
 // apps/backend/.../providers/hanzo-iam.provider.ts. The button is omitted

@@ -1,9 +1,9 @@
-import { LifetimeDeal } from '@gitroom/frontend/components/billing/lifetime.deal';
+import { LifetimeDeal } from '@social/frontend/components/billing/lifetime.deal';
 export const dynamic = 'force-dynamic';
 import { Metadata } from 'next';
-import { isGeneralServerSide } from '@gitroom/helpers/utils/is.general.server.side';
+import { isGeneralServerSide } from '@social/helpers/utils/is.general.server.side';
 export const metadata: Metadata = {
-  title: `${isGeneralServerSide() ? 'Hanzo Social' : 'Gitroom'} Lifetime deal`,
+  title: `${isGeneralServerSide() ? 'Hanzo Social' : 'Hanzo Social'} Lifetime deal`,
   description: '',
 };
 export default async function Page() {

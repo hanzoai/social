@@ -1,22 +1,22 @@
 'use client';
 
 import React, { FC, Fragment, useCallback, useMemo, useState } from 'react';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
 import useSWR from 'swr';
-import { Button } from '@gitroom/react/form/button';
-import { useModals } from '@gitroom/frontend/components/layout/new-modal';
-import { Input } from '@gitroom/react/form/input';
+import { Button } from '@social/react/form/button';
+import { useModals } from '@social/frontend/components/layout/new-modal';
+import { Input } from '@social/react/form/input';
 import { FormProvider, useForm } from 'react-hook-form';
 import { array, boolean, object, string } from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Select } from '@gitroom/react/form/select';
-import { PickPlatforms } from '@gitroom/frontend/components/launches/helpers/pick.platform.component';
-import { useToaster } from '@gitroom/react/toaster/toaster';
+import { Select } from '@social/react/form/select';
+import { PickPlatforms } from '@social/frontend/components/launches/helpers/pick.platform.component';
+import { useToaster } from '@social/react/toaster/toaster';
 import clsx from 'clsx';
-import { deleteDialog } from '@gitroom/react/helpers/delete.dialog';
+import { deleteDialog } from '@social/react/helpers/delete.dialog';
 import { CopilotTextarea } from '@copilotkit/react-textarea';
-import { Slider } from '@gitroom/react/form/slider';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { Slider } from '@social/react/form/slider';
+import { useT } from '@social/react/translation/get.transation.service.client';
 export const Autopost: FC = () => {
   const fetch = useFetch();
   const t = useT();

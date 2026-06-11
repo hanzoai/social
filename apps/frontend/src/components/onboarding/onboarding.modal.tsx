@@ -1,14 +1,14 @@
 'use client';
 
 import React, { FC, useCallback, useMemo, useState } from 'react';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
 import useSWR from 'swr';
 import { orderBy } from 'lodash';
 import clsx from 'clsx';
-import SafeImage from '@gitroom/react/helpers/safe.image';
-import { AddProviderComponent } from '@gitroom/frontend/components/launches/add.provider.component';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { useModals } from '@gitroom/frontend/components/layout/new-modal';
+import SafeImage from '@social/react/helpers/safe.image';
+import { AddProviderComponent } from '@social/frontend/components/launches/add.provider.component';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { useModals } from '@social/frontend/components/layout/new-modal';
 
 interface OnboardingModalProps {
   onClose: () => void;

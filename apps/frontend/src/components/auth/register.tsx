@@ -1,31 +1,31 @@
 'use client';
 
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
 import Link from 'next/link';
-import { Button } from '@gitroom/react/form/button';
-import { Input } from '@gitroom/react/form/input';
+import { Button } from '@social/react/form/button';
+import { Input } from '@social/react/form/input';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { classValidatorResolver } from '@hookform/resolvers/class-validator';
-import { CreateOrgUserDto } from '@gitroom/nestjs-libraries/dtos/auth/create.org.user.dto';
-import { GithubProvider } from '@gitroom/frontend/components/auth/providers/github.provider';
+import { CreateOrgUserDto } from '@social/nestjs-libraries/dtos/auth/create.org.user.dto';
+import { GithubProvider } from '@social/frontend/components/auth/providers/github.provider';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { LoadingComponent } from '@gitroom/frontend/components/layout/loading';
+import { LoadingComponent } from '@social/frontend/components/layout/loading';
 import clsx from 'clsx';
-import { GoogleProvider } from '@gitroom/frontend/components/auth/providers/google.provider';
-import { OauthProvider } from '@gitroom/frontend/components/auth/providers/oauth.provider';
-import { useFireEvents } from '@gitroom/helpers/utils/use.fire.events';
-import { useVariables } from '@gitroom/react/helpers/variable.context';
-import { useTrack } from '@gitroom/react/helpers/use.track';
-import { TrackEnum } from '@gitroom/nestjs-libraries/user/track.enum';
-import { FarcasterProvider } from '@gitroom/frontend/components/auth/providers/farcaster.provider';
-import { HanzoProvider } from '@gitroom/frontend/components/auth/providers/hanzo.provider';
+import { GoogleProvider } from '@social/frontend/components/auth/providers/google.provider';
+import { OauthProvider } from '@social/frontend/components/auth/providers/oauth.provider';
+import { useFireEvents } from '@social/helpers/utils/use.fire.events';
+import { useVariables } from '@social/react/helpers/variable.context';
+import { useTrack } from '@social/react/helpers/use.track';
+import { TrackEnum } from '@social/nestjs-libraries/user/track.enum';
+import { FarcasterProvider } from '@social/frontend/components/auth/providers/farcaster.provider';
+import { HanzoProvider } from '@social/frontend/components/auth/providers/hanzo.provider';
 import dynamic from 'next/dynamic';
-import { WalletUiProvider } from '@gitroom/frontend/components/auth/providers/placeholder/wallet.ui.provider';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { WalletUiProvider } from '@social/frontend/components/auth/providers/placeholder/wallet.ui.provider';
+import { useT } from '@social/react/translation/get.transation.service.client';
 import useCookie from 'react-use-cookie';
 const WalletProvider = dynamic(
-  () => import('@gitroom/frontend/components/auth/providers/wallet.provider'),
+  () => import('@social/frontend/components/auth/providers/wallet.provider'),
   {
     ssr: false,
     loading: () => <WalletUiProvider />,
@@ -221,7 +221,7 @@ export function RegisterAfter({
                 )}
                 &nbsp;
                 <a
-                  href={`https://postiz.com/terms`}
+                  href={`https://social.com/terms`}
                   className="underline hover:font-bold"
                   rel="nofollow"
                 >
@@ -230,7 +230,7 @@ export function RegisterAfter({
                 &nbsp;
                 {t('and', 'and')}&nbsp;
                 <a
-                  href={`https://postiz.com/privacy`}
+                  href={`https://social.com/privacy`}
                   rel="nofollow"
                   className="underline hover:font-bold"
                 >

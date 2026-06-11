@@ -2,8 +2,8 @@
 
 import { useCallback, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { Logo } from '@gitroom/frontend/components/new-layout/logo';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { Logo } from '@social/frontend/components/new-layout/logo';
 
 export default function OAuthAuthorizePage() {
   const searchParams = useSearchParams();

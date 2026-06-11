@@ -4,12 +4,12 @@ import { useState, useCallback } from 'react';
 import { useSWRConfig } from 'swr';
 import { useUser } from '../layout/user.context';
 import copy from 'copy-to-clipboard';
-import { useToaster } from '@gitroom/react/toaster/toaster';
-import { useVariables } from '@gitroom/react/helpers/variable.context';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { useDecisionModal } from '@gitroom/frontend/components/layout/new-modal';
-import { DeveloperComponent } from '@gitroom/frontend/components/developer/developer.component';
+import { useToaster } from '@social/react/toaster/toaster';
+import { useVariables } from '@social/react/helpers/variable.context';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { useDecisionModal } from '@social/frontend/components/layout/new-modal';
+import { DeveloperComponent } from '@social/frontend/components/developer/developer.component';
 import clsx from 'clsx';
 
 const mcpClients = [
@@ -41,46 +41,46 @@ const getMcpConfig = (
     switch (client) {
       case 'Claude Code':
         return {
-          config: `claude mcp add postiz --transport http "${urlWithKey}"`,
+          config: `claude mcp add social --transport http "${urlWithKey}"`,
           hint: 'Run this command in your terminal.',
         };
       case 'Cursor':
         return {
-          config: json({ mcpServers: { postiz: { url: urlWithKey } } }),
+          config: json({ mcpServers: { social: { url: urlWithKey } } }),
           hint: 'Add to .cursor/mcp.json in your project root.',
         };
       case 'VS Code / Copilot':
         return {
           config: json({
-            servers: { postiz: { type: 'http', url: urlWithKey } },
+            servers: { social: { type: 'http', url: urlWithKey } },
           }),
           hint: 'Add to .vscode/mcp.json in your project root.',
         };
       case 'Windsurf':
         return {
           config: json({
-            mcpServers: { postiz: { serverUrl: urlWithKey } },
+            mcpServers: { social: { serverUrl: urlWithKey } },
           }),
           hint: 'Add to ~/.codeium/windsurf/mcp_config.json',
         };
       case 'Amp':
         return {
-          config: `amp mcp add postiz ${urlWithKey}`,
+          config: `amp mcp add social ${urlWithKey}`,
           hint: 'Run this command in your terminal.',
         };
       case 'Codex':
         return {
-          config: `# ~/.codex/config.toml\n\n[mcp_servers.postiz]\nurl = "${urlWithKey}"`,
+          config: `# ~/.codex/config.toml\n\n[mcp_servers.social]\nurl = "${urlWithKey}"`,
           hint: 'Add to ~/.codex/config.toml',
         };
       case 'Gemini CLI':
         return {
-          config: json({ mcpServers: { postiz: { url: urlWithKey } } }),
+          config: json({ mcpServers: { social: { url: urlWithKey } } }),
           hint: 'Add to ~/.gemini/settings.json',
         };
       case 'Warp':
         return {
-          config: json({ postiz: { url: urlWithKey } }),
+          config: json({ social: { url: urlWithKey } }),
           hint: 'Settings > MCP Servers > + Add, then paste this config.',
         };
     }
@@ -89,14 +89,14 @@ const getMcpConfig = (
   switch (client) {
     case 'Claude Code':
       return {
-        config: `claude mcp add --transport http postiz ${urlBase} --header "Authorization: ${bearer}"`,
+        config: `claude mcp add --transport http social ${urlBase} --header "Authorization: ${bearer}"`,
         hint: 'Run this command in your terminal.',
       };
     case 'Cursor':
       return {
         config: json({
           mcpServers: {
-            postiz: { url: urlBase, headers: { Authorization: bearer } },
+            social: { url: urlBase, headers: { Authorization: bearer } },
           },
         }),
         hint: 'Add to .cursor/mcp.json in your project root.',
@@ -105,7 +105,7 @@ const getMcpConfig = (
       return {
         config: json({
           servers: {
-            postiz: {
+            social: {
               type: 'http',
               url: urlBase,
               headers: { Authorization: bearer },
@@ -118,7 +118,7 @@ const getMcpConfig = (
       return {
         config: json({
           mcpServers: {
-            postiz: {
+            social: {
               serverUrl: urlBase,
               headers: { Authorization: bearer },
             },
@@ -130,21 +130,21 @@ const getMcpConfig = (
       return {
         config: json({
           'amp.mcpServers': {
-            postiz: { url: urlBase, headers: { Authorization: bearer } },
+            social: { url: urlBase, headers: { Authorization: bearer } },
           },
         }),
         hint: 'Add to your Amp settings.json',
       };
     case 'Codex':
       return {
-        config: `# ~/.codex/config.toml\n\n[mcp_servers.postiz]\nurl = "${urlBase}"\nhttp_headers = { "Authorization" = "${bearer}" }`,
+        config: `# ~/.codex/config.toml\n\n[mcp_servers.social]\nurl = "${urlBase}"\nhttp_headers = { "Authorization" = "${bearer}" }`,
         hint: 'Add to ~/.codex/config.toml',
       };
     case 'Gemini CLI':
       return {
         config: json({
           mcpServers: {
-            postiz: { url: urlBase, headers: { Authorization: bearer } },
+            social: { url: urlBase, headers: { Authorization: bearer } },
           },
         }),
         hint: 'Add to ~/.gemini/settings.json',
@@ -152,7 +152,7 @@ const getMcpConfig = (
     case 'Warp':
       return {
         config: json({
-          postiz: { url: urlBase, headers: { Authorization: bearer } },
+          social: { url: urlBase, headers: { Authorization: bearer } },
         }),
         hint: 'Settings > MCP Servers > + Add, then paste this config.',
       };
@@ -233,7 +233,7 @@ const McpSection = ({
           </div>
           <div className="text-[13px] text-customColor18 mt-[2px]">
             {t(
-              'connect_your_mcp_client_to_postiz_to_schedule_your_posts_faster',
+              'connect_your_mcp_client_to_social_to_schedule_your_posts_faster',
               'Connect Hanzo Social MCP server to your client (Http streaming) to schedule your posts faster.'
             )}
           </div>
@@ -361,30 +361,30 @@ const McpSection = ({
 const localCliSteps = [
   {
     label: 'Install the CLI',
-    code: 'npm install -g postiz',
+    code: 'npm install -g social',
   },
   {
-    label: 'Run: postiz auth:login',
-    code: 'postiz auth:login',
+    label: 'Run: social auth:login',
+    code: 'social auth:login',
   },
   {
     label: 'Install the Hanzo Social skill for your AI agent',
-    code: 'npx skills add gitroomhq/postiz-agent',
+    code: 'npx skills add hanzoai/social-agent',
   },
 ] as const;
 
 const ciCliSteps = [
   {
     label: 'Install the CLI',
-    code: 'npm install -g postiz',
+    code: 'npm install -g social',
   },
   {
     label: 'Set your API key as an environment variable',
-    code: 'export POSTIZ_API_KEY="{API_KEY}"',
+    code: 'export SOCIAL_API_KEY="{API_KEY}"',
   },
   {
     label: 'Install the Hanzo Social skill for your AI agent',
-    code: 'npx skills add gitroomhq/postiz-agent',
+    code: 'npx skills add hanzoai/social-agent',
   },
 ] as const;
 
@@ -577,7 +577,7 @@ const PublicApiContent = () => {
             </div>
             <div className="text-[13px] text-customColor18 mt-[2px]">
               {t(
-                'use_postiz_api_to_integrate_with_your_tools',
+                'use_social_api_to_integrate_with_your_tools',
                 'Use Hanzo Social API to integrate with your tools.'
               )}
             </div>
@@ -593,7 +593,7 @@ const PublicApiContent = () => {
             </a>
             <a
               className="cursor-pointer px-[16px] h-[36px] bg-[#612BD3] hover:bg-[#5520CB] text-white transition-colors rounded-[8px] text-[13px] font-[600] flex items-center gap-[6px]"
-              href="https://www.npmjs.com/package/n8n-nodes-postiz"
+              href="https://www.npmjs.com/package/n8n-nodes-social"
               target="_blank"
             >
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" /><polyline points="15 3 21 3 21 9" /><line x1="10" y1="14" x2="21" y2="3" /></svg>

@@ -1,17 +1,17 @@
-import { Input } from '@gitroom/react/form/input';
+import { Input } from '@social/react/form/input';
 import { ChangeEventHandler, FC, useCallback, useMemo, useState } from 'react';
 import useSWR, { useSWRConfig } from 'swr';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { useUser } from '@gitroom/frontend/components/layout/user.context';
-import { Select } from '@gitroom/react/form/select';
-import { pricing } from '@gitroom/nestjs-libraries/database/prisma/subscriptions/pricing';
-import { deleteDialog } from '@gitroom/react/helpers/delete.dialog';
-import { useVariables } from '@gitroom/react/helpers/variable.context';
-import { setCookie } from '@gitroom/frontend/components/layout/layout.context';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { useModals } from '@gitroom/frontend/components/layout/new-modal';
-import { Button } from '@gitroom/react/form/button';
-import { ImportDebugPostModal } from '@gitroom/frontend/components/launches/import-debug-post.modal';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { useUser } from '@social/frontend/components/layout/user.context';
+import { Select } from '@social/react/form/select';
+import { pricing } from '@social/nestjs-libraries/database/prisma/subscriptions/pricing';
+import { deleteDialog } from '@social/react/helpers/delete.dialog';
+import { useVariables } from '@social/react/helpers/variable.context';
+import { setCookie } from '@social/frontend/components/layout/layout.context';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { useModals } from '@social/frontend/components/layout/new-modal';
+import { Button } from '@social/react/form/button';
+import { ImportDebugPostModal } from '@social/frontend/components/launches/import-debug-post.modal';
 
 interface Charge {
   id: string;
