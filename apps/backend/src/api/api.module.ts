@@ -3,9 +3,8 @@ import { AuthController } from '@gitroom/backend/api/routes/auth.controller';
 import { AuthService } from '@gitroom/backend/services/auth/auth.service';
 import { UsersController } from '@gitroom/backend/api/routes/users.controller';
 import { AuthMiddleware } from '@gitroom/backend/services/auth/auth.middleware';
-import { StripeController } from '@gitroom/backend/api/routes/stripe.controller';
-import { StripeService } from '@gitroom/nestjs-libraries/services/stripe.service';
-import { HanzoBillingService } from '@gitroom/nestjs-libraries/services/hanzo-billing.service';
+import { CommerceController } from '@gitroom/backend/api/routes/commerce.controller';
+import { BillingService } from '@gitroom/nestjs-libraries/services/billing.service';
 import { AnalyticsController } from '@gitroom/backend/api/routes/analytics.controller';
 import { PoliciesGuard } from '@gitroom/backend/services/auth/permissions/permissions.guard';
 import { PermissionsService } from '@gitroom/backend/services/auth/permissions/permissions.service';
@@ -71,7 +70,7 @@ const authenticatedController = [
   imports: [UploadModule],
   controllers: [
     RootController,
-    StripeController,
+    CommerceController,
     AuthController,
     PublicController,
     MonitorController,
@@ -82,18 +81,7 @@ const authenticatedController = [
   ],
   providers: [
     AuthService,
-    // Feature-flagged: when HANZO_BILLING_ENABLED=true, StripeService is
-    // backed by HanzoBillingService (commerce.hanzo.ai). Otherwise it's
-    // the upstream Stripe direct-SDK implementation. billing.controller
-    // injects StripeService and is agnostic to which backend is wired.
-    {
-      provide: StripeService,
-      useClass:
-        process.env.HANZO_BILLING_ENABLED === 'true'
-          ? (HanzoBillingService as unknown as typeof StripeService)
-          : StripeService,
-    },
-    HanzoBillingService,
+    BillingService,
     OpenaiService,
     ExtractContentService,
     AuthMiddleware,

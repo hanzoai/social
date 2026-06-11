@@ -240,7 +240,7 @@ export class OrganizationRepository {
       });
 
     if (
-      process.env.STRIPE_PUBLISHABLE_KEY &&
+      process.env.BILLING_ENABLED &&
       checkForSubscription?.subscription?.subscriptionTier ===
         SubscriptionTier.STANDARD
     ) {

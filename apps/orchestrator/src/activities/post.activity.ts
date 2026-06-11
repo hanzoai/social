@@ -112,7 +112,7 @@ export class PostActivity {
 
   @ActivityMethod()
   async getPost(orgId: string, postId: string) {
-    if (process.env.STRIPE_SECRET_KEY) {
+    if (process.env.BILLING_ENABLED) {
       const subscription = await this._subscriptionService.getSubscription(
         orgId
       );
@@ -130,7 +130,7 @@ export class PostActivity {
 
   @ActivityMethod()
   async getPostsList(orgId: string, postId: string) {
-    if (process.env.STRIPE_SECRET_KEY) {
+    if (process.env.BILLING_ENABLED) {
       const subscription = await this._subscriptionService.getSubscription(
         orgId
       );
@@ -206,7 +206,7 @@ export class PostActivity {
 
   @ActivityMethod()
   async postSocial(integration: Integration, posts: Post[]) {
-    if (process.env.STRIPE_SECRET_KEY) {
+    if (process.env.BILLING_ENABLED) {
       const subscription = await this._subscriptionService.getSubscription(
         integration.organizationId
       );
