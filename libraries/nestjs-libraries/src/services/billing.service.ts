@@ -25,6 +25,7 @@ import { SubscriptionService } from '@social/nestjs-libraries/database/prisma/su
 import { OrganizationService } from '@social/nestjs-libraries/database/prisma/organizations/organization.service';
 import { BillingSubscribeDto } from '@social/nestjs-libraries/dtos/billing/billing.subscribe.dto';
 import { subscriptionPlans } from '@hanzo/plans';
+import { pricing } from '@social/nestjs-libraries/database/prisma/subscriptions/pricing';
 
 // Commerce webhook event shape — mirrors the wire format emitted by
 // commerce.hanzo.ai (see hanzo/commerce/webhook/spec.md). Fields:
@@ -42,7 +43,49 @@ export interface CommerceWebhookEvent {
 }
 
 const COMMERCE_URL = () =>
-  (process.env.COMMERCE_URL || 'https://commerce.hanzo.ai').replace(/\/+$/, '');
+  (process.env.COMMERCE_URL || 'https://api.hanzo.ai').replace(/\/+$/, '');
+
+// Commerce sits behind api.hanzo.ai (hanzoai/gateway). The gateway validates
+// IAM JWTs and mints the X-Org-Id / X-User-Id trust headers commerce reads —
+// commerced itself never validates tokens. We authenticate as ourselves via
+// the IAM client_credentials grant using the same hanzo-social client that
+// powers user SSO. Token cached until 5 minutes before expiry.
+let cachedServiceToken: { token: string; expiresAt: number } | null = null;
+
+async function iamServiceToken(): Promise<string | undefined> {
+  const clientId = process.env.IAM_CLIENT_ID;
+  const clientSecret = process.env.IAM_CLIENT_SECRET;
+  if (!clientId || !clientSecret) return undefined;
+  if (cachedServiceToken && cachedServiceToken.expiresAt > Date.now()) {
+    return cachedServiceToken.token;
+  }
+  const iamUrl = (process.env.IAM_URL || 'https://hanzo.id').replace(/\/+$/, '');
+  const res = await fetch(`${iamUrl}/oauth/token`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      Accept: 'application/json',
+    },
+    body: new URLSearchParams({
+      grant_type: 'client_credentials',
+      client_id: clientId,
+      client_secret: clientSecret,
+      scope: 'openid profile',
+    }).toString(),
+  });
+  if (!res.ok) {
+    throw new Error(`IAM client_credentials grant failed: ${res.status}`);
+  }
+  const data = (await res.json()) as {
+    access_token: string;
+    expires_in?: number;
+  };
+  cachedServiceToken = {
+    token: data.access_token,
+    expiresAt: Date.now() + Math.max((data.expires_in ?? 3600) - 300, 60) * 1000,
+  };
+  return data.access_token;
+}
 
 const LEGACY_TO_HANZO: Record<string, string> = {
   FREE: 'social-free',
@@ -60,8 +103,9 @@ interface CommerceSubscription {
   planId?: string;
   userId?: string;
   status?: string;
-  periodStart?: string;
-  periodEnd?: string;
+  currentPeriodStart?: string;
+  currentPeriodEnd?: string;
+  cancelAtPeriodEnd?: boolean;
 }
 
 async function commerceRequest<T>(
@@ -80,7 +124,11 @@ async function commerceRequest<T>(
     }
   }
   const headers: Record<string, string> = { Accept: 'application/json' };
-  if (init.token) headers.Authorization = `Bearer ${init.token}`;
+  // COMMERCE_TOKEN is the shared service token (COMMERCE_SERVICE_TOKEN on the
+  // commerce side) — the canonical S2S credential. IAM M2M is the fallback.
+  const token =
+    init.token ?? process.env.COMMERCE_TOKEN ?? (await iamServiceToken());
+  if (token) headers.Authorization = `Bearer ${token}`;
   if (init.body) headers['Content-Type'] = 'application/json';
   const res = await fetch(url.toString(), {
     method: init.method || 'GET',
@@ -121,19 +169,33 @@ export class BillingService {
         body: {
           planId,
           userId,
-          // commerce.hanzo.ai accepts interval via planId suffix when
-          // priced per-interval, or via metadata. @hanzo/plans models
+          // commerce accepts interval via metadata. @hanzo/plans models
           // monthly/yearly as priceMonthly/priceAnnual on the same plan;
           // interval is selected at checkout.
           metadata: { interval: body.period?.toLowerCase() || 'monthly', orgId },
         },
       }
     );
-    // Don't touch local subscription state here — the authoritative
-    // record arrives via commerce.hanzo.ai webhook (subscription.created),
-    // which calls createOrUpdateSubscription in createSubscription().
-    // Returning early avoids double-write races between the API call and
-    // the webhook.
+    // commerce has no outbound webhook emitter yet, so the local
+    // subscription row is written here, synchronously. The webhook
+    // receiver (CommerceController) stays wired so the day commerce
+    // ships signed webhooks they reconcile the same row idempotently.
+    if (sub.id && planId !== 'social-free') {
+      const legacyTier = (HANZO_TO_LEGACY[planId] || 'STANDARD') as
+        | 'STANDARD'
+        | 'TEAM'
+        | 'PRO'
+        | 'ULTIMATE';
+      await this._subscriptionService.createOrUpdateSubscription(
+        sub.status !== 'active',
+        sub.id,
+        orgId,
+        pricing[legacyTier].channel || 0,
+        legacyTier,
+        body.period === 'YEARLY' ? 'YEARLY' : 'MONTHLY',
+        null
+      );
+    }
     return { ok: true, subscriptionId: sub.id };
   }
 
@@ -148,16 +210,14 @@ export class BillingService {
     }
     await commerceRequest<void>(
       `/v1/billing/subscriptions/${subscriptionId}/cancel`,
-      { method: 'POST' }
+      { method: 'POST', body: { atPeriodEnd: false } }
     );
-    await this._subscriptionService.deleteSubscriptionByCustomerId(
-      organizationId
-    );
+    await this._subscriptionService.deleteSubscription(organizationId);
     return { ok: true };
   }
 
   async setToCancel(organizationId: string) {
-    // commerce.hanzo.ai cancels at period end via PATCH … {cancelAtPeriodEnd:true}.
+    // commerce cancels at period end via POST …/cancel {atPeriodEnd:true}.
     const sub =
       await this._subscriptionService.getSubscriptionByOrganizationId(
         organizationId
@@ -167,8 +227,8 @@ export class BillingService {
       return { ok: false, reason: 'no active subscription' };
     }
     await commerceRequest<CommerceSubscription>(
-      `/v1/billing/subscriptions/${subscriptionId}`,
-      { method: 'PATCH', body: { cancelAtPeriodEnd: true } }
+      `/v1/billing/subscriptions/${subscriptionId}/cancel`,
+      { method: 'POST', body: { atPeriodEnd: true } }
     );
     return { ok: true };
   }
@@ -201,14 +261,14 @@ export class BillingService {
         status: sub.status,
         planId: sub.planId,
         legacyTier: HANZO_TO_LEGACY[sub.planId || ''] || null,
-        periodEnd: sub.periodEnd,
+        periodEnd: sub.currentPeriodEnd,
       };
     } catch {
       return null;
     }
   }
 
-  async checkDiscount(_customerId: string) {
+  async checkDiscount(_customerId: string): Promise<null> {
     // Hanzo billing manages discount eligibility centrally — if the
     // customer is eligible the portal surfaces a "discount available"
     // banner. Return null here so Hanzo Social's offerCoupon path falls back
@@ -303,7 +363,7 @@ export class BillingService {
       sub.status !== 'active',
       sub.id,
       orgId,
-      0,
+      pricing[legacyTier].channel || 0,
       legacyTier,
       interval as 'MONTHLY' | 'YEARLY',
       sub.cancelAt ?? null
@@ -318,7 +378,7 @@ export class BillingService {
     const sub = event.data.object as { userId?: string; metadata?: { orgId?: string } };
     const customerId = sub.metadata?.orgId || sub.userId;
     if (!customerId) return { ok: false };
-    return this._subscriptionService.deleteSubscriptionByCustomerId(customerId);
+    return this._subscriptionService.deleteSubscription(customerId);
   }
 
   async paymentSucceeded(_event: CommerceWebhookEvent) {
@@ -377,11 +437,11 @@ export class BillingService {
     }
     const planId =
       LEGACY_TO_HANZO[body.billing.toUpperCase()] || body.billing.toLowerCase();
-    const sub = await commerceRequest<CommerceSubscription>(
+    const updated = await commerceRequest<CommerceSubscription>(
       `/v1/billing/subscriptions/${subscriptionId}`,
-      { method: 'PATCH', body: { planId } }
+      { method: 'PATCH', body: { planId, prorate: true } }
     );
-    return { ok: true, subscriptionId: sub.id };
+    return { ok: true, subscriptionId: updated.id };
   }
 
   async refundCharges(organizationId: string, chargeIds: string[]) {

@@ -18,7 +18,7 @@ import SafeImage from '@social/react/helpers/safe.image';
 import { useFetch } from '@social/helpers/utils/custom.fetch';
 import { useWaitForClass } from '@social/helpers/utils/use.wait.for.class';
 import { MultiMediaComponent } from '@social/frontend/components/media/media.component';
-import { Integration } from '@prisma/client';
+import type { Integration } from '@prisma/client';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { useT } from '@social/react/translation/get.transation.service.client';

@@ -1,7 +1,7 @@
 import { TopTitle } from '@social/frontend/components/launches/helpers/top.title.component';
 import React, { FC, useCallback, useState } from 'react';
 import { useModals } from '@social/frontend/components/layout/new-modal';
-import { Integration } from '@prisma/client';
+import type { Integration } from '@prisma/client';
 import { useFetch } from '@social/helpers/utils/custom.fetch';
 import { Button } from '@social/react/form/button';
 import { Slider } from '@social/react/form/slider';

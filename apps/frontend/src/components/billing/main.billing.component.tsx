@@ -4,7 +4,7 @@ import { Slider } from '@social/react/form/slider';
 import React, { FC, useCallback, useEffect, useMemo, useState } from 'react';
 import { Button } from '@social/react/form/button';
 import { useFetch } from '@social/helpers/utils/custom.fetch';
-import { Subscription } from '@prisma/client';
+import type { Subscription } from '@prisma/client';
 import { useDebouncedCallback } from 'use-debounce';
 import ReactLoading from '@social/frontend/components/layout/loading';
 import { deleteDialog } from '@social/react/helpers/delete.dialog';

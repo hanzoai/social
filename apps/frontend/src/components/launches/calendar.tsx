@@ -35,7 +35,7 @@ import clsx from 'clsx';
 import { useFetch } from '@social/helpers/utils/custom.fetch';
 import { ExistingDataContextProvider } from '@social/frontend/components/launches/helpers/use.existing.data';
 import { useDrag, useDrop } from 'react-dnd';
-import { Integration, Post, State, Tags } from '@prisma/client';
+import type { Integration, Post, State, Tags } from '@prisma/client';
 import { useAddProvider } from '@social/frontend/components/launches/add.provider.component';
 import { useToaster } from '@social/react/toaster/toaster';
 import { useUser } from '@social/frontend/components/layout/user.context';

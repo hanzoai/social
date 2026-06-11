@@ -36,11 +36,16 @@ class CloudflareStorage implements IUploadProvider {
     secretKey: string,
     private region: string,
     private _bucketName: string,
-    private _uploadUrl: string
+    private _uploadUrl: string,
+    endpoint?: string
   ) {
+    // Default endpoint is Cloudflare R2. CLOUDFLARE_ENDPOINT overrides it for
+    // any S3-compatible store (Hanzo S3 at s3-api.hanzo.ai) — those serve
+    // buckets path-style, R2 serves them virtual-host style.
     this._client = new S3Client({
-      endpoint: `https://${accountID}.r2.cloudflarestorage.com`,
+      endpoint: endpoint || `https://${accountID}.r2.cloudflarestorage.com`,
       region,
+      forcePathStyle: !!endpoint,
       credentials: {
         accessKeyId: accessKey,
         secretAccessKey: secretKey,

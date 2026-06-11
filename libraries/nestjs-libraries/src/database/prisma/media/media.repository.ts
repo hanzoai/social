@@ -88,7 +88,7 @@ export class MediaRepository {
         organization: {
           id: org,
         },
-        deletedAt: null,
+        deletedAt: null as Date | null,
         ...searchFilter,
       },
     };

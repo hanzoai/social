@@ -69,7 +69,7 @@ const LEGACY_TO_HANZO: Record<string, string> = {
 };
 
 function findSocialPlan(id: string): HanzoSocialPlan {
-  const plan = (subscriptionPlans as HanzoSocialPlan[]).find(
+  const plan = (subscriptionPlans as unknown as HanzoSocialPlan[]).find(
     (p) => p.id === id && p.category === 'social'
   );
   if (!plan) {

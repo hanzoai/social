@@ -1,5 +1,5 @@
 import { FC, useCallback, useMemo, useState } from 'react';
-import { Integration } from '@prisma/client';
+import type { Integration } from '@prisma/client';
 import useSWR from 'swr';
 import { useFetch } from '@social/helpers/utils/custom.fetch';
 import { ChartSocial } from '@social/frontend/components/analytics/chart-social';

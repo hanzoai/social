@@ -2,7 +2,7 @@
 
 import React, { FC, useCallback, useEffect, useState } from 'react';
 import { useModals } from '@social/frontend/components/layout/new-modal';
-import { Integration } from '@prisma/client';
+import type { Integration } from '@prisma/client';
 import { Autocomplete } from '@mantine/core';
 import useSWR from 'swr';
 import { useFetch } from '@social/helpers/utils/custom.fetch';

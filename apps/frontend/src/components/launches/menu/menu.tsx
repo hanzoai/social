@@ -21,7 +21,7 @@ import {
 } from '@social/frontend/components/launches/calendar.context';
 import { BotPicture } from '@social/frontend/components/launches/bot.picture';
 import { CustomerModal } from '@social/frontend/components/launches/customer.modal';
-import { Integration } from '@prisma/client';
+import type { Integration } from '@prisma/client';
 import { SettingsModal } from '@social/frontend/components/launches/settings.modal';
 import { CustomVariables } from '@social/frontend/components/launches/add.provider.component';
 import { useRouter } from 'next/navigation';
