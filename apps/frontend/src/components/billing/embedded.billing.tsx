@@ -2,7 +2,7 @@
 
 // Hanzo Social billing — handoff to billing.hanzo.ai/checkout.
 //
-// Postiz upstream mounted Stripe Elements here (loadStripe + ConfirmPayment).
+// Hanzo Social upstream mounted Stripe Elements here (loadStripe + ConfirmPayment).
 // We don't use Stripe — payment capture happens inside the Hanzo billing
 // portal at billing.hanzo.ai, which is IAM-session-authenticated and
 // shares state with commerce.hanzo.ai. The BillingService.embedded
@@ -10,7 +10,7 @@
 // — we render a CTA button that redirects there.
 
 import React, { FC, useCallback } from 'react';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { useT } from '@social/react/translation/get.transation.service.client';
 
 export const EmbeddedBilling: FC<{
   portal: string;

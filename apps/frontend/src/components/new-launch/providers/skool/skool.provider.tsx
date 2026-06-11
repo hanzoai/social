@@ -2,13 +2,13 @@
 
 import {
   PostComment, withProvider
-} from '@gitroom/frontend/components/new-launch/providers/high.order.provider';
+} from '@social/frontend/components/new-launch/providers/high.order.provider';
 import { FC, useState } from 'react';
-import { SkoolDto } from '@gitroom/nestjs-libraries/dtos/posts/providers-settings/skool.dto';
-import { SkoolGroupSelect } from '@gitroom/frontend/components/new-launch/providers/skool/skool.group.select';
-import { SkoolLabelSelect } from '@gitroom/frontend/components/new-launch/providers/skool/skool.label.select';
-import { useSettings } from '@gitroom/frontend/components/launches/helpers/use.values';
-import { Input } from '@gitroom/react/form/input';
+import { SkoolDto } from '@social/nestjs-libraries/dtos/posts/providers-settings/skool.dto';
+import { SkoolGroupSelect } from '@social/frontend/components/new-launch/providers/skool/skool.group.select';
+import { SkoolLabelSelect } from '@social/frontend/components/new-launch/providers/skool/skool.label.select';
+import { useSettings } from '@social/frontend/components/launches/helpers/use.values';
+import { Input } from '@social/react/form/input';
 const SkoolComponent: FC = () => {
   const form = useSettings();
   const [selectedGroup, setSelectedGroup] = useState<string | undefined>(

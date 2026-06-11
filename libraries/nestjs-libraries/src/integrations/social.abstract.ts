@@ -1,7 +1,7 @@
-import { timer } from '@gitroom/helpers/utils/timer';
+import { timer } from '@social/helpers/utils/timer';
 import { Integration } from '@prisma/client';
 import { ApplicationFailure } from '@temporalio/activity';
-import { readOrFetch } from '@gitroom/helpers/utils/read.or.fetch';
+import { readOrFetch } from '@social/helpers/utils/read.or.fetch';
 import sharp from 'sharp';
 
 export type ValidityMedia = {

@@ -1,10 +1,10 @@
 export const dynamic = 'force-dynamic';
-import { AdminStatsComponent } from '@gitroom/frontend/components/admin/admin-stats.component';
+import { AdminStatsComponent } from '@social/frontend/components/admin/admin-stats.component';
 import { Metadata } from 'next';
-import { isGeneralServerSide } from '@gitroom/helpers/utils/is.general.server.side';
+import { isGeneralServerSide } from '@social/helpers/utils/is.general.server.side';
 
 export const metadata: Metadata = {
-  title: `${isGeneralServerSide() ? 'Hanzo Social' : 'Gitroom'} Admin Stats`,
+  title: `${isGeneralServerSide() ? 'Hanzo Social' : 'Hanzo Social'} Admin Stats`,
   description: '',
 };
 

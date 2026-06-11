@@ -4,19 +4,19 @@ import useSWR from 'swr';
 import { useCallback, useMemo, useState } from 'react';
 import { capitalize, orderBy } from 'lodash';
 import clsx from 'clsx';
-import ImageWithFallback from '@gitroom/react/helpers/image.with.fallback';
-import SafeImage from '@gitroom/react/helpers/safe.image';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
-import { RenderAnalytics } from '@gitroom/frontend/components/platform-analytics/render.analytics';
-import { Select } from '@gitroom/react/form/select';
-import { Button } from '@gitroom/react/form/button';
+import ImageWithFallback from '@social/react/helpers/image.with.fallback';
+import SafeImage from '@social/react/helpers/safe.image';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
+import { RenderAnalytics } from '@social/frontend/components/platform-analytics/render.analytics';
+import { Select } from '@social/react/form/select';
+import { Button } from '@social/react/form/button';
 import { useRouter } from 'next/navigation';
-import { useToaster } from '@gitroom/react/toaster/toaster';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { useVariables } from '@gitroom/react/helpers/variable.context';
+import { useToaster } from '@social/react/toaster/toaster';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { useVariables } from '@social/react/helpers/variable.context';
 import useCookie from 'react-use-cookie';
-import { SVGLine } from '@gitroom/frontend/components/launches/launches.component';
-import { LoadingComponent } from '@gitroom/frontend/components/layout/loading';
+import { SVGLine } from '@social/frontend/components/launches/launches.component';
+import { LoadingComponent } from '@social/frontend/components/layout/loading';
 const allowedIntegrations = [
   'facebook',
   'instagram',

@@ -1,6 +1,6 @@
 import { FC, useCallback } from 'react';
 import clsx from 'clsx';
-import { ChevronUpIcon } from '@gitroom/frontend/components/ui/icons';
+import { ChevronUpIcon } from '@social/frontend/components/ui/icons';
 
 const Arrow: FC<{
   flip: boolean;

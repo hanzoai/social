@@ -1,13 +1,13 @@
 'use client';
 
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
 import useSWR from 'swr';
 import { FC, useCallback, useState } from 'react';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { useClickAway } from '@uidotdev/usehooks';
-import ReactLoading from '@gitroom/frontend/components/layout/loading';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import ReactLoading from '@social/frontend/components/layout/loading';
+import { useT } from '@social/react/translation/get.transation.service.client';
 function replaceLinks(text: string) {
   const urlRegex =
     /(\bhttps?:\/\/[-A-Z0-9+&@#/%?=~_|!:,.;]*[-A-Z0-9+&@#/%=~_|])/gi;

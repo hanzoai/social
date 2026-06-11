@@ -6,7 +6,7 @@
 // Portal:   BILLING_PORTAL_URL (default https://billing.hanzo.ai).
 //
 // Plan IDs use the canonical Hanzo plan slugs (social-free, social-pro,
-// social-team, social-team-max, social-enterprise). Legacy Postiz tier
+// social-team, social-team-max, social-enterprise). Legacy Hanzo Social tier
 // names (FREE/STANDARD/TEAM/PRO/ULTIMATE) are mapped by the LEGACY_TO_HANZO
 // table mirrored from pricing.ts.
 //
@@ -21,9 +21,9 @@
 import { Injectable, HttpException } from '@nestjs/common';
 import { createHmac, timingSafeEqual } from 'crypto';
 import { Organization } from '@prisma/client';
-import { SubscriptionService } from '@gitroom/nestjs-libraries/database/prisma/subscriptions/subscription.service';
-import { OrganizationService } from '@gitroom/nestjs-libraries/database/prisma/organizations/organization.service';
-import { BillingSubscribeDto } from '@gitroom/nestjs-libraries/dtos/billing/billing.subscribe.dto';
+import { SubscriptionService } from '@social/nestjs-libraries/database/prisma/subscriptions/subscription.service';
+import { OrganizationService } from '@social/nestjs-libraries/database/prisma/organizations/organization.service';
+import { BillingSubscribeDto } from '@social/nestjs-libraries/dtos/billing/billing.subscribe.dto';
 import { subscriptionPlans } from '@hanzo/plans';
 
 // Commerce webhook event shape — mirrors the wire format emitted by
@@ -211,7 +211,7 @@ export class BillingService {
   async checkDiscount(_customerId: string) {
     // Hanzo billing manages discount eligibility centrally — if the
     // customer is eligible the portal surfaces a "discount available"
-    // banner. Return null here so Postiz's offerCoupon path falls back
+    // banner. Return null here so Hanzo Social's offerCoupon path falls back
     // to "no offer".
     return null;
   }
@@ -333,7 +333,7 @@ export class BillingService {
 
   // ── Embedded / one-time flows via commerce.hanzo.ai ────────────
 
-  // Postiz' old embedded() returned Stripe Elements client_secret. We
+  // Hanzo Social' old embedded() returned Stripe Elements client_secret. We
   // instead return a billing.hanzo.ai portal URL deep-linked to the
   // checkout-for-plan flow; the FE redirects there and billing.hanzo.ai
   // handles card capture (Square Web Payments SDK on commerce.hanzo.ai

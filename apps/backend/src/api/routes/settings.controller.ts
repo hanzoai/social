@@ -1,12 +1,12 @@
 import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
-import { GetOrgFromRequest } from '@gitroom/nestjs-libraries/user/org.from.request';
+import { GetOrgFromRequest } from '@social/nestjs-libraries/user/org.from.request';
 import { Organization } from '@prisma/client';
-import { CheckPolicies } from '@gitroom/backend/services/auth/permissions/permissions.ability';
-import { OrganizationService } from '@gitroom/nestjs-libraries/database/prisma/organizations/organization.service';
-import { AddTeamMemberDto } from '@gitroom/nestjs-libraries/dtos/settings/add.team.member.dto';
-import { ShortlinkPreferenceDto } from '@gitroom/nestjs-libraries/dtos/settings/shortlink-preference.dto';
+import { CheckPolicies } from '@social/backend/services/auth/permissions/permissions.ability';
+import { OrganizationService } from '@social/nestjs-libraries/database/prisma/organizations/organization.service';
+import { AddTeamMemberDto } from '@social/nestjs-libraries/dtos/settings/add.team.member.dto';
+import { ShortlinkPreferenceDto } from '@social/nestjs-libraries/dtos/settings/shortlink-preference.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { AuthorizationActions, Sections } from '@gitroom/backend/services/auth/permissions/permission.exception.class';
+import { AuthorizationActions, Sections } from '@social/backend/services/auth/permissions/permission.exception.class';
 
 @ApiTags('Settings')
 @Controller('/settings')

@@ -1,13 +1,13 @@
 'use client';
 
 import { FC, useCallback, useState } from 'react';
-import { useFetch } from '@gitroom/helpers/utils/custom.fetch';
+import { useFetch } from '@social/helpers/utils/custom.fetch';
 import useSWR from 'swr';
-import { useToaster } from '@gitroom/react/toaster/toaster';
-import { useDecisionModal, useModals } from '@gitroom/frontend/components/layout/new-modal';
-import { MediaBox } from '@gitroom/frontend/components/media/media.component';
+import { useToaster } from '@social/react/toaster/toaster';
+import { useDecisionModal, useModals } from '@social/frontend/components/layout/new-modal';
+import { MediaBox } from '@social/frontend/components/media/media.component';
 import copy from 'copy-to-clipboard';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { useT } from '@social/react/translation/get.transation.service.client';
 
 const useOAuthApp = () => {
   const fetch = useFetch();

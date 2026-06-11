@@ -1,13 +1,13 @@
 'use client';
 
-import { useCalendar, ListStateFilter } from '@gitroom/frontend/components/launches/calendar.context';
+import { useCalendar, ListStateFilter } from '@social/frontend/components/launches/calendar.context';
 import clsx from 'clsx';
 import dayjs from 'dayjs';
 import { useCallback } from 'react';
-import { SelectCustomer } from '@gitroom/frontend/components/launches/select.customer';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
+import { SelectCustomer } from '@social/frontend/components/launches/select.customer';
+import { useT } from '@social/react/translation/get.transation.service.client';
 import i18next from 'i18next';
-import { newDayjs } from '@gitroom/frontend/components/layout/set.timezone';
+import { newDayjs } from '@social/frontend/components/layout/set.timezone';
 
 // Helper function to get start and end dates based on display type
 function getDateRange(

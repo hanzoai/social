@@ -4,11 +4,11 @@ import {
   HttpException,
   Query,
 } from '@nestjs/common';
-import { GetUserFromRequest } from '@gitroom/nestjs-libraries/user/user.from.request';
+import { GetUserFromRequest } from '@social/nestjs-libraries/user/user.from.request';
 import { User } from '@prisma/client';
 import { ApiTags } from '@nestjs/swagger';
-import { ErrorsService } from '@gitroom/nestjs-libraries/database/prisma/errors/errors.service';
-import { AdminStatsService } from '@gitroom/nestjs-libraries/database/prisma/admin-stats/admin-stats.service';
+import { ErrorsService } from '@social/nestjs-libraries/database/prisma/errors/errors.service';
+import { AdminStatsService } from '@social/nestjs-libraries/database/prisma/admin-stats/admin-stats.service';
 import dayjs from 'dayjs';
 
 @ApiTags('Admin')

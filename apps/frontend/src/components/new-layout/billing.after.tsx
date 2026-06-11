@@ -1,11 +1,11 @@
-import { BillingComponent } from '@gitroom/frontend/components/billing/billing.component';
-import { useUser } from '@gitroom/frontend/components/layout/user.context';
-import { useVariables } from '@gitroom/react/helpers/variable.context';
-import { useT } from '@gitroom/react/translation/get.transation.service.client';
-import { Logo } from '@gitroom/frontend/components/new-layout/logo';
-import { LogoutComponent } from '@gitroom/frontend/components/layout/logout.component';
+import { BillingComponent } from '@social/frontend/components/billing/billing.component';
+import { useUser } from '@social/frontend/components/layout/user.context';
+import { useVariables } from '@social/react/helpers/variable.context';
+import { useT } from '@social/react/translation/get.transation.service.client';
+import { Logo } from '@social/frontend/components/new-layout/logo';
+import { LogoutComponent } from '@social/frontend/components/layout/logout.component';
 import React from 'react';
-import { OrganizationSelector } from '@gitroom/frontend/components/layout/organization.selector';
+import { OrganizationSelector } from '@social/frontend/components/layout/organization.selector';
 
 export const BillingAfter = () => {
   const user = useUser();
@@ -22,7 +22,7 @@ export const BillingAfter = () => {
       <div className="text-center mb-[20px] text-xl [@media(max-width:1024px)]:text-xl">
         <h1 className="text-3xl [@media(max-width:1024px)]:text-xl">
           {t(
-            'join_10000_entrepreneurs_who_use_postiz',
+            'join_10000_entrepreneurs_who_use_social',
             'Join 10,000+ Entrepreneurs Who Use Hanzo Social'
           )}
           <br />

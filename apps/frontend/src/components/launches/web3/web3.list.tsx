@@ -1,8 +1,8 @@
 import { FC } from 'react';
-import { Web3ProviderInterface } from '@gitroom/frontend/components/launches/web3/web3.provider.interface';
-import { WrapcasterProvider } from '@gitroom/frontend/components/launches/web3/providers/wrapcaster.provider';
-import { TelegramProvider } from '@gitroom/frontend/components/launches/web3/providers/telegram.provider';
-import { MoltbookProvider } from '@gitroom/frontend/components/launches/web3/providers/moltbook.provider';
+import { Web3ProviderInterface } from '@social/frontend/components/launches/web3/web3.provider.interface';
+import { WrapcasterProvider } from '@social/frontend/components/launches/web3/providers/wrapcaster.provider';
+import { TelegramProvider } from '@social/frontend/components/launches/web3/providers/telegram.provider';
+import { MoltbookProvider } from '@social/frontend/components/launches/web3/providers/moltbook.provider';
 export const web3List: {
   identifier: string;
   component: FC<Web3ProviderInterface>;
