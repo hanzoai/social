@@ -11,7 +11,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
-export default function HanzoIamCallback() {
+export default function HanzoIamCallback(): null {
   const router = useRouter();
   const params = useSearchParams();
   useEffect(() => {
