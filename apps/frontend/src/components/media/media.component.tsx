@@ -15,7 +15,7 @@ import { Button } from '@social/react/form/button';
 import useSWR from 'swr';
 import { useFetch } from '@social/helpers/utils/custom.fetch';
 import { hasExtension } from '@social/helpers/utils/has.extension';
-import { Media } from '@prisma/client';
+import type { Media } from '@prisma/client';
 import { useMediaDirectory } from '@social/react/helpers/use.media.directory';
 import { useSettings } from '@social/frontend/components/launches/helpers/use.values';
 import EventEmitter from 'events';
