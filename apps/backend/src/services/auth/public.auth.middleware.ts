@@ -28,7 +28,7 @@ export class PublicAuthMiddleware implements NestMiddleware {
         }
 
         const org = authorization.organization;
-        if (!!process.env.STRIPE_SECRET_KEY && !org.subscription) {
+        if (!!process.env.BILLING_ENABLED && !org.subscription) {
           res
             .status(HttpStatus.UNAUTHORIZED)
             .json({ msg: 'No subscription found' });
@@ -46,7 +46,7 @@ export class PublicAuthMiddleware implements NestMiddleware {
           return;
         }
 
-        if (!!process.env.STRIPE_SECRET_KEY && !org.subscription) {
+        if (!!process.env.BILLING_ENABLED && !org.subscription) {
           res
             .status(HttpStatus.UNAUTHORIZED)
             .json({ msg: 'No subscription found' });
