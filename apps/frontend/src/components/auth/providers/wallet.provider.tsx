@@ -32,7 +32,7 @@ import {
   TrustWalletAdapter,
   XDEFIWalletAdapter,
   TokenPocketWalletAdapter,
-} from '@social/wallets';
+} from '@hanzo/wallets';
 import {
   WalletModalProvider,
   useWalletModal,

@@ -67,17 +67,21 @@ export class HanzoIamProvider extends AuthProviderAbstract {
 
   async getUser(
     access_token: string
-  ): Promise<{ email: string; id: string } | false> {
+  ): Promise<{ email: string; id: string }> {
     const res = await fetch(`${IAM_URL()}/oauth/userinfo`, {
       headers: { Authorization: `Bearer ${access_token}` },
     });
-    if (!res.ok) return false;
+    if (!res.ok) {
+      throw new Error(`Hanzo IAM /oauth/userinfo failed: ${res.status}`);
+    }
     const data = (await res.json()) as {
       sub?: string;
       email?: string;
       preferred_username?: string;
     };
-    if (!data.email || !data.sub) return false;
+    if (!data.email || !data.sub) {
+      throw new Error('Hanzo IAM userinfo missing email or sub claim');
+    }
     return { email: data.email, id: String(data.sub) };
   }
 

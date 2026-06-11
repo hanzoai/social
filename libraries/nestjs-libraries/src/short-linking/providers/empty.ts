@@ -3,7 +3,7 @@ import { ShortLinking } from '@social/nestjs-libraries/short-linking/short-linki
 export class Empty implements ShortLinking {
   shortLinkDomain = 'empty';
 
-  async linksStatistics(links: string[]) {
+  async linksStatistics(links: string[]): Promise<any[]> {
     return [];
   }
 
