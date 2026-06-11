@@ -65,6 +65,10 @@ export class OrganizationService {
     return this._organizationRepository.updateApiKey(orgId);
   }
 
+  updateOrgName(orgId: string, name: string) {
+    return this._organizationRepository.updateOrgName(orgId, name);
+  }
+
   getTeam(orgId: string) {
     return this._organizationRepository.getTeam(orgId);
   }
