@@ -1,3 +1,5 @@
+<p align="center"><img src=".github/hero.svg" alt="social" width="880"></p>
+
 <p align="center">
   <a href="https://social.hanzo.ai" target="_blank">
     <img alt="Hanzo Social" src="https://hanzo.ai/logo-mark.svg" width="160"/>
