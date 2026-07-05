@@ -2,7 +2,7 @@
 
 import React, { ReactNode, useCallback } from 'react';
 import { Logo } from '@social/frontend/components/new-layout/logo';
-import { Plus_Jakarta_Sans } from 'next/font/google';
+import { jakartaSans } from '@social/frontend/fonts/jakarta';
 const ModeComponent = dynamic(
   () => import('@social/frontend/components/layout/mode.component'),
   {
@@ -42,12 +42,6 @@ import { PreConditionComponent } from '@social/frontend/components/layout/pre-co
 import { AttachToFeedbackIcon } from '@social/frontend/components/new-layout/sentry.feedback.component';
 import { FirstBillingComponent } from '@social/frontend/components/billing/first.billing.component';
 import { TrialTracker } from '@social/frontend/components/layout/gtm.component';
-
-const jakartaSans = Plus_Jakarta_Sans({
-  weight: ['600', '500', '700'],
-  style: ['normal', 'italic'],
-  subsets: ['latin'],
-});
 
 export const LayoutComponent = ({ children }: { children: ReactNode }) => {
   const fetch = useFetch();
