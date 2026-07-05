@@ -4,7 +4,7 @@ import {
   proxyActivities,
   setHandler,
   sleep,
-} from '@temporalio/workflow';
+} from '@social/nestjs-libraries/temporal/workflow';
 import { Email, emailSignal } from '@social/orchestrator/signals/email.signal';
 import { EmailActivity } from '@social/orchestrator/activities/email.activity';
 

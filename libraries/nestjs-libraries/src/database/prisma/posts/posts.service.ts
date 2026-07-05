@@ -36,8 +36,8 @@ import { Readable } from 'stream';
 import { OpenaiService } from '@social/nestjs-libraries/openai/openai.service';
 dayjs.extend(utc);
 import * as Sentry from '@sentry/nestjs';
-import { TemporalService } from 'nestjs-temporal-core';
-import { TypedSearchAttributes } from '@temporalio/common';
+import { TemporalService } from '@social/nestjs-libraries/temporal/tasks';
+import { TypedSearchAttributes } from '@hanzoai/tasks';
 import {
   organizationId,
   postId as postIdSearchParam,

@@ -1,4 +1,4 @@
-import { proxyActivities, sleep } from '@temporalio/workflow';
+import { proxyActivities, sleep } from '@social/nestjs-libraries/temporal/workflow';
 import { EmailActivity } from '@social/orchestrator/activities/email.activity';
 
 const { sendEmailAsync, getUserOrgs, setStreak } = proxyActivities<EmailActivity>({
