@@ -28,7 +28,7 @@ RUN npm --no-update-notifier --no-fund --global install pnpm@10.6.1
 
 COPY . /app
 RUN pnpm install --frozen-lockfile
-RUN NODE_OPTIONS="--max-old-space-size=4096" pnpm run build
+RUN NODE_OPTIONS="--max-old-space-size=8192" pnpm run build
 
 # ─── Stage 2a: backend (NestJS, port 3000) ───────────────────────────
 FROM node:${NODE_VERSION} AS backend
