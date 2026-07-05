@@ -1,6 +1,7 @@
 import { Controller, Get, Res } from '@nestjs/common';
 import { Response } from 'express';
-import { Connection } from '@temporalio/client';
+import { Connection, Client } from '@hanzoai/tasks';
+import { iamTokenSource } from '@social/nestjs-libraries/temporal/tasks';
 
 @Controller('health')
 export class HealthController {
@@ -8,18 +9,14 @@ export class HealthController {
   async getHealthStatus(@Res() res: Response) {
     let connection: Connection | undefined;
     try {
-      const address = process.env.TEMPORAL_ADDRESS || 'localhost:7233';
-      connection = await Connection.connect({
-        address,
-        ...(process.env.TEMPORAL_TLS === 'true' ? { tls: true } : {}),
-        ...(process.env.TEMPORAL_API_KEY
-          ? { apiKey: process.env.TEMPORAL_API_KEY }
-          : {}),
+      const address = process.env.TASKS_ADDRESS || 'cloud.hanzo.svc:9999';
+      connection = await Connection.connect({ address, token: iamTokenSource });
+      const client = await Client.create({
+        connection,
+        namespace: process.env.TASKS_NAMESPACE || 'default',
       });
-
-      const namespace = process.env.TEMPORAL_NAMESPACE || 'default';
       await Promise.race([
-        connection.workflowService.describeNamespace({ namespace }),
+        client.connection.health(),
         new Promise((_, reject) =>
           setTimeout(() => reject(new Error('timeout')), 10000)
         ),

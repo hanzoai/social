@@ -7,13 +7,13 @@ import {
   sleep,
   defineSignal,
   setHandler,
-} from '@temporalio/workflow';
+} from '@social/nestjs-libraries/temporal/workflow';
 import dayjs from 'dayjs';
 import { Integration } from '@prisma/client';
 import { capitalize, sortBy } from 'lodash';
 import { PostResponse } from '@social/nestjs-libraries/integrations/social/social.integrations.interface';
 import { makeId } from '@social/nestjs-libraries/services/make.is';
-import { TypedSearchAttributes } from '@temporalio/common';
+import { TypedSearchAttributes } from '@social/nestjs-libraries/temporal/workflow';
 import { postId as postIdSearchParam } from '@social/nestjs-libraries/temporal/temporal.search.attribute';
 
 const proxyTaskQueue = (taskQueue: string) => {

@@ -4,7 +4,7 @@ import {
   condition,
   sleep,
   continueAsNew,
-} from '@temporalio/workflow';
+} from '@social/nestjs-libraries/temporal/workflow';
 import { EmailActivity } from '@social/orchestrator/activities/email.activity';
 import {
   SendEmail,

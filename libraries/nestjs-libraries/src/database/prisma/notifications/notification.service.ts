@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { NotificationsRepository } from '@social/nestjs-libraries/database/prisma/notifications/notifications.repository';
 import { EmailService } from '@social/nestjs-libraries/services/email.service';
 import { OrganizationRepository } from '@social/nestjs-libraries/database/prisma/organizations/organization.repository';
-import { TemporalService } from 'nestjs-temporal-core';
-import { TypedSearchAttributes } from '@temporalio/common';
+import { TemporalService } from '@social/nestjs-libraries/temporal/tasks';
+import { TypedSearchAttributes } from '@hanzoai/tasks';
 import { organizationId } from '@social/nestjs-libraries/temporal/temporal.search.attribute';
 
 export type NotificationType = 'success' | 'fail' | 'info';

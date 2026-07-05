@@ -1,4 +1,4 @@
-import { defineSignal } from '@temporalio/workflow';
+import { defineSignal } from '@hanzoai/tasks';
 
 export type SendEmail = {
   to: string;

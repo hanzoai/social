@@ -3,7 +3,7 @@ import { EmailInterface } from '@social/nestjs-libraries/emails/email.interface'
 import { ResendProvider } from '@social/nestjs-libraries/emails/resend.provider';
 import { EmptyProvider } from '@social/nestjs-libraries/emails/empty.provider';
 import { NodeMailerProvider } from '@social/nestjs-libraries/emails/node.mailer.provider';
-import { TemporalService } from 'nestjs-temporal-core';
+import { TemporalService } from '@social/nestjs-libraries/temporal/tasks';
 import { timer } from '@social/helpers/utils/timer';
 
 @Injectable()

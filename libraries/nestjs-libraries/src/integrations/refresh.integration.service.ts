@@ -6,7 +6,7 @@ import {
   AuthTokenDetails,
   SocialProvider,
 } from '@social/nestjs-libraries/integrations/social/social.integrations.interface';
-import { TemporalService } from 'nestjs-temporal-core';
+import { TemporalService } from '@social/nestjs-libraries/temporal/tasks';
 
 @Injectable()
 export class RefreshIntegrationService {

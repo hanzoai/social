@@ -1,7 +1,7 @@
 import {
   defineSearchAttributeKey,
   SearchAttributeType,
-} from '@temporalio/common';
+} from '@hanzoai/tasks';
 
 export const organizationId = defineSearchAttributeKey(
   'organizationId',

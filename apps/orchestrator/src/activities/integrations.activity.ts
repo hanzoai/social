@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Activity, ActivityMethod } from 'nestjs-temporal-core';
+import { Activity, ActivityMethod } from '@social/nestjs-libraries/temporal/tasks';
 import { IntegrationService } from '@social/nestjs-libraries/database/prisma/integrations/integration.service';
 import { Integration } from '@prisma/client';
 import { RefreshIntegrationService } from '@social/nestjs-libraries/integrations/refresh.integration.service';
