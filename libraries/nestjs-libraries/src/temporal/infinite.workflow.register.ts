@@ -1,5 +1,5 @@
 import { Global, Injectable, Module, OnModuleInit } from '@nestjs/common';
-import { TemporalService } from 'nestjs-temporal-core';
+import { TemporalService } from '@social/nestjs-libraries/temporal/tasks';
 
 @Injectable()
 export class InfiniteWorkflowRegister implements OnModuleInit {
@@ -13,6 +13,7 @@ export class InfiniteWorkflowRegister implements OnModuleInit {
           ?.workflow?.start('missingPostWorkflow', {
             workflowId: 'missing-post-workflow',
             taskQueue: 'main',
+            workflowIdConflictPolicy: 'USE_EXISTING',
           });
       } catch (err) {}
     }

@@ -1,4 +1,4 @@
-import { proxyActivities, sleep } from '@temporalio/workflow';
+import { proxyActivities, sleep } from '@social/nestjs-libraries/temporal/workflow';
 import { AutopostActivity } from '@social/orchestrator/activities/autopost.activity';
 
 const { autoPost } = proxyActivities<AutopostActivity>({

@@ -3,7 +3,7 @@ import {
   Activity,
   ActivityMethod,
   TemporalService,
-} from 'nestjs-temporal-core';
+} from '@social/nestjs-libraries/temporal/tasks';
 import { PostsService } from '@social/nestjs-libraries/database/prisma/posts/posts.service';
 import {
   NotificationService,
@@ -17,7 +17,7 @@ import { RefreshIntegrationService } from '@social/nestjs-libraries/integrations
 import { timer } from '@social/helpers/utils/timer';
 import { IntegrationService } from '@social/nestjs-libraries/database/prisma/integrations/integration.service';
 import { WebhooksService } from '@social/nestjs-libraries/database/prisma/webhooks/webhooks.service';
-import { TypedSearchAttributes } from '@temporalio/common';
+import { TypedSearchAttributes } from '@hanzoai/tasks';
 import {
   organizationId,
   postId as postIdSearchParam,

@@ -14,8 +14,8 @@ import { PostsService } from '@social/nestjs-libraries/database/prisma/posts/pos
 import Parser from 'rss-parser';
 import { IntegrationService } from '@social/nestjs-libraries/database/prisma/integrations/integration.service';
 import { makeId } from '@social/nestjs-libraries/services/make.is';
-import { TemporalService } from 'nestjs-temporal-core';
-import { TypedSearchAttributes } from '@temporalio/common';
+import { TemporalService } from '@social/nestjs-libraries/temporal/tasks';
+import { TypedSearchAttributes } from '@hanzoai/tasks';
 import {
   organizationId,
 } from '@social/nestjs-libraries/temporal/temporal.search.attribute';

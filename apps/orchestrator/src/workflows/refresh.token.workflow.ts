@@ -1,4 +1,4 @@
-import { proxyActivities, sleep } from '@temporalio/workflow';
+import { proxyActivities, sleep } from '@social/nestjs-libraries/temporal/workflow';
 import { IntegrationsActivity } from '@social/orchestrator/activities/integrations.activity';
 
 const { getIntegrationsById, refreshToken } =
