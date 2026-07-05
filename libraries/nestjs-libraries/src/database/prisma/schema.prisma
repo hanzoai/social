@@ -7,7 +7,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -22,7 +22,7 @@ model Organization {
   updatedAt           DateTime             @updatedAt
   allowTrial          Boolean              @default(false)
   isTrailing          Boolean              @default(false)
-  shortlink           ShortLinkPreference  @default(ASK)
+  shortlink           String  @default("ASK")
   autoPost            AutoPost[]
   Comments            Comments[]
   credits             Credits[]
@@ -83,7 +83,7 @@ model User {
   id                    String               @id @default(uuid())
   email                 String
   password              String?
-  providerName          Provider
+  providerName          String
   name                  String?
   lastName              String?
   isSuperAdmin          Boolean              @default(false)
@@ -141,7 +141,7 @@ model UserOrganization {
   userId         String
   organizationId String
   disabled       Boolean      @default(false)
-  role           Role         @default(USER)
+  role           String         @default("USER")
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
   organization   Organization @relation(fields: [organizationId], references: [id])
@@ -202,7 +202,7 @@ model Star {
   forks      Int
   totalForks Int
   login      String
-  date       DateTime @default(now()) @db.Date
+  date       DateTime @default(now())
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
 
@@ -286,10 +286,10 @@ model Credits {
 model Subscription {
   id               String           @id @default(cuid())
   organizationId   String           @unique
-  subscriptionTier SubscriptionTier
+  subscriptionTier String
   identifier       String?
   cancelAt         DateTime?
-  period           Period
+  period           String
   totalChannels    Int
   isLifetime       Boolean          @default(false)
   createdAt        DateTime         @default(now())
@@ -395,7 +395,7 @@ model Comments {
 
 model Post {
   id                         String                    @id @default(cuid())
-  state                      State                     @default(QUEUE)
+  state                      String                     @default("QUEUE")
   publishDate                DateTime
   organizationId             String
   integrationId              String
@@ -411,8 +411,8 @@ model Post {
   image                      String?
   submittedForOrderId        String?
   submittedForOrganizationId String?
-  approvedSubmitForOrder     APPROVED_SUBMIT_FOR_ORDER @default(NO)
-  creationMethod             CreationMethod            @default(UNKNOWN)
+  approvedSubmitForOrder     String @default("NO")
+  creationMethod             String            @default("UNKNOWN")
   lastMessageId              String?
   intervalInDays             Int?
   error                      String?
@@ -500,7 +500,7 @@ model Orders {
   id             String           @id @default(uuid())
   buyerId        String
   sellerId       String
-  status         OrderStatus
+  status         String
   messageGroupId String
   captureId      String?
   createdAt      DateTime         @default(now())
@@ -534,7 +534,7 @@ model OrderItems {
 
 model Messages {
   id        String        @id @default(uuid())
-  from      From
+  from      String
   content   String?
   groupId   String
   special   String?
@@ -702,15 +702,15 @@ model mastra_ai_spans {
   input        Json?
   output       Json?
   error        Json?
-  startedAt    DateTime  @db.Timestamp(6)
-  endedAt      DateTime? @db.Timestamp(6)
-  createdAt    DateTime  @db.Timestamp(6)
-  updatedAt    DateTime? @db.Timestamp(6)
+  startedAt    DateTime
+  endedAt      DateTime?
+  createdAt    DateTime
+  updatedAt    DateTime?
   isEvent      Boolean
-  startedAtZ   DateTime? @default(now()) @db.Timestamptz(6)
-  endedAtZ     DateTime? @default(now()) @db.Timestamptz(6)
-  createdAtZ   DateTime? @default(now()) @db.Timestamptz(6)
-  updatedAtZ   DateTime? @default(now()) @db.Timestamptz(6)
+  startedAtZ   DateTime? @default(now())
+  endedAtZ     DateTime? @default(now())
+  createdAtZ   DateTime? @default(now())
+  updatedAtZ   DateTime? @default(now())
 
   @@index([name], map: "public_mastra_ai_spans_name_idx")
   @@index([parentSpanId, startedAt(sort: Desc)], map: "public_mastra_ai_spans_parentspanid_startedat_idx")
@@ -730,10 +730,10 @@ model mastra_evals {
   test_info     Json?
   global_run_id String
   run_id        String
-  created_at    DateTime  @db.Timestamp(6)
-  createdAt     DateTime? @db.Timestamp(6)
-  created_atZ   DateTime? @default(now()) @db.Timestamptz(6)
-  createdAtZ    DateTime? @default(now()) @db.Timestamptz(6)
+  created_at    DateTime
+  createdAt     DateTime?
+  created_atZ   DateTime? @default(now())
+  createdAtZ    DateTime? @default(now())
 
   @@index([agent_name, created_at(sort: Desc)], map: "public_mastra_evals_agent_name_created_at_idx")
   @@ignore
@@ -745,9 +745,9 @@ model mastra_messages {
   content    String
   role       String
   type       String
-  createdAt  DateTime  @db.Timestamp(6)
+  createdAt  DateTime
   resourceId String?
-  createdAtZ DateTime? @default(now()) @db.Timestamptz(6)
+  createdAtZ DateTime? @default(now())
 
   @@index([thread_id, createdAt(sort: Desc)], map: "public_mastra_messages_thread_id_createdat_idx")
 }
@@ -756,10 +756,10 @@ model mastra_resources {
   id            String    @id
   workingMemory String?
   metadata      Json?
-  createdAt     DateTime  @db.Timestamp(6)
-  updatedAt     DateTime  @db.Timestamp(6)
-  createdAtZ    DateTime? @default(now()) @db.Timestamptz(6)
-  updatedAtZ    DateTime? @default(now()) @db.Timestamptz(6)
+  createdAt     DateTime
+  updatedAt     DateTime
+  createdAtZ    DateTime? @default(now())
+  updatedAtZ    DateTime? @default(now())
 }
 
 model mastra_scorers {
@@ -790,10 +790,10 @@ model mastra_scorers {
   source               String
   resourceId           String?
   threadId             String?
-  createdAt            DateTime  @db.Timestamp(6)
-  updatedAt            DateTime  @db.Timestamp(6)
-  createdAtZ           DateTime? @default(now()) @db.Timestamptz(6)
-  updatedAtZ           DateTime? @default(now()) @db.Timestamptz(6)
+  createdAt            DateTime
+  updatedAt            DateTime
+  createdAtZ           DateTime? @default(now())
+  updatedAtZ           DateTime? @default(now())
   spanId               String?
 
   @@index([traceId, spanId, createdAt(sort: Desc)], map: "public_mastra_scores_trace_id_span_id_created_at_idx")
@@ -804,10 +804,10 @@ model mastra_threads {
   resourceId String
   title      String
   metadata   String?
-  createdAt  DateTime  @db.Timestamp(6)
-  updatedAt  DateTime  @db.Timestamp(6)
-  createdAtZ DateTime? @default(now()) @db.Timestamptz(6)
-  updatedAtZ DateTime? @default(now()) @db.Timestamptz(6)
+  createdAt  DateTime
+  updatedAt  DateTime
+  createdAtZ DateTime? @default(now())
+  updatedAtZ DateTime? @default(now())
 
   @@index([resourceId, createdAt(sort: Desc)], map: "public_mastra_threads_resourceid_createdat_idx")
 }
@@ -826,8 +826,8 @@ model mastra_traces {
   other        String?
   startTime    BigInt
   endTime      BigInt
-  createdAt    DateTime  @db.Timestamp(6)
-  createdAtZ   DateTime? @default(now()) @db.Timestamptz(6)
+  createdAt    DateTime
+  createdAtZ   DateTime? @default(now())
 
   @@index([name, startTime(sort: Desc)], map: "public_mastra_traces_name_starttime_idx")
 }
@@ -837,10 +837,10 @@ model mastra_workflow_snapshot {
   run_id        String
   resourceId    String?
   snapshot      String
-  createdAt     DateTime  @db.Timestamp(6)
-  updatedAt     DateTime  @db.Timestamp(6)
-  createdAtZ    DateTime? @default(now()) @db.Timestamptz(6)
-  updatedAtZ    DateTime? @default(now()) @db.Timestamptz(6)
+  createdAt     DateTime
+  updatedAt     DateTime
+  createdAtZ    DateTime? @default(now())
+  updatedAtZ    DateTime? @default(now())
 
   @@unique([workflow_name, run_id], map: "public_mastra_workflow_snapshot_workflow_name_run_id_key")
 }
@@ -891,83 +891,21 @@ model OAuthAuthorization {
   @@index([revokedAt])
 }
 
-enum OrderStatus {
-  PENDING
-  ACCEPTED
-  CANCELED
-  COMPLETED
-}
 
-enum From {
-  BUYER
-  SELLER
-}
 
-enum State {
-  QUEUE
-  PUBLISHED
-  ERROR
-  DRAFT
-}
 
-enum SubscriptionTier {
-  STANDARD
-  PRO
-  TEAM
-  ULTIMATE
-}
 
-enum Period {
-  MONTHLY
-  YEARLY
-}
 
-enum Provider {
-  LOCAL
-  GITHUB
-  GOOGLE
-  FARCASTER
-  WALLET
-  GENERIC
-}
 
-enum Role {
-  SUPERADMIN
-  ADMIN
-  USER
-}
 
-enum APPROVED_SUBMIT_FOR_ORDER {
-  NO
-  WAITING_CONFIRMATION
-  YES
-}
 
-enum CreationMethod {
-  UNKNOWN
-  WEB
-  MCP
-  API
-  AUTOPOST
-  CLI
-}
 
-enum ShortLinkPreference {
-  ASK
-  YES
-  NO
-}
 
-enum AnnouncementColor {
-  INFO
-  WARNING
-  ERROR
-}
 
 model Announcement {
   id          String            @id @default(uuid())
   title       String
   description String
-  color       AnnouncementColor @default(INFO)
+  color       String @default("INFO")
   createdAt   DateTime          @default(now())
 }
