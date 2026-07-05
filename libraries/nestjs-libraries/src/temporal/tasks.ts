@@ -23,7 +23,7 @@ import { socialIntegrationList } from '@social/nestjs-libraries/integrations/int
 type TokenProvider = () => string | Promise<string>;
 
 // Hanzo Tasks NestJS integration — the drop-in replacement for
-// nestjs-temporal-core. Durable workflow execution runs on the ONE Hanzo Tasks
+// the prior durable-execution NestJS module. Durable workflow execution runs on
 // engine embedded in cloud, reached over its identity-gated ZAP listener
 // (cloud.hanzo.svc:9999) and authenticated with a Hanzo IAM client_credentials
 // bearer. There is no upstream Temporal anywhere.
@@ -38,7 +38,7 @@ type TokenProvider = () => string | Promise<string>;
 // ── @Activity / @ActivityMethod decorators ─────────────────────────────
 const ACTIVITY_METHODS = Symbol('hanzo.tasks.activityMethods');
 
-/** Marks a class as an activity provider (parity with nestjs-temporal-core). */
+/** Marks a class as an activity provider (activity-decorator parity). */
 export function Activity(): ClassDecorator {
   return () => {
     /* marker only — methods are discovered via @ActivityMethod */
@@ -113,7 +113,7 @@ const STATUS_NAME: Record<number, string> = {
   [WorkflowStatus.TimedOut]: 'TIMED_OUT',
 };
 
-// Adapt a Hanzo WorkflowHandle to the @temporalio shape social's legacy code
+// Adapt a Hanzo WorkflowHandle to the legacy client shape social's older code
 // reads — notably `describe().status.name` as a string.
 function adaptHandle(handle: ReturnType<Client['workflow']['getHandle']>) {
   return {
@@ -129,7 +129,7 @@ function adaptHandle(handle: ReturnType<Client['workflow']['getHandle']>) {
   };
 }
 
-// getRawClient() exposes the @temporalio/client-shaped surface social uses:
+// getRawClient() exposes the legacy client-shaped surface social uses:
 // .workflow.{start,signalWithStart,getHandle,list}. start/signalWithStart pass
 // straight through to the @hanzoai/tasks WorkflowClient (which already accepts
 // typedSearchAttributes + workflowIdConflictPolicy). list() streams executions
@@ -177,7 +177,7 @@ export class TemporalService implements OnModuleInit, OnModuleDestroy {
     private readonly moduleRef: ModuleRef
   ) {}
 
-  /** The @temporalio-shaped client facade social's services consume. */
+  /** The legacy-shaped client facade social's services consume. */
   get client() {
     return {
       getRawClient: () => (this._client ? rawClientAdapter(this._client) : undefined),
@@ -284,7 +284,7 @@ export class HanzoTasksModule {}
 /**
  * Builds the Hanzo Tasks module. `isWorkers` starts the workers (orchestrator);
  * false is a client-only wiring (backend). Signature-compatible with the prior
- * nestjs-temporal-core getTemporalModule call sites.
+ * getTemporalModule call sites.
  */
 export function getTemporalModule(
   isWorkers: boolean,
