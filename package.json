@@ -101,7 +101,7 @@
     "@swc/helpers": "0.5.13",
     "@sweetalert2/theme-dark": "^5.0.16",
     "@tailwindcss/postcss": "^4.1.7",
-    "@hanzoai/tasks": "file:vendor/hanzoai-tasks-1.49.0.tgz",
+    "@hanzoai/tasks": "file:vendor/hanzoai-tasks-1.49.1.tgz",
     "@tiptap/extension-bold": "^3.0.6",
     "@tiptap/extension-document": "^3.0.6",
     "@tiptap/extension-heading": "^3.0.7",
