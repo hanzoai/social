@@ -6,7 +6,7 @@ import 'react-tooltip/dist/react-tooltip.css';
 import '@copilotkit/react-ui/styles.css';
 import LayoutContext from '@social/frontend/components/layout/layout.context';
 import { ReactNode } from 'react';
-import { Plus_Jakarta_Sans } from 'next/font/google';
+import { jakartaSans } from '@social/frontend/fonts/jakarta';
 import PlausibleProvider from 'next-plausible';
 import clsx from 'clsx';
 import { VariableContextComponent } from '@social/react/helpers/variable.context';
@@ -24,12 +24,6 @@ import {
 import { HtmlComponent } from '@social/frontend/components/layout/html.component';
 import Script from 'next/script';
 import { ChangeDirClient } from '@social/frontend/components/new-layout/change.dir.client';
-
-const jakartaSans = Plus_Jakarta_Sans({
-  weight: ['600', '500'],
-  style: ['normal', 'italic'],
-  subsets: ['latin'],
-});
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
   const cookieStore = await cookies();
