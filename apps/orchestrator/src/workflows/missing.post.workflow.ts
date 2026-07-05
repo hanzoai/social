@@ -1,4 +1,4 @@
-import { proxyActivities, sleep } from '@temporalio/workflow';
+import { proxyActivities, sleep } from '@social/nestjs-libraries/temporal/workflow';
 import { PostActivity } from '@social/orchestrator/activities/post.activity';
 
 const { searchForMissingThreeHoursPosts } = proxyActivities<PostActivity>({
