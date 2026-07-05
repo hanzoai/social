@@ -24,7 +24,7 @@ import { difference, uniq } from 'lodash';
 import utc from 'dayjs/plugin/utc';
 import { AutopostRepository } from '@social/nestjs-libraries/database/prisma/autopost/autopost.repository';
 import { RefreshIntegrationService } from '@social/nestjs-libraries/integrations/refresh.integration.service';
-import { TemporalService } from 'nestjs-temporal-core';
+import { TemporalService } from '@social/nestjs-libraries/temporal/tasks';
 
 dayjs.extend(utc);
 
