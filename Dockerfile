@@ -28,7 +28,7 @@ RUN npm --no-update-notifier --no-fund --global install pnpm@10.6.1
 
 COPY . /app
 RUN pnpm install --frozen-lockfile
-RUN NODE_OPTIONS="--max-old-space-size=8192" pnpm run build
+RUN NODE_OPTIONS="--max-old-space-size=8192" pnpm -r --workspace-concurrency=1 --filter ./apps/backend --filter ./apps/orchestrator run build
 
 # ─── Stage 2a: backend (NestJS, port 3000) ───────────────────────────
 FROM node:${NODE_VERSION} AS backend
@@ -49,6 +49,7 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y --no-install-recommends openssl && rm -rf /var/lib/apt/lists/* \
  && npm --no-update-notifier --no-fund --global install pnpm@10.6.1
 COPY --from=build /app /app
+RUN NODE_OPTIONS="--max-old-space-size=8192" pnpm --filter ./apps/frontend run build
 EXPOSE 4200
 CMD ["sh", "-c", "pnpm --filter ./apps/frontend start"]
 
