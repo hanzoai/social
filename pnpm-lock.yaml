@@ -56,8 +56,8 @@ importers:
         specifier: ^0.1.0
         version: 0.1.0(@babel/runtime@7.28.6)(@react-native-async-storage/async-storage@1.24.0(react-native@0.84.1(@babel/core@7.29.0)(@types/react@19.1.8)(bufferutil@4.1.0)(react@19.2.4)(utf-8-validate@5.0.10)))(@solana/web3.js@1.98.4(bufferutil@4.1.0)(typescript@5.5.4)(utf-8-validate@5.0.10))(@types/react@19.1.8)(@upstash/redis@1.36.3)(bs58@6.0.0)(bufferutil@4.1.0)(ioredis@5.10.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.5.4)(utf-8-validate@5.0.10)(zod@3.25.76)
       '@hanzoai/tasks':
-        specifier: file:vendor/hanzoai-tasks-1.49.0.tgz
-        version: file:vendor/hanzoai-tasks-1.49.0.tgz
+        specifier: file:vendor/hanzoai-tasks-1.49.1.tgz
+        version: file:vendor/hanzoai-tasks-1.49.1.tgz
       '@hookform/resolvers':
         specifier: ^3.3.4
         version: 3.10.0(react-hook-form@7.71.2(react@19.2.4))
@@ -2792,9 +2792,9 @@ packages:
     peerDependencies:
       '@solana/web3.js': ^1.77.3
 
-  '@hanzoai/tasks@file:vendor/hanzoai-tasks-1.49.0.tgz':
-    resolution: {integrity: sha512-DnXUh70dGji25DRNhzRNrZ0HwuS+bVBK3KXe1RJAmd79uesP6DpG6FywNycOhX75owGwjaD+xCy9wG7IvTMhww==, tarball: file:vendor/hanzoai-tasks-1.49.0.tgz}
-    version: 1.49.0
+  '@hanzoai/tasks@file:vendor/hanzoai-tasks-1.49.1.tgz':
+    resolution: {integrity: sha512-n4a30nq/lojKzRTH4B/fqucEU6Ke7CLRVKEwYKghbxXYPb9fL5R3WFDe5PnPg7gujKjVhGu0j6dzeJ1Yx/76Qw==, tarball: file:vendor/hanzoai-tasks-1.49.1.tgz}
+    version: 1.49.1
     engines: {node: '>=18'}
 
   '@headlessui/react@2.2.9':
@@ -20883,7 +20883,7 @@ snapshots:
       - utf-8-validate
       - zod
 
-  '@hanzoai/tasks@file:vendor/hanzoai-tasks-1.49.0.tgz': {}
+  '@hanzoai/tasks@file:vendor/hanzoai-tasks-1.49.1.tgz': {}
 
   '@headlessui/react@2.2.9(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
