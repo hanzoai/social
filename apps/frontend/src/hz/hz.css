@@ -1,0 +1,30 @@
+/* Hanzo Social — minimal, decoupled baseline. Uses the repo's Tailwind config
+   (same design tokens) but NOT Postiz's colors.scss/uppy/polonto, so this app
+   stays orthogonal. Dark, product-grade surface. */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --hz-accent: #7c5cff;
+}
+html,
+body {
+  margin: 0;
+  background: #0a0a0b;
+  color: #e6e6ea;
+  -webkit-font-smoothing: antialiased;
+}
+::selection {
+  background: rgba(124, 92, 255, 0.35);
+}
+/* thin dark scrollbars for the queue columns */
+.hz-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.hz-scroll::-webkit-scrollbar-thumb {
+  background: #2a2a31;
+  border-radius: 8px;
+}
