@@ -39,6 +39,14 @@ export async function proxy(request: NextRequest) {
     topResponse.headers.set(cookieName, lng);
   }
 
+  // Hanzo Social: the (social) route group owns "/" and every /hz/* route (its
+  // own hanzo.id OIDC auth + the BFF proxy). The retired Postiz auth guard below
+  // must NOT intercept them — otherwise the dashboard never renders and
+  // /hz/auth/* + /hz/bff/* get 307'd to /auth. Bypass early, keeping i18n headers.
+  if (nextUrl.pathname === '/' || nextUrl.pathname.startsWith('/hz/')) {
+    return topResponse;
+  }
+
   if (nextUrl.pathname.startsWith('/modal/') && !authCookie) {
     return NextResponse.redirect(new URL(`/auth/login-required`, nextUrl.href));
   }
