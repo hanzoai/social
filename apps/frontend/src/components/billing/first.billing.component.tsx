@@ -24,7 +24,6 @@ import { useUser } from '@social/frontend/components/layout/user.context';
 import { useDubClickId } from '@social/frontend/components/layout/dubAnalytics';
 import SafeImage from '@social/react/helpers/safe.image';
 import { useModals } from '@social/frontend/components/layout/new-modal';
-import useCookie from 'react-use-cookie';
 import { LogoutComponent } from '@social/frontend/components/layout/logout.component';
 import { DeveloperIconComponent } from '@social/frontend/components/developer/developer.icon.component';
 
@@ -54,8 +53,6 @@ export const FirstBillingComponent = () => {
   const fetch = useFetch();
   const modals = useModals();
   const t = useT();
-  const [datafast_visitor_id] = useCookie('datafast_visitor_id', '');
-  const [datafast_session_id] = useCookie('datafast_session_id', '');
 
   const loadCheckout = useCallback(async () => {
     return (
@@ -64,9 +61,6 @@ export const FirstBillingComponent = () => {
         body: JSON.stringify({
           billing: tier,
           period: period,
-          ...(datafast_visitor_id && datafast_session_id
-            ? { datafast_visitor_id, datafast_session_id }
-            : {}),
           ...(dub ? { dub } : {}),
         }),
       })

@@ -23,7 +23,6 @@ import { HanzoProvider } from '@social/frontend/components/auth/providers/hanzo.
 import dynamic from 'next/dynamic';
 import { WalletUiProvider } from '@social/frontend/components/auth/providers/placeholder/wallet.ui.provider';
 import { useT } from '@social/react/translation/get.transation.service.client';
-import useCookie from 'react-use-cookie';
 const WalletProvider = dynamic(
   () => import('@social/frontend/components/auth/providers/wallet.provider'),
   {
@@ -96,7 +95,6 @@ export function RegisterAfter({
   const router = useRouter();
   const fireEvents = useFireEvents();
   const track = useTrack();
-  const [datafast_visitor_id] = useCookie('datafast_visitor_id');
   const isAfterProvider = useMemo(() => {
     return !!token && !!provider;
   }, [token, provider]);
@@ -117,7 +115,6 @@ export function RegisterAfter({
       method: 'POST',
       body: JSON.stringify({
         ...data,
-        datafast_visitor_id,
       }),
     })
       .then(async (response) => {
