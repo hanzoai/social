@@ -27,5 +27,4 @@ export class LoginUserDto {
   @IsDefined()
   email: string;
 
-  datafast_visitor_id: string;
 }

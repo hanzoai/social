@@ -220,13 +220,9 @@ export class AuthController {
   @Post('/activate')
   async activate(
     @Body('code') code: string,
-    @Body('datafast_visitor_id') datafast_visitor_id: string,
     @Res({ passthrough: false }) response: Response
   ) {
-    const activate = await this._authService.activate(
-      code,
-      datafast_visitor_id
-    );
+    const activate = await this._authService.activate(code);
     if (!activate) {
       return response.status(200).json({ can: false });
     }
