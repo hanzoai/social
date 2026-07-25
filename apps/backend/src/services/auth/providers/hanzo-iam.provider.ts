@@ -7,9 +7,9 @@ import { OrganizationService } from '@social/nestjs-libraries/database/prisma/or
 // Hanzo IAM OAuth/OIDC provider (RFC 6749 + OIDC 1.0).
 //
 // Endpoints (per HIP-0026):
-//   GET  ${IAM_URL}/oauth/authorize    — authorization code grant
-//   POST ${IAM_URL}/oauth/token        — code exchange
-//   GET  ${IAM_URL}/oauth/userinfo     — profile (email, sub, owner)
+//   GET  ${IAM_URL}/v1/iam/oauth/authorize    — authorization code grant
+//   POST ${IAM_URL}/v1/iam/oauth/token        — code exchange
+//   GET  ${IAM_URL}/v1/iam/oauth/userinfo     — profile (email, sub, owner)
 //
 // Env wiring (set in universe/infra/k8s/social/configmap.yaml and KMSSecret):
 //   IAM_URL           = https://hanzo.id
@@ -37,7 +37,7 @@ export class HanzoIamProvider extends AuthProviderAbstract {
       scope: 'openid profile email',
       redirect_uri: REDIRECT_URI(),
     });
-    return `${IAM_URL()}/oauth/authorize?${params.toString()}`;
+    return `${IAM_URL()}/v1/iam/oauth/authorize?${params.toString()}`;
   }
 
   async getToken(code: string, _redirectUri?: string): Promise<string> {
@@ -48,7 +48,7 @@ export class HanzoIamProvider extends AuthProviderAbstract {
       client_secret: process.env.IAM_CLIENT_SECRET || '',
       redirect_uri: REDIRECT_URI(),
     });
-    const res = await fetch(`${IAM_URL()}/oauth/token`, {
+    const res = await fetch(`${IAM_URL()}/v1/iam/oauth/token`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
@@ -58,7 +58,7 @@ export class HanzoIamProvider extends AuthProviderAbstract {
     });
     if (!res.ok) {
       throw new Error(
-        `Hanzo IAM /oauth/token failed: ${res.status} ${res.statusText}`
+        `Hanzo IAM /v1/iam/oauth/token failed: ${res.status} ${res.statusText}`
       );
     }
     const { access_token } = (await res.json()) as { access_token: string };
@@ -68,11 +68,11 @@ export class HanzoIamProvider extends AuthProviderAbstract {
   async getUser(
     access_token: string
   ): Promise<{ email: string; id: string }> {
-    const res = await fetch(`${IAM_URL()}/oauth/userinfo`, {
+    const res = await fetch(`${IAM_URL()}/v1/iam/oauth/userinfo`, {
       headers: { Authorization: `Bearer ${access_token}` },
     });
     if (!res.ok) {
-      throw new Error(`Hanzo IAM /oauth/userinfo failed: ${res.status}`);
+      throw new Error(`Hanzo IAM /v1/iam/oauth/userinfo failed: ${res.status}`);
     }
     const data = (await res.json()) as {
       sub?: string;
@@ -100,7 +100,7 @@ export class HanzoIamProvider extends AuthProviderAbstract {
     orgId: string
   ): Promise<void> {
     try {
-      const res = await fetch(`${IAM_URL()}/oauth/userinfo`, {
+      const res = await fetch(`${IAM_URL()}/v1/iam/oauth/userinfo`, {
         headers: { Authorization: `Bearer ${providerToken}` },
       });
       if (!res.ok) return;

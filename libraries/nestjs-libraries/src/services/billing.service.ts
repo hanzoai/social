@@ -60,7 +60,7 @@ async function iamServiceToken(): Promise<string | undefined> {
     return cachedServiceToken.token;
   }
   const iamUrl = (process.env.IAM_URL || 'https://hanzo.id').replace(/\/+$/, '');
-  const res = await fetch(`${iamUrl}/oauth/token`, {
+  const res = await fetch(`${iamUrl}/v1/iam/oauth/token`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
