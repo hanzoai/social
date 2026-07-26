@@ -1,12 +1,8 @@
 import { PrismaRepository } from '@social/nestjs-libraries/database/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { Post as PostBody } from '@social/nestjs-libraries/dtos/posts/create.post.dto';
-import {
-  APPROVED_SUBMIT_FOR_ORDER,
-  CreationMethod,
-  Post,
-  State,
-} from '@prisma/client';
+import { Post } from '@prisma/client';
+import { APPROVED_SUBMIT_FOR_ORDER, CreationMethod, State } from '../enums';
 import { GetPostsDto } from '@social/nestjs-libraries/dtos/posts/get.posts.dto';
 import { GetPostsListDto } from '@social/nestjs-libraries/dtos/posts/get.posts.list.dto';
 import dayjs from 'dayjs';

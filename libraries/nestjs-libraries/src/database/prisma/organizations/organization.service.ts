@@ -6,7 +6,8 @@ import { AddTeamMemberDto } from '@social/nestjs-libraries/dtos/settings/add.tea
 import { AuthService } from '@social/helpers/auth/auth.service';
 import dayjs from 'dayjs';
 import { makeId } from '@social/nestjs-libraries/services/make.is';
-import { Organization, ShortLinkPreference } from '@prisma/client';
+import { Organization } from '@prisma/client';
+import { ShortLinkPreference } from '../enums';
 import { AutopostService } from '@social/nestjs-libraries/database/prisma/autopost/autopost.service';
 
 @Injectable()

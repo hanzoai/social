@@ -21,7 +21,7 @@ import { getCookieUrlFromDomain } from '@social/helpers/subdomain/subdomain.mana
 import { EmailService } from '@social/nestjs-libraries/services/email.service';
 import { RealIP } from 'nestjs-real-ip';
 import { UserAgent } from '@social/nestjs-libraries/user/user.agent';
-import { Provider } from '@prisma/client';
+import { Provider } from '@social/nestjs-libraries/database/prisma/enums';
 import * as Sentry from '@sentry/nestjs';
 
 @ApiTags('Auth')

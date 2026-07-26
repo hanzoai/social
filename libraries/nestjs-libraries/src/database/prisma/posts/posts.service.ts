@@ -7,14 +7,8 @@ import { PostsRepository } from '@social/nestjs-libraries/database/prisma/posts/
 import { CreatePostDto } from '@social/nestjs-libraries/dtos/posts/create.post.dto';
 import dayjs from 'dayjs';
 import { IntegrationManager } from '@social/nestjs-libraries/integrations/integration.manager';
-import {
-  Integration,
-  Post,
-  Media,
-  From,
-  CreationMethod,
-  State,
-} from '@prisma/client';
+import { Integration, Post, Media } from '@prisma/client';
+import { From, CreationMethod, State } from '../enums';
 import { GetPostsDto } from '@social/nestjs-libraries/dtos/posts/get.posts.dto';
 import { GetPostsListDto } from '@social/nestjs-libraries/dtos/posts/get.posts.list.dto';
 import { shuffle } from 'lodash';
@@ -919,7 +913,9 @@ export class PostsService {
           post.settings.__type.split('-')[0].toLowerCase(),
           posts[0].id,
           orgId,
-          posts[0].state
+          // SQLite stores state as String; the column is only ever written from
+          // the State vocabulary, so narrow it back at this boundary.
+          posts[0].state as State
         ).catch((err) => {});
       }
 

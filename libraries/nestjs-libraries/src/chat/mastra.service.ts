@@ -12,7 +12,7 @@ export class MastraService {
     MastraService.mastra =
       MastraService.mastra ||
       new Mastra({
-        storage: pStore,
+        storage: pStore ?? undefined,
         agents: {
           social: await this._loadToolsService.agent(),
         },

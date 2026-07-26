@@ -1,7 +1,7 @@
 import { PrismaRepository } from '@social/nestjs-libraries/database/prisma/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { AnnouncementDto } from '@social/nestjs-libraries/dtos/announcements/announcements.dto';
-import { AnnouncementColor } from '@prisma/client';
+import { AnnouncementColor } from '../enums';
 
 @Injectable()
 export class AnnouncementsRepository {

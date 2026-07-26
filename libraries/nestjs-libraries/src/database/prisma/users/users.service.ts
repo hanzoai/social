@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { UsersRepository } from '@social/nestjs-libraries/database/prisma/users/users.repository';
-import { Provider } from '@prisma/client';
+import { Provider } from '../enums';
 import { UserDetailDto } from '@social/nestjs-libraries/dtos/users/user.details.dto';
 import { EmailNotificationsDto } from '@social/nestjs-libraries/dtos/users/email-notifications.dto';
 import { OrganizationRepository } from '@social/nestjs-libraries/database/prisma/organizations/organization.repository';

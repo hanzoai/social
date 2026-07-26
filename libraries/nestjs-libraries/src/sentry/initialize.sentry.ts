@@ -1,11 +1,24 @@
 import * as Sentry from '@sentry/nestjs';
-import { nodeProfilingIntegration } from '@sentry/profiling-node';
 import { capitalize } from 'lodash';
+
+// @sentry/profiling-node loads a native binding that is not built for every
+// Node release. Importing it at module scope crashed the whole backend on
+// startup even when Sentry was disabled — the early return below never got to
+// run. Resolve it lazily, after the DSN guard, and treat it as optional.
+const loadProfilingIntegration = () => {
+  try {
+    return require('@sentry/profiling-node').nodeProfilingIntegration();
+  } catch {
+    return null;
+  }
+};
 
 export const initializeSentry = (appName: string, allowLogs = false) => {
   if (!process.env.NEXT_PUBLIC_SENTRY_DSN) {
     return null;
   }
+
+  const profiling = loadProfilingIntegration();
 
   try {
     Sentry.init({
@@ -24,8 +37,7 @@ export const initializeSentry = (appName: string, allowLogs = false) => {
       dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
       spotlight: process.env.SENTRY_SPOTLIGHT === '1',
       integrations: [
-        // Add our Profiling integration
-        nodeProfilingIntegration(),
+        ...(profiling ? [profiling] : []),
         Sentry.consoleLoggingIntegration({ levels: ['log', 'info', 'warn', 'error', 'debug', 'assert', 'trace'] }),
         Sentry.openAIIntegration({
           recordInputs: true,

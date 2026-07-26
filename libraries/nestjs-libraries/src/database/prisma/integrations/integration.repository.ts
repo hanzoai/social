@@ -27,13 +27,11 @@ export class IntegrationRepository {
           {
             name: {
               contains: q,
-              mode: 'insensitive',
             },
           },
           {
             username: {
               contains: q,
-              mode: 'insensitive',
             },
           },
         ],
@@ -57,15 +55,30 @@ export class IntegrationRepository {
     if (mentions.length === 0) {
       return [] as any[];
     }
-    return this._mentions.model.mentions.createMany({
-      data: mentions.map((mention) => ({
-        platform,
-        name: mention.name,
-        username: mention.username,
-        image: mention.image,
-      })),
-      skipDuplicates: true,
-    });
+    // SQLite has no createMany({ skipDuplicates }). Mentions are keyed by
+    // @@id([name, username, platform, image]), so a no-op upsert on that key is
+    // the same insert-if-absent guarantee, portably.
+    return Promise.all(
+      mentions.map((mention) =>
+        this._mentions.model.mentions.upsert({
+          where: {
+            name_username_platform_image: {
+              name: mention.name,
+              username: mention.username,
+              platform,
+              image: mention.image,
+            },
+          },
+          update: {},
+          create: {
+            platform,
+            name: mention.name,
+            username: mention.username,
+            image: mention.image,
+          },
+        })
+      )
+    );
   }
 
   async checkPreviousConnections(org: string, id: string) {

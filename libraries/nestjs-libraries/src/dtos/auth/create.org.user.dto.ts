@@ -6,7 +6,7 @@ import {
   MinLength,
   ValidateIf,
 } from 'class-validator';
-import { Provider } from '@prisma/client';
+import { Provider } from '../../database/prisma/enums';
 
 export class CreateOrgUserDto {
   @IsString()

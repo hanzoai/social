@@ -9,7 +9,8 @@ import {
   NotificationService,
   NotificationType,
 } from '@social/nestjs-libraries/database/prisma/notifications/notification.service';
-import { Integration, Post, State } from '@prisma/client';
+import { Integration, Post } from '@prisma/client';
+import { State } from '@social/nestjs-libraries/database/prisma/enums';
 import { stripHtmlValidation } from '@social/helpers/utils/strip.html.validation';
 import { IntegrationManager } from '@social/nestjs-libraries/integrations/integration.manager';
 import { AuthTokenDetails } from '@social/nestjs-libraries/integrations/social/social.integrations.interface';

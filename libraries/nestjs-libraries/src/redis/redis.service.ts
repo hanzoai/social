@@ -1,6 +1,6 @@
-import { Redis } from 'ioredis';
+import { KV } from '@hanzo/kv';
 
-// Create a mock Redis implementation for testing environments
+// Create a mock KV implementation for testing environments
 class MockRedis {
   private data: Map<string, any> = new Map();
 
@@ -18,13 +18,13 @@ class MockRedis {
     return 1;
   }
 
-  // Add other Redis methods as needed for your tests
+  // Add other KV methods as needed for your tests
 }
 
-// Use real Redis if REDIS_URL is defined, otherwise use MockRedis
+// Use real KV if REDIS_URL is defined, otherwise use MockRedis
 export const ioRedis = process.env.REDIS_URL
-  ? new Redis(process.env.REDIS_URL, {
+  ? new KV(process.env.REDIS_URL, {
       maxRetriesPerRequest: null,
       connectTimeout: 10000,
     })
-  : (new MockRedis() as unknown as Redis); // Type cast to Redis to maintain interface compatibility
+  : (new MockRedis() as unknown as KV); // Type cast to KV to maintain interface compatibility

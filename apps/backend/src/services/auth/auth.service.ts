@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { Provider, User } from '@prisma/client';
+import { User } from '@prisma/client';
+import { Provider } from '@social/nestjs-libraries/database/prisma/enums';
 import { CreateOrgUserDto } from '@social/nestjs-libraries/dtos/auth/create.org.user.dto';
 import { LoginUserDto } from '@social/nestjs-libraries/dtos/auth/login.user.dto';
 import { UsersService } from '@social/nestjs-libraries/database/prisma/users/users.service';

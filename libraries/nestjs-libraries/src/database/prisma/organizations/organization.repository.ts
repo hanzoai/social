@@ -1,5 +1,5 @@
 import { PrismaRepository } from '@social/nestjs-libraries/database/prisma/prisma.service';
-import { Role, ShortLinkPreference, SubscriptionTier } from '@prisma/client';
+import { Role, ShortLinkPreference, SubscriptionTier } from '../enums';
 import { Injectable } from '@nestjs/common';
 import { AuthService } from '@social/helpers/auth/auth.service';
 import { CreateOrgUserDto } from '@social/nestjs-libraries/dtos/auth/create.org.user.dto';

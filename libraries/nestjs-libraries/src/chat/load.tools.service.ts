@@ -90,7 +90,7 @@ export class LoadToolsService {
       model: openai('gpt-5.2'),
       tools,
       memory: new Memory({
-        storage: pStore,
+        storage: pStore ?? undefined,
         options: {
           generateTitle: true,
           workingMemory: {
