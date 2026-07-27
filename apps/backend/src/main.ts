@@ -18,7 +18,6 @@ import { SubscriptionExceptionFilter } from '@social/backend/services/auth/permi
 import { PostValidationExceptionFilter } from '@social/backend/api/routes/posts.validation.exception';
 import { HttpExceptionFilter } from '@social/nestjs-libraries/services/exception.filter';
 import { ConfigurationChecker } from '@social/helpers/configuration/configuration.checker';
-import { startMcp } from '@social/nestjs-libraries/chat/start.mcp';
 
 async function start() {
   const app = await NestFactory.create(AppModule, {
@@ -31,13 +30,11 @@ async function start() {
         'auth',
         'showorg',
         'impersonate',
-        'x-copilotkit-runtime-client-gql-version',
       ],
       exposedHeaders: [
         'reload',
         'onboarding',
         'activate',
-        'x-copilotkit-runtime-client-gql-version',
         ...(process.env.NOT_SECURED ? ['auth', 'showorg', 'impersonate'] : []),
       ],
       origin: [
@@ -48,15 +45,13 @@ async function start() {
     },
   });
 
-  await startMcp(app);
-
   app.useGlobalPipes(
     new ValidationPipe({
       transform: true,
     })
   );
 
-  app.use(['/copilot/{*splat}', '/posts'], (req: any, res: any, next: any) => {
+  app.use(['/posts'], (req: any, res: any, next: any) => {
     json({ limit: '50mb' })(req, res, next);
   });
 

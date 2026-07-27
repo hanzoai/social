@@ -6,7 +6,6 @@ import { OrganizationService } from '@social/nestjs-libraries/database/prisma/or
 import { UsersService } from '@social/nestjs-libraries/database/prisma/users/users.service';
 import { getCookieUrlFromDomain } from '@social/helpers/subdomain/subdomain.management';
 import { HttpForbiddenException } from '@social/nestjs-libraries/services/exception.filter';
-import { MastraService } from '@social/nestjs-libraries/chat/mastra.service';
 
 export const removeAuth = (res: Response) => {
   res.cookie('auth', '', {

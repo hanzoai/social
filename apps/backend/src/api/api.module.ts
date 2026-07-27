@@ -19,7 +19,6 @@ import { NotificationsController } from '@social/backend/api/routes/notification
 import { OpenaiService } from '@social/nestjs-libraries/openai/openai.service';
 import { ExtractContentService } from '@social/nestjs-libraries/openai/extract.content.service';
 import { CodesService } from '@social/nestjs-libraries/services/codes.service';
-import { CopilotController } from '@social/backend/api/routes/copilot.controller';
 import { PublicController } from '@social/backend/api/routes/public.controller';
 import { RootController } from '@social/backend/api/routes/root.controller';
 import { TrackService } from '@social/nestjs-libraries/track/track.service';
@@ -54,7 +53,6 @@ const authenticatedController = [
   MediaController,
   BillingController,
   NotificationsController,
-  CopilotController,
   WebhookController,
   SignatureController,
   AutopostController,

@@ -11,7 +11,6 @@ import { ThirdPartyModule } from '@social/nestjs-libraries/3rdparties/thirdparty
 import { VideoModule } from '@social/nestjs-libraries/videos/video.module';
 import { SentryModule } from '@sentry/nestjs/setup';
 import { FILTER } from '@social/nestjs-libraries/sentry/sentry.exception';
-import { ChatModule } from '@social/nestjs-libraries/chat/chat.module';
 import { getTemporalModule } from '@social/nestjs-libraries/temporal/temporal.module';
 import { TemporalRegisterMissingSearchAttributesModule } from '@social/nestjs-libraries/temporal/temporal.register';
 import { InfiniteWorkflowRegisterModule } from '@social/nestjs-libraries/temporal/infinite.workflow.register';
@@ -28,7 +27,6 @@ import { ioRedis } from '@social/nestjs-libraries/redis/redis.service';
     AgentModule,
     ThirdPartyModule,
     VideoModule,
-    ChatModule,
     getTemporalModule(false),
     TemporalRegisterMissingSearchAttributesModule,
     InfiniteWorkflowRegisterModule,
@@ -60,7 +58,6 @@ import { ioRedis } from '@social/nestjs-libraries/redis/redis.service';
     PublicApiModule,
     AgentModule,
     ThrottlerModule,
-    ChatModule,
   ],
 })
 export class AppModule {}
