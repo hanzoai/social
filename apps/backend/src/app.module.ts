@@ -37,7 +37,10 @@ import { ioRedis } from '@social/nestjs-libraries/redis/redis.service';
           limit: process.env.API_LIMIT ? Number(process.env.API_LIMIT) : 90,
         },
       ],
-      storage: new ThrottlerStorageRedisService(ioRedis),
+      // @hanzo/kv speaks the RESP wire protocol, so this works at runtime;
+      // nestjs-throttler-storage-redis types its parameter as an ioredis
+      // instance specifically, which KV is not structurally.
+      storage: new ThrottlerStorageRedisService(ioRedis as never),
     }),
   ],
   controllers: [],
