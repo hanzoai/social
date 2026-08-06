@@ -1,0 +1,25 @@
+# Canonical CI/CD config for hanzoai/social — the one file both the hanzoai/ci
+# reusable (.hanzo/workflows/cicd.yml) and platform.hanzo.ai read.
+#
+# No `images:` and no `deploy:`: this is an nx monorepo of four deployables
+# (frontend, backend, orchestrator, extension) behind one root Dockerfile, and
+# naming one image for four apps would be a claim this repo does not support.
+#
+# The gate is install plus the workspace build. The install half is not
+# ceremony: `postinstall` runs `prisma generate` against
+# libraries/nestjs-libraries/src/database/prisma/schema.prisma, so the generated
+# client — the type surface the whole backend is written against — is rebuilt
+# from the schema on every run, and a schema/query divergence fails right there.
+# The build half then compiles frontend, backend and orchestrator through nx;
+# `--workspace-concurrency=1` is the repo's own setting and is kept, because
+# these three builds in parallel are what exhausts a runner.
+#
+# Not claimed: `pnpm test`. The jest projects come from `getJestProjects()` and
+# the backend suites want postgres and redis, which this fleet does not run.
+test:
+  - name: build
+    run: |
+      set -e
+      corepack enable
+      pnpm install --frozen-lockfile
+      pnpm build
