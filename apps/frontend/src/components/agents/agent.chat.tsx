@@ -8,11 +8,12 @@ import React, {
   useMemo,
   useState,
 } from 'react';
-import { CopilotChat, CopilotKitCSSProperties } from '@copilotkit/react-ui';
 import {
+  CopilotChat,
+  CopilotKitCSSProperties,
   InputProps,
   UserMessageProps,
-} from '@copilotkit/react-ui/dist/components/chat/props';
+} from '@copilotkit/react-ui';
 import { Input } from '@social/frontend/components/agents/agent.input';
 import { useModals } from '@social/frontend/components/layout/new-modal';
 import {
