@@ -1,6 +1,7 @@
 {
   "name": "hanzo-social",
   "version": "1.0.0",
+  "private": true,
   "description": "Hanzo Social \u2014 agentic social media scheduling. Forked from hanzoai/social under AGPL-3.0.",
   "main": "index.js",
   "license": "AGPL-3.0",
