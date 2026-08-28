@@ -2,7 +2,7 @@
   "name": "hanzo-social",
   "version": "1.0.0",
   "private": true,
-  "description": "Hanzo Social \u2014 agentic social media scheduling. Forked from hanzoai/social under AGPL-3.0.",
+  "description": "Hanzo Social — agentic social media scheduling. Forked from hanzoai/social under AGPL-3.0.",
   "main": "index.js",
   "license": "AGPL-3.0",
   "keywords": [
@@ -20,7 +20,7 @@
   "engines": {
     "node": ">=22.12.0 <23.0.0"
   },
-  "packageManager": "pnpm@10.6.1",
+  "packageManager": "pnpm@11.24.0",
   "scripts": {
     "dev": "pnpm run --filter ./apps/extension --filter ./apps/orchestrator --filter ./apps/backend --filter ./apps/frontend --parallel dev",
     "dev-backend": "pnpm run --filter ./apps/backend --filter ./apps/frontend --parallel dev",
@@ -62,8 +62,8 @@
     "@copilotkit/react-ui": "1.10.6",
     "@copilotkit/runtime": "1.10.6",
     "@dub/analytics": "^0.0.32",
-    "@hanzo/event": "^0.3.3",
-    "@hanzo/plans": "^1.1.4",
+    "@hanzo/event": "catalog:",
+    "@hanzo/plans": "catalog:",
     "@hookform/resolvers": "^3.3.4",
     "@langchain/community": "^1.1.27",
     "@langchain/core": "^1.1.39",
@@ -92,7 +92,7 @@
     "@neynar/nodejs-sdk": "^3.112.0",
     "@neynar/react": "^1.2.22",
     "@pigment-css/react": "^0.0.30",
-    "@hanzo/wallets": "^0.1.0",
+    "@hanzo/wallets": "catalog:",
     "@prisma/client": "6.5.0",
     "@sentry/nestjs": "^10.26.0",
     "@sentry/nextjs": "^10.26.0",
