@@ -1,62 +1,36 @@
-This project is Hanzo Social (a hard fork of gitroomhq/postiz-app, AGPL-3.0), a tool to schedule social media and chat posts to 28+ channels. Deployed at https://social.hanzo.ai and integrated with Hanzo IAM (hanzo.id), Hanzo KMS, Hanzo S3, and ~/work/hanzo/bot. Upstream identifiers (env vars like `social-*`, package paths, internal symbols) are preserved verbatim; only user-facing brand surfaces are rebranded.
-You can add posts to the calendar, they will be added into a workflow and posted at the right time.
-You can find things like:
-- Schedule posts
-- Calendar view
-- Analytics
-- Team management
-- Media library
+# Hanzo Social — social.hanzo.ai
 
-This project is a monorepo with a root only package.json of dependencies.
-Made with PNPM.
-We have 3 important folders
+This repo is the dedicated frontend, and only the frontend.
 
-- apps/backend - this is where the API code is (NESTJS)
-- apps/orchestrator - this is temporal, it's for background jobs (NESTJS) it contains all the workflows and activities
-- apps/frontend - this is the code of the frontend (Vite ReactJS)
-- /libraries contains a lot of services shared between backend and orchestrator and frontend components.
+It began as a hard fork of gitroomhq/postiz-app. That stack — `apps/backend` (NestJS),
+`apps/orchestrator` (Temporal), `apps/frontend`, `libraries/` — was **folded into the
+unified cloud binary** as `/v1/social` (`hanzoai/cloud`, `clients/social`: a native-Go
+per-org accounts + posts store on Base/SQLite, with the scheduler and the publish edge)
+and its pods were retired. The fork is therefore **deleted**, not disabled: keeping a
+dead second implementation of the same product is the drift this repo now exists to
+avoid.
 
-We are using only pnpm, don't use any other dependency manager.
-Never install frontend components from npmjs, focus on writing native components.
+## The shape
 
-The project uses tailwind 3, before writing any component look at:
-- /apps/frontend/src/app/colors.scss
-- /apps/frontend/src/app/global.scss
-- /apps/frontend/tailwind.config.js
+- **Product** → `SocialResource` in `@hanzo/ui/product/social`. The Hanzo Cloud Console
+  renders the SAME component for its Publish surface. Change the product THERE; a
+  change made here would be a fork.
+- **Contract** → `@hanzo/ui/product/social/api` (`createSocialApi`), the typed
+  `/v1/social` routes + defensive normalizers. Imports nothing — no React — so a data
+  layer can bind it without a component tree.
+- **This repo** → the transport (`src/api.ts`), the mount (`app/page.tsx`), the theme on
+  the shared scale (`app/providers.tsx` + `@hanzo/ui/gui-config`), the shell
+  (`app/layout.tsx`). Four files.
 
-All the --color-custom* are deprecated, don't use them.
+## Rules
 
-And check other components in the system before to get the right design.
-
-When working on the backend we need to pass the 3 layers:
-Controller >> Service >> Repository (no shortcuts)
-In some cases we will have
-Controller >> Mananger >> Service >> Repository.
-
-Most of the server logic should be inside of libs/server.
-The backend repository is mostly used to write controller, and import files from libs.server.
-
-For the frontend follow this:
-- Many of the UI components lives in /apps/frontend/src/components/ui
-- Routing is in /apps/frontend/src/app
-- Components are in /apps/frontend/src/components
-- always use SWR to fetch stuff, and use "useFetch" hook from /libraries/helpers/src/utils/custom.fetch.tsx
-
-When using SWR, each one have to be in a seperate hook and must comply with react-hooks/rules-of-hooks, never put eslint-disable-next-line on it.
-
-It means that this is valid:
-const useCommunity = () => {
-   return useSWR....
-}
-
-This is not valid:
-const useCommunity = () => {
-  return {
-    communities: () => useSWR<CommunitiesListResponse>("communities", getCommunities),
-    providers: () => useSWR<ProvidersListResponse>("providers", getProviders),
-  };
-}
-
-- Linting of the project can run only from the root.
-- Use only pnpm.
-- The system is in production with many users, if you want to change something, you need to be sure that you are not breaking anything for existing users and a migration might be needed
+- pnpm only, hoisted linker (`.npmrc`) — Next discovers the `@hanzo gui` packages to
+  transpile by reading `node_modules`, so the tree must be flat.
+- Never add a component here that belongs in `@hanzo/ui/product`. If Publish needs a
+  new piece, it lands in the package and BOTH hosts get it.
+- `/v1` only, same-origin, no prefix. The org is resolved SERVER-SIDE from the session
+  owner claim; the browser never sends one.
+- Build + deploy is `hanzo.yml` (one image, `ghcr.io/hanzoai/social`) read by both
+  `hanzoai/ci` and platform.hanzo.ai. No per-repo build logic.
+- LICENSE remains AGPL-3.0 as inherited; relicensing is a decision for a human, not a
+  side effect of deleting the derived code.

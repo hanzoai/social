@@ -1,0 +1,22 @@
+# Canonical CI config for hanzoai/social — read by the hanzoai/ci reusable
+# (.github/workflows/cicd.yml) and platform.hanzo.ai.
+#
+# ONE image: the dedicated social.hanzo.ai frontend. The retired Postiz-derived
+# backend/orchestrator images are gone — that stack was folded into the cloud binary
+# as /v1/social (hanzoai/cloud clients/social), so this repo builds a UI and nothing
+# else. hanzoai/ci pushes to `repo:` and server-side-mirrors to registry.hanzo.ai.
+images:
+  - name: social
+    context: .
+    dockerfile: Dockerfile
+    repo: ghcr.io/hanzoai/social
+
+# CI gates (`bash -c` per entry). The build IS the typecheck — next build runs tsc —
+# so the gate is the real artifact's compile, not a weaker proxy for it.
+test:
+  - name: build
+    run: |
+      set -e
+      corepack enable && corepack prepare pnpm@9.15.9 --activate
+      pnpm install --no-frozen-lockfile
+      pnpm run build

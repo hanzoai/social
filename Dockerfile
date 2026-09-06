@@ -1,63 +1,31 @@
-# syntax=docker/dockerfile:1.7
-
-# Hanzo Social — production multi-target build.
+# Hanzo Social — the dedicated social.hanzo.ai frontend. AGPL-3.0 (see LICENSE).
 #
-# Three runtime targets, one per app. No nginx, no pm2 — each container runs
-# a single Node process. Cluster ingress (hanzoai/ingress, traefik) does
-# the path-based routing across them.
-#
-# Build all three:
-#   docker buildx build --target backend      -t ghcr.io/hanzoai/social-backend      .
-#   docker buildx build --target frontend     -t ghcr.io/hanzoai/social-frontend     .
-#   docker buildx build --target orchestrator -t ghcr.io/hanzoai/social-orchestrator .
-
-ARG NODE_VERSION=22.20-bookworm-slim
-ARG NEXT_PUBLIC_VERSION=dev
-
-# ─── Stage 1: build (shared across all three apps) ───────────────────
-FROM node:${NODE_VERSION} AS build
-ARG NEXT_PUBLIC_VERSION
-ENV NEXT_PUBLIC_VERSION=$NEXT_PUBLIC_VERSION
+# One Node process, one port. There is no backend stage: the API is the unified
+# cloud binary's /v1/social, served SAME-ORIGIN at this host by the edge — so this
+# image ships only the UI, and the product itself lives in @hanzo/ui/product/social
+# (the same component the console renders).
+FROM public.ecr.aws/docker/library/node:24-alpine AS build
 WORKDIR /app
+# Copy ALL source FIRST, then install — order matters under Kaniko --single-snapshot:
+# a COPY that FOLLOWS the install in the same stage drops the freshly created
+# node_modules (the "next not found" cause). Putting COPY first means node_modules is
+# created by the LAST RUNs and nothing clobbers it.
+COPY . .
+# pnpm with the hoisted linker (.npmrc): Next's transpilePackages discovers the
+# @hanzogui/* packages by reading node_modules, so the tree has to be flat.
+RUN corepack enable && corepack prepare pnpm@9.15.9 --activate \
+ && pnpm install --no-frozen-lockfile --prod=false
+ENV NEXT_TELEMETRY_DISABLED=1 NODE_OPTIONS=--max-old-space-size=6144
+RUN pnpm run build
 
-RUN apt-get update \
- && apt-get install -y --no-install-recommends g++ make python3-pip openssl \
- && rm -rf /var/lib/apt/lists/*
-
-RUN npm --no-update-notifier --no-fund --global install pnpm@10.6.1
-
-COPY . /app
-RUN pnpm install --frozen-lockfile
-RUN NODE_OPTIONS="--max-old-space-size=8192" pnpm -r --workspace-concurrency=1 --filter ./apps/backend --filter ./apps/orchestrator run build
-
-# ─── Stage 2a: backend (NestJS, port 3000) ───────────────────────────
-FROM node:${NODE_VERSION} AS backend
-ENV NODE_ENV=production
+FROM public.ecr.aws/docker/library/node:24-alpine AS runner
 WORKDIR /app
-RUN apt-get update && apt-get install -y --no-install-recommends openssl && rm -rf /var/lib/apt/lists/* \
- && npm --no-update-notifier --no-fund --global install pnpm@10.6.1
-COPY --from=build /app /app
-EXPOSE 3000
-# Run prisma db push on startup so schema drift is reconciled before serving.
-# (Postiz upstream pattern — see root package.json "pm2-run".)
-CMD ["sh", "-c", "pnpm run prisma-db-push && pnpm --filter ./apps/backend start"]
-
-# ─── Stage 2b: frontend (Next.js SSR, port 4200) ─────────────────────
-FROM node:${NODE_VERSION} AS frontend
-ENV NODE_ENV=production
-WORKDIR /app
-RUN apt-get update && apt-get install -y --no-install-recommends openssl && rm -rf /var/lib/apt/lists/* \
- && npm --no-update-notifier --no-fund --global install pnpm@10.6.1
-COPY --from=build /app /app
-RUN NODE_OPTIONS="--max-old-space-size=8192" pnpm --filter ./apps/frontend run build
+ENV NODE_ENV=production NEXT_TELEMETRY_DISABLED=1 PORT=4200
+RUN addgroup -S app && adduser -S app -G app
+COPY --from=build /app/.next ./.next
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/package.json ./package.json
+COPY --from=build /app/next.config.mjs ./next.config.mjs
+USER app
 EXPOSE 4200
-CMD ["sh", "-c", "pnpm --filter ./apps/frontend start"]
-
-# ─── Stage 2c: orchestrator (Temporal worker, no HTTP port) ──────────
-FROM node:${NODE_VERSION} AS orchestrator
-ENV NODE_ENV=production
-WORKDIR /app
-RUN apt-get update && apt-get install -y --no-install-recommends openssl && rm -rf /var/lib/apt/lists/* \
- && npm --no-update-notifier --no-fund --global install pnpm@10.6.1
-COPY --from=build /app /app
-CMD ["sh", "-c", "pnpm --filter ./apps/orchestrator start"]
+CMD ["node", "node_modules/next/dist/bin/next", "start", "-p", "4200"]
