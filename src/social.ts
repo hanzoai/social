@@ -258,7 +258,8 @@ export function edit(http: HttpClient, id: string, draft: Partial<Draft>): Promi
 
 /** Forget a post: DELETE /v1/social/posts/:id. */
 export function drop(http: HttpClient, id: string): Promise<unknown> {
-  return http.json({ method: 'DELETE', path: `/v1/social/posts/${encodeURIComponent(id)}` })
+  // 204: there is no body to parse. A refusal still throws.
+  return http.raw({ method: 'DELETE', path: `/v1/social/posts/${encodeURIComponent(id)}` }).then(() => undefined)
 }
 
 /**
@@ -299,7 +300,7 @@ export function editAccount(
 
 /** Forget a target: DELETE /v1/social/accounts/:id. */
 export function dropAccount(http: HttpClient, id: string): Promise<unknown> {
-  return http.json({ method: 'DELETE', path: `/v1/social/accounts/${encodeURIComponent(id)}` })
+  return http.raw({ method: 'DELETE', path: `/v1/social/accounts/${encodeURIComponent(id)}` }).then(() => undefined)
 }
 
 /**
