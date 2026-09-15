@@ -27,7 +27,6 @@ images:
     context: .
     dockerfile: Dockerfile
     repo: ghcr.io/hanzoai/social
-    platforms: [linux/amd64]
     # No build_secrets, and none belong here. Every credential that names a
     # person is minted by hanzo.id at sign-in; every credential that names a
     # network is sealed in KMS and read only by the publisher, server-side.
