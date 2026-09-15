@@ -1,9 +1,9 @@
 // Every network, with the two separate things it needs before a post can go out.
 //
 // THE CONSENT is the org's credential for the network — the OAuth the person
-// gives once, sealed into KMS. `GET /v1/integration` reports whether this org
+// gives once, sealed into KMS. `GET /v1/provider` reports whether this org
 // has it and whether this deployment could even ask for it;
-// `POST /v1/integration/:provider/connect` starts it and answers the network's
+// `POST /v1/provider/:provider/connect` starts it and answers the network's
 // own consent URL.
 //
 // THE TARGETS are the handles a publish fans out to — `/v1/social/accounts`.

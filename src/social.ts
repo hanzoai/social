@@ -8,7 +8,7 @@
 //                     An ACCOUNT here is a publish target — a network and a
 //                     handle. A POST is content on one channel, with a state.
 //
-//   /v1/integration   the org's CREDENTIAL for a network: the OAuth consent a
+//   /v1/provider   the org's CREDENTIAL for a network: the OAuth consent a
 //                     person gives once, sealed into KMS and never returned.
 //                     This is where `Connect` actually leads.
 //
@@ -16,7 +16,7 @@
 // them side by side rather than folding one into the other — they are separately
 // true, and a screen that merged them would have to lie about which was missing.
 //
-// NO CREDENTIAL EVER REACHES THIS CODE. `GET /v1/integration/connectors/:id/token`
+// NO CREDENTIAL EVER REACHES THIS CODE. `GET /v1/connection/:id/token`
 // is the one custody exit the platform offers and nothing here calls it: a
 // browser has no use for a provider token, and a surface that held one would be
 // a place to leak it from. The publisher reads it server-side.
@@ -205,7 +205,7 @@ export function usePosts(http: HttpClient | null, status?: string): Read<Post[]>
 }
 
 /**
- * The org's credential standing, network by network: GET /v1/integration.
+ * The org's credential standing, network by network: GET /v1/provider.
  *
  * The catalog carries every connector the platform knows — Slack, GitHub, the
  * rest — so it is narrowed to the networks the social API will actually publish
@@ -219,7 +219,7 @@ export function useConnections(
   return useRead(
     http,
     async (h) => {
-      const all = await h.collection<Connection>('providers', { path: '/v1/integration' })
+      const all = await h.collection<Connection>('providers', { path: '/v1/provider' })
       const want = new Set(only ? only.split(',') : [])
       return all.filter((one) => want.has(one.id))
     },
@@ -304,7 +304,7 @@ export function dropAccount(http: HttpClient, id: string): Promise<unknown> {
 }
 
 /**
- * Begin the org's consent for one network: POST /v1/integration/:provider/connect.
+ * Begin the org's consent for one network: POST /v1/provider/:provider/connect.
  *
  * The body carries no `token` key, and that absence is what selects the
  * three-legged flow over sealing a credential directly — the platform answers
@@ -315,16 +315,16 @@ export function dropAccount(http: HttpClient, id: string): Promise<unknown> {
 export function connect(http: HttpClient, provider: string): Promise<{ authorizeUrl?: string }> {
   return http.json<{ authorizeUrl?: string }>({
     method: 'POST',
-    path: `/v1/integration/${encodeURIComponent(provider)}/connect`,
+    path: `/v1/provider/${encodeURIComponent(provider)}/connect`,
     body: {},
   })
 }
 
-/** Revoke and forget the org's credential: POST /v1/integration/:provider/disconnect. */
+/** Revoke and forget the org's credential: POST /v1/provider/:provider/disconnect. */
 export function disconnect(http: HttpClient, provider: string): Promise<{ disconnected: boolean }> {
   return http.json<{ disconnected: boolean }>({
     method: 'POST',
-    path: `/v1/integration/${encodeURIComponent(provider)}/disconnect`,
+    path: `/v1/provider/${encodeURIComponent(provider)}/disconnect`,
     body: {},
   })
 }
