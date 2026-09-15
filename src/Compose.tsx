@@ -23,7 +23,7 @@ import { useState } from 'react'
 import { Trash2 } from 'lucide-react'
 import { Box, Text, XStack, YStack } from '@hanzo/ui'
 
-import { Act, Ready, Failed, Screen } from '~/page'
+import { Act, Failed, Ready, Screen } from '~/page'
 import { Mark, tone } from '~/status'
 import { MEDIA, check, kind, rule } from '~/network'
 import { fromField, now, toField } from '~/time'
@@ -473,6 +473,8 @@ export function Compose() {
                     borderWidth={0}
                     hoverStyle={{ bg: '$hover' }}
                   >
+                    {/* A gui button centres its children; a card's text reads
+                        from the left edge. */}
                     <YStack gap="$1" width="100%" items="flex-start">
                       <XStack items="center" gap="$2" width="100%">
                         <Text fontSize="$2" color={on ? '$ink' : '$soft'} flex={1} text="left">

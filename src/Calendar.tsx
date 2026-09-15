@@ -11,7 +11,7 @@ import { useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Box, Text, XStack, YStack } from '@hanzo/ui'
 
-import { Act, Ready, Failed, Screen } from '~/page'
+import { Act, Failed, Ready, Screen } from '~/page'
 import { Full } from '~/post'
 import { Mark, tone } from '~/status'
 import { day, grid } from '~/time'
@@ -120,6 +120,9 @@ export function Calendar() {
                   <Text fontSize="$1" color={key === today ? '$ink' : '$quiet'}>
                     {date.getDate()}
                   </Text>
+                  {/* The opened post inverts. That is the same spend as anywhere
+                      else — attention on one thing — and it is one thing by
+                      construction, because only one post is open at a time. */}
                   {here.map((post) => (
                     <Box
                       key={post.id}
@@ -134,11 +137,12 @@ export function Calendar() {
                       borderWidth={0}
                       hoverStyle={{ bg: post.id === opened ? '$ink' : '$hover' }}
                     >
-                      <YStack gap="$1" items="flex-start">
+                      <YStack gap="$1" items="flex-start" width="100%">
                         <Text
                           fontSize="$1"
                           color={post.id === opened ? '$background' : '$soft'}
                           numberOfLines={1}
+                          text="left"
                         >
                           {rule(post.channel).name}
                         </Text>
