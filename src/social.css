@@ -1,0 +1,102 @@
+/* This app's own rules — the ones no package ships, because they are its layout
+   rather than a library's components.
+
+   Everything else comes from packages. `@hanzo/ui/theme.css` is the design
+   tokens, the reset and the material; `@hanzo/ui/styles/motion.css` is the rules
+   its components assume; gui inserts the atomic rules for this app's own props
+   at first render. Nothing here restates a token and nothing here is a utility —
+   a rule belongs in this file only if it addresses a class this app writes.
+   Two do. */
+
+/* THE MONTH. A calendar is a seven-column grid with equal columns and rows that
+   grow with what is on the day, which is the one shape a flex row cannot state:
+   flex sizes children to their content, and a week of days sized to their posts
+   is a week of unequal days. `minmax(0, 1fr)` rather than `1fr` so a long
+   network name cannot push a column wider than its share. */
+.week,
+.month {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 4px;
+}
+
+.day {
+  min-height: 92px;
+}
+
+/* On a narrow window the seven columns become one: a 40px-wide Tuesday holds
+   nothing, and a month a thumb can scroll is a month a thumb can read. */
+@media (max-width: 860px) {
+  .week {
+    display: none;
+  }
+  .month {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  :root .day.day {
+    min-height: 0;
+  }
+}
+
+/* THE LOOK AT A MEDIA ADDRESS. The composer frames a photo and a video in the
+   same box so a strip of attachments reads as one row rather than as whatever
+   sizes the files happen to be. `contain` rather than `cover`: this is a check
+   that the right file is attached, and a crop can hide that it is not. */
+.media {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 76px;
+  background: var(--panel, rgb(255 255 255 / 0.04));
+}
+
+.media > img,
+.media > video {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* THE SHELL, NARROW. Two columns need two columns' worth of room: a 232px rail
+   beside a pane leaves a phone about 180px to read in, which is not a pane. So
+   below the breakpoint the rail becomes a bar across the top — the ways across
+   it, the account beside them — and the pane takes the whole width under it.
+
+   In CSS rather than in a breakpoint the frame carries, because this is the one
+   fact the layout has that React does not need to know: a component that
+   re-renders on a resize is a component that re-renders on a phone's address
+   bar sliding away. */
+/* `:root` AND A DOUBLED CLASS IS NOT A TYPO. gui writes the rule for a prop —
+   `width={232}` — as `:root ._width-232px`, and inserts it at first render,
+   which is after this stylesheet. That selector weighs the same as `.rail.rail`,
+   and equal weight is decided by source order, so gui wins. One step above it
+   takes the prop back without `!important`, which would win against everything
+   including whoever adjusts this next. */
+@media (max-width: 720px) {
+  :root .shell.shell {
+    flex-direction: column;
+  }
+  :root .rail.rail {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-right: 0;
+    border-bottom: 1px solid var(--border);
+  }
+  :root .ways.ways {
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+    flex: 1;
+  }
+  :root .ways.ways > * {
+    flex: none;
+  }
+  :root .whose.whose {
+    flex-direction: row;
+    align-items: center;
+  }
+}
