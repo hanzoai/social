@@ -30,3 +30,12 @@ images:
     # No build_secrets, and none belong here. Every credential that names a
     # person is minted by hanzo.id at sign-in; every credential that names a
     # network is sealed in KMS and read only by the publisher, server-side.
+
+# social.hanzo.ai is bytes: the export is the whole product and its API is
+# api.hanzo.ai. The site lane publishes the `build` gate's dist to
+# s3://hanzo-sites/hanzo/social, where the edge serves it with no pod. The image
+# lane above goes when the social Deployment does.
+site:
+  slug: social
+  dir: dist
+  on: [main]
