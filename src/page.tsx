@@ -157,7 +157,7 @@ export function Ready({ children }: { children: ReactNode }) {
         </Text>
         <Text fontSize="$2" color="$soft" text="center" maxW={420}>
           Accounts and posts belong to one organization. Choose which one you are
-          working in, at the bottom of the column on the left.
+          working in. The switch stays at the top of the column on the left.
         </Text>
       </YStack>
     )

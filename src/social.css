@@ -58,45 +58,47 @@
   object-fit: contain;
 }
 
-/* THE SHELL, NARROW. Two columns need two columns' worth of room: a 232px rail
-   beside a pane leaves a phone about 180px to read in, which is not a pane. So
-   below the breakpoint the rail becomes a bar across the top — the ways across
-   it, the account beside them — and the pane takes the whole width under it.
+/* THE SHELL, NARROW. Two columns need two columns' worth of room: the shared
+   rail is 264px, and beside a pane that leaves a phone with nothing to read.
+   Below the breakpoint the rail becomes a bar across the top. The wordmark and
+   the organization switch stay put — they are the fixed part of the rail — and
+   the screens scroll sideways under them.
 
    In CSS rather than in a breakpoint the frame carries, because this is the one
    fact the layout has that React does not need to know: a component that
    re-renders on a resize is a component that re-renders on a phone's address
    bar sliding away. */
-/* `:root` AND A DOUBLED CLASS IS NOT A TYPO. gui writes the rule for a prop —
-   `width={232}` — as `:root ._width-232px`, and inserts it at first render,
-   which is after this stylesheet. That selector weighs the same as `.rail.rail`,
-   and equal weight is decided by source order, so gui wins. One step above it
-   takes the prop back without `!important`, which would win against everything
-   including whoever adjusts this next. */
+/* `html:root` AND A DOUBLED CLASS IS NOT A TYPO. gui writes the rule for a prop
+   — the rail's width and height — as `:root ._width-…`, and inserts it at first
+   render, which is after this stylesheet. Equal weight is decided by source
+   order, so gui wins. One step above it takes the prop back without
+   `!important`. */
 @media (max-width: 720px) {
   :root .shell.shell {
     flex-direction: column;
   }
-  :root .rail.rail {
+  html:root .rail.rail {
     width: 100%;
-    flex-direction: row;
-    align-items: center;
-    gap: 8px;
-    padding: 8px 12px;
-    border-right: 0;
+    height: auto;
+    max-height: none;
+    flex-direction: column;
+    border-right-width: 0;
     border-bottom: 1px solid var(--border);
+  }
+  :root .orgslot.orgslot {
+    position: relative;
   }
   :root .ways.ways {
     flex-direction: row;
     overflow-x: auto;
     overflow-y: hidden;
-    flex: 1;
+    flex: none;
   }
   :root .ways.ways > * {
     flex: none;
   }
   :root .whose.whose {
-    flex-direction: row;
-    align-items: center;
+    border-top-width: 0;
+    padding-top: 0;
   }
 }
