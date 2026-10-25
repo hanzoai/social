@@ -52,3 +52,23 @@ site:
     pnpm build
     test -s dist/index.html
     test -d dist/assets
+    # Attach social.hanzo.ai to this project. The deploy token is already in
+    # this step; a SuperAdmin-vouched bind goes live immediately. Anything
+    # else is printed (status, DNS records, or the refusal) and does not
+    # fail the export — the upload still has to land.
+    api="${HANZO_API:-https://api.hanzo.ai}"
+    if [ -z "${HANZO_DEPLOY_TOKEN:-}" ]; then
+      echo "::warning::HANZO_DEPLOY_TOKEN missing in site.build — cannot POST /v1/projects/social/domains"
+    else
+      out="${RUNNER_TEMP:-/tmp}/bind-ai.json"
+      set +e
+      code=$(curl -sS -o "$out" -w '%{http_code}' \
+        -X POST "$api/v1/projects/social/domains" \
+        -H "Authorization: Bearer $HANZO_DEPLOY_TOKEN" \
+        -H 'Content-Type: application/json' \
+        -d '{"domains":["social.hanzo.ai"]}')
+      curl_rc=$?
+      set -e
+      echo "POST /v1/projects/social/domains social.hanzo.ai HTTP ${code:-000} curl=${curl_rc}"
+      cat "$out" || true
+    fi
