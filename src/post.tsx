@@ -121,7 +121,7 @@ export function Controls({ post, again }: { post: Post; again: () => void }) {
             <Act
               onPress={() =>
                 void run('when', () =>
-                  edit(http!, post.id, {
+                  edit(http!, post, {
                     scheduleAt: fromField(when),
                     status: fromField(when) ? 'scheduled' : 'draft',
                   }),

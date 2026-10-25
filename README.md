@@ -39,12 +39,12 @@ Analytics. `src/routes.tsx` is the table, and the sidebar reads the same one.
 A network needs both before anything goes out, and the Accounts screen shows
 them side by side:
 
-- **`/v1/integration`** — the organization's *credential* for a network. The
+- **`/v1/provider`** — the organization's *credential* for a network. The
   OAuth consent a person gives once, sealed into KMS. `Connect` leads here.
 - **`/v1/social`** — the *accounts* a post fans out to, and the posts
   themselves.
 
-No credential ever reaches this code. `GET /v1/integration/connectors/:id/token`
+No credential ever reaches this code. `GET /v1/connection/:id/token`
 is the platform's one custody exit and nothing here calls it: a browser has no
 use for a provider token, and a surface holding one would be a place to leak it
 from.

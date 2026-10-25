@@ -10,7 +10,7 @@ licence, shall be dual licensed as above, without any additional terms or
 conditions.
 
 This is an independent implementation. It is written against the Hanzo
-platform's own published surface — /v1/social and /v1/integration, as
+platform's own published surface — /v1/social and /v1/provider, as
 documented at api.hanzo.ai/v1/openapi.json — and shares no source with any
 earlier social publishing tool. No code, markup, styles, or structure was
 taken from another project.

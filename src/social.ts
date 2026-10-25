@@ -247,12 +247,26 @@ export function write(http: HttpClient, draft: Draft): Promise<Post> {
   return http.json<Post>({ method: 'POST', path: '/v1/social/posts', body: draft })
 }
 
-/** Change a stored post: PUT /v1/social/posts/:id. */
-export function edit(http: HttpClient, id: string, draft: Partial<Draft>): Promise<Post> {
+/**
+ * Change a stored post: PUT /v1/social/posts/:id.
+ *
+ * A REPLACEMENT, not a merge — the platform says so, and omitting `content`
+ * is a 400, omitting `media` clears the attachments, omitting `status` resets
+ * the post to draft. Callers therefore send the whole post they mean to keep,
+ * plus the fields they are changing. A partial body here was how reschedule
+ * wiped a caption.
+ */
+export function edit(http: HttpClient, post: Post, draft: Partial<Draft>): Promise<Post> {
   return http.json<Post>({
     method: 'PUT',
-    path: `/v1/social/posts/${encodeURIComponent(id)}`,
-    body: draft,
+    path: `/v1/social/posts/${encodeURIComponent(post.id)}`,
+    body: {
+      content: draft.content ?? post.content,
+      channel: draft.channel ?? post.channel,
+      media: draft.media ?? post.media,
+      scheduleAt: draft.scheduleAt ?? post.scheduleAt,
+      status: draft.status ?? post.status,
+    },
   })
 }
 
@@ -327,4 +341,76 @@ export function disconnect(http: HttpClient, provider: string): Promise<{ discon
     path: `/v1/provider/${encodeURIComponent(provider)}/disconnect`,
     body: {},
   })
+}
+
+/** Copy invented from a brief, still only words — nothing is stored or sent. */
+export interface Copy {
+  shared: string
+  /** Per-network wording. A missing key means that network still shares. */
+  apart: Record<string, string>
+}
+
+/**
+ * Invent a caption from a brief: POST /v1/chat/completions.
+ *
+ * THIS DOES NOT PUBLISH. It does not store a post, it does not file a CMS
+ * document, and it does not call the publish route. The words come back here
+ * so a person can read them, cut them, and then choose Save draft or Post now
+ * — the same two controls they would have used had they typed the words.
+ *
+ * The CMS generate route (`POST /v1/content/generate`) files a document and
+ * answers a name, not the copy, so it is the wrong door for a composer that
+ * still has to show the words.
+ */
+export async function invent(http: HttpClient, brief: string, networks: string[]): Promise<Copy> {
+  const listed = networks.length ? networks.join(', ') : 'x, facebook, instagram, linkedin, tiktok, youtube, threads'
+  const got = await http.json<{
+    choices?: { message?: { content?: string | null } }[]
+  }>({
+    method: 'POST',
+    path: '/v1/chat/completions',
+    body: {
+      model: 'hanzo/zen',
+      temperature: 0.6,
+      messages: [
+        {
+          role: 'system',
+          content:
+            'You write social posts. Reply with JSON only, no fences: ' +
+            '{"shared":"...","apart":{"x":"..."}}. "shared" is the default caption. ' +
+            `"apart" is optional per-network wording, keyed only by: ${listed}. ` +
+            "Honour each network's character limit. No hashtag walls. No preamble.",
+        },
+        { role: 'user', content: brief },
+      ],
+    },
+  })
+  const raw = (got.choices?.[0]?.message?.content ?? '').trim()
+  return readCopy(raw)
+}
+
+/** Pull a Copy out of a model reply. A reply that is not JSON is the shared caption. */
+function readCopy(raw: string): Copy {
+  const empty: Copy = { shared: '', apart: {} }
+  if (!raw) return empty
+  const stripped = raw.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '')
+  const start = stripped.indexOf('{')
+  const end = stripped.lastIndexOf('}')
+  if (start < 0 || end <= start) return { shared: stripped, apart: {} }
+  try {
+    const parsed = JSON.parse(stripped.slice(start, end + 1)) as {
+      shared?: unknown
+      apart?: unknown
+    }
+    const shared = typeof parsed.shared === 'string' ? parsed.shared : stripped
+    const apart: Record<string, string> = {}
+    if (parsed.apart && typeof parsed.apart === 'object') {
+      for (const [k, v] of Object.entries(parsed.apart as Record<string, unknown>)) {
+        if (typeof v === 'string' && v.trim()) apart[k] = v
+      }
+    }
+    return { shared, apart }
+  } catch {
+    return { shared: stripped, apart: {} }
+  }
 }
