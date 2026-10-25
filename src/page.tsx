@@ -138,9 +138,10 @@ export function Ready({ children }: { children: ReactNode }) {
         <Text render="h1" fontSize="$6" fontWeight="600" color="$ink">
           Hanzo Social
         </Text>
-        <Text fontSize="$2" color="$soft" text="center" maxW={420}>
-          Write once, and publish to every account your organization owns — now,
-          or at a time you pick.
+        <Text fontSize="$2" color="$soft" text="center" maxW={460}>
+          Connect a network, write a post, and schedule it. Those three are the
+          first items in the column on the left. A post is saved as a draft or
+          put on the calendar — it is not sent to a live audience from here.
         </Text>
         <Act onPress={() => void enter(door)} loud>
           Sign in
@@ -157,7 +158,7 @@ export function Ready({ children }: { children: ReactNode }) {
         </Text>
         <Text fontSize="$2" color="$soft" text="center" maxW={420}>
           Accounts and posts belong to one organization. Choose which one you are
-          working in, at the bottom of the column on the left.
+          working in. The switch stays at the top of the column on the left.
         </Text>
       </YStack>
     )

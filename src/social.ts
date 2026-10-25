@@ -355,8 +355,8 @@ export interface Copy {
  *
  * THIS DOES NOT PUBLISH. It does not store a post, it does not file a CMS
  * document, and it does not call the publish route. The words come back here
- * so a person can read them, cut them, and then choose Save draft or Post now
- * — the same two controls they would have used had they typed the words.
+ * so a person can read them, cut them, and then choose Save draft or Schedule
+ * — the same control they would have used had they typed the words.
  *
  * The CMS generate route (`POST /v1/content/generate`) files a document and
  * answers a name, not the copy, so it is the wrong door for a composer that

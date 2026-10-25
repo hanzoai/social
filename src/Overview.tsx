@@ -28,6 +28,12 @@ function Count({ of, says }: { of: number | null; says: string }) {
   )
 }
 
+const START = [
+  { to: '/accounts', title: 'Connect', says: 'Give a network consent' },
+  { to: '/compose', title: 'Post', says: 'Write it, then save a draft or schedule it' },
+  { to: '/calendar', title: 'Schedule', says: 'See the day it goes out' },
+] as const
+
 export function Overview() {
   const http = useHttp()
   const summary = useSummary(http)
@@ -42,8 +48,29 @@ export function Overview() {
     <Ready>
       <Screen
         title="Overview"
-        says="Everything this organization has connected, written and sent."
+        says="Connect a network, write a post, or open the schedule. Counts are underneath."
       >
+        <XStack gap="$3" flexWrap="wrap">
+          {START.map((step) => (
+            <Link key={step.to} to={step.to} style={{ textDecoration: 'none', flex: '1 1 180px' }}>
+              <YStack
+                gap="$1"
+                p="$3"
+                rounded="$3"
+                borderWidth={1}
+                borderColor="$borderColor"
+                hoverStyle={{ bg: '$hover' }}
+              >
+                <Text fontSize="$3" fontWeight="600" color="$ink">
+                  {step.title}
+                </Text>
+                <Text fontSize="$1" color="$soft">
+                  {step.says}
+                </Text>
+              </YStack>
+            </Link>
+          ))}
+        </XStack>
         {summary.failed ? (
           <Failed what="the roll-up" why={summary.failed} />
         ) : (
@@ -98,7 +125,7 @@ export function Overview() {
           {posts.failed ? (
             <Failed what="the posts" why={posts.failed} />
           ) : recent.length === 0 ? (
-            <Nothing says="Nothing written yet. Compose one and it appears here." />
+            <Nothing says="Nothing written yet. Open Post, save a draft or schedule it, and it appears here." />
           ) : (
             <YStack>
               {recent.map((post) => (

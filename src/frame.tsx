@@ -1,103 +1,114 @@
 // The chrome: the column of screens on the left, and whichever one is open
 // beside it.
 //
-// The sidebar reads the SAME table the router does, so a screen is one entry in
-// `routes.tsx` and never two that drift.
+// The column is `@hanzo/ui/chat`'s Sidebar — the same rail hanzo.app wears —
+// and the organization control is `@hanzo/ui/product`'s OrgSwitcher, the same
+// one the console hoisted for every surface. The screen list is still the
+// router's table, so a screen is one entry in `routes.tsx` and never two.
 
-import { useState } from 'react'
+import { useCallback, useMemo } from 'react'
 import { useIam } from '@hanzo/iam/react'
-import { Check, ChevronDown } from 'lucide-react'
+import {
+  BarChart3,
+  CalendarDays,
+  LayoutDashboard,
+  PenLine,
+  Radio,
+  ScrollText,
+  type LucideIcon,
+} from 'lucide-react'
 import { Box, Text, XStack, YStack } from '@hanzo/ui'
-import { HanzoMark } from '@hanzo/ui/product'
+import { Sidebar } from '@hanzo/ui/chat'
+import { OrgSwitcher, UserMenu, type OrgScope } from '@hanzo/ui/product'
 import { NavLink, Outlet } from 'react-router'
 
 import { enter } from '~/enter'
 import { SCREENS } from '~/routes'
 import { useTenant } from '~/client'
 
+const ICONS: Record<(typeof SCREENS)[number]['path'], LucideIcon> = {
+  '/': LayoutDashboard,
+  '/compose': PenLine,
+  '/posts': ScrollText,
+  '/calendar': CalendarDays,
+  '/accounts': Radio,
+  '/analytics': BarChart3,
+}
+
 /**
- * Which organization this browser works in.
+ * The organization this browser works in, pinned under the wordmark.
  *
- * THE ORG IS THE TENANT. Every account and every post belongs to one: the social
- * API resolves it from the validated bearer and filters every query by it, so
- * switching here changes everything on every screen. A sole organization is not
- * a choice and is drawn as a name.
+ * PINNED, NOT SCROLLED. The screen list is the part that grows; the switcher
+ * stays in the rail so a long menu cannot carry it off the page, and the menu
+ * itself is the shared popover, which stays inside the viewport instead of
+ * painting into the overflow the old in-flow list was clipped by.
  *
- * The social API carries no scope finer than this. It has no project column and
- * its listings filter by state and network only, so an account or a post cannot
- * be filed under anything below the org — which is why there is no second
- * switch here pretending otherwise.
+ * Social has no project under the organization — the API filters by the org
+ * alone — so this is the only switch.
  */
 function Tenant() {
   const { org, orgs, choose } = useTenant()
-  const [open, setOpen] = useState(false)
+  const list = useMemo(
+    () => orgs.map((one) => ({ name: one.name, displayName: one.displayName || one.name })),
+    [orgs],
+  )
+  const load = useCallback(
+    async (page: number, query: string) => {
+      if (page > 0) return []
+      const q = query.trim().toLowerCase()
+      return list.filter(
+        (one) =>
+          !q ||
+          one.name.toLowerCase().includes(q) ||
+          one.displayName.toLowerCase().includes(q),
+      )
+    },
+    [list],
+  )
+  const scope = useMemo<OrgScope>(
+    () => ({
+      currentOrg: () => org ?? '',
+      setCurrentOrg: choose,
+      isScopedAway: () => false,
+      hasSelectedOrg: () => Boolean(org),
+      enterOrg: choose,
+      leaveOrg: () => {},
+      switchOrg: choose,
+    }),
+    [org, choose],
+  )
+  const current = list.find((one) => one.name === org)
 
-  if (orgs.length === 0) return null
-
-  if (orgs.length === 1) {
-    return (
-      <Text fontSize="$1" color="$quiet" px="$3" numberOfLines={1}>
-        {orgs[0]}
-      </Text>
-    )
-  }
+  if (!org) return null
 
   return (
-    <YStack gap="$1">
-      <Box
-        render="button"
-        onClick={() => setOpen(!open)}
-        aria-expanded={open}
-        width="100%"
-        px="$3"
-        py="$2"
-        rounded="$2"
-        hoverStyle={{ bg: '$hover' }}
-      >
-        <XStack items="center" gap="$2">
-          <Text fontSize="$2" color="$ink" flex={1} numberOfLines={1}>
-            {org ?? 'Pick an organization'}
-          </Text>
-          <ChevronDown size={13} aria-hidden />
-        </XStack>
-      </Box>
-      {open
-        ? orgs.map((one) => (
-            <Box
-              key={one}
-              render="button"
-              onClick={() => {
-                choose(one)
-                setOpen(false)
-              }}
-              width="100%"
-              px="$3"
-              py="$2"
-              rounded="$2"
-              hoverStyle={{ bg: '$hover' }}
-            >
-              <XStack items="center" gap="$2">
-                <Text fontSize="$2" color={one === org ? '$ink' : '$soft'} flex={1} numberOfLines={1}>
-                  {one}
-                </Text>
-                {one === org ? <Check size={12} aria-hidden /> : null}
-              </XStack>
-            </Box>
-          ))
-        : null}
+    <YStack className="orgslot" shrink={0} px="$1">
+      <OrgSwitcher
+        scope={scope}
+        orgs={list.length > 1 ? load : undefined}
+        current={current}
+        search={list.length > 8}
+        direction="down"
+        testId="org-switcher"
+      />
     </YStack>
   )
 }
 
-/** Who is signed in, and the way in or out. */
+/** Who is signed in. The account menu is the shared one, opening upward so it
+ *  stays in the rail instead of falling off the bottom of the window. */
 function Account() {
   const door = useIam()
   const { user, isAuthenticated, logout } = door
-  const name =
-    (user as { displayName?: string; name?: string; email?: string } | null)?.displayName ||
-    (user as { name?: string } | null)?.name ||
-    (user as { email?: string } | null)?.email ||
-    ''
+  const person = user as {
+    displayName?: string
+    name?: string
+    email?: string
+    avatar?: string
+    picture?: string
+  } | null
+  const name = person?.displayName || person?.name || ''
+  const email = person?.email || ''
 
   if (!isAuthenticated) {
     return (
@@ -119,74 +130,68 @@ function Account() {
   }
 
   return (
-    <YStack gap="$1">
-      <Text fontSize="$1" color="$quiet" px="$3" numberOfLines={1}>
-        {name}
-      </Text>
-      <Box
-        render="button"
-        onClick={() => void logout()}
-        px="$3"
-        py="$2"
-        rounded="$2"
-        hoverStyle={{ bg: '$hover' }}
-      >
-        <Text fontSize="$2" color="$soft">
-          Sign out
-        </Text>
-      </Box>
-    </YStack>
+    <UserMenu
+      name={name || email}
+      email={email}
+      avatar={person?.avatar || person?.picture}
+      direction="up"
+      align="start"
+      onSignOut={() => void logout()}
+      testId="account-menu"
+    />
   )
 }
 
 export function Frame() {
   return (
     <XStack className="shell" flex={1} minW={0} minH={0}>
-      <YStack
-        className="rail"
-        width={232}
-        shrink={0}
-        minH={0}
-        borderRightWidth={1}
-        borderColor="$borderColor"
-        py="$3"
-        gap="$3"
-      >
-        <XStack items="center" gap="$2" px="$3">
-          <HanzoMark size={18} />
-          <Text fontSize="$3" fontWeight="500" color="$ink">
-            Social
+      <Sidebar className="rail">
+        <XStack className="brand" items="center" px="$2" py="$1.5" shrink={0}>
+          <Text fontSize="$3" fontWeight="600" color="$ink" numberOfLines={1}>
+            Hanzo Social
           </Text>
         </XStack>
 
-        <YStack className="ways" gap="$1" px="$2" flex={1} minH={0} overflow="scroll">
-          {SCREENS.map(({ path, label }) => (
-            // NavLink rather than a Box with a handler: a person who wants this
-            // screen in another tab reaches for the middle button, and a button
-            // calling navigate() has no address for them to reach.
-            <NavLink key={path} to={path} end={path === '/'} style={{ textDecoration: 'none' }}>
-              {({ isActive }) => (
-                <Box
-                  px="$3"
-                  py="$2"
-                  rounded="$2"
-                  bg={isActive ? '$hover' : 'transparent'}
-                  hoverStyle={{ bg: '$hover' }}
-                >
-                  <Text fontSize="$2" color={isActive ? '$ink' : '$soft'}>
-                    {label}
-                  </Text>
-                </Box>
-              )}
-            </NavLink>
-          ))}
+        <Tenant />
+
+        <YStack className="ways" flex={1} minH={0} overflow="scroll" gap="$1">
+          {SCREENS.map(({ path, label }) => {
+            const Icon = ICONS[path]
+            return (
+              <NavLink key={path} to={path} end={path === '/'} style={{ textDecoration: 'none' }}>
+                {({ isActive }) => (
+                  <XStack
+                    px="$2"
+                    py="$1.5"
+                    rounded="$3"
+                    items="center"
+                    gap="$2"
+                    bg={isActive ? '$edge' : 'transparent'}
+                    hoverStyle={{ bg: isActive ? '$edge' : '$hover' }}
+                    aria-current={isActive ? 'page' : undefined}
+                  >
+                    <YStack opacity={0.7}>
+                      <Icon size={16} />
+                    </YStack>
+                    <Text
+                      fontSize="$2"
+                      numberOfLines={1}
+                      flex={1}
+                      color={isActive ? '$color' : '$quiet'}
+                    >
+                      {label}
+                    </Text>
+                  </XStack>
+                )}
+              </NavLink>
+            )
+          })}
         </YStack>
 
-        <YStack className="whose" gap="$2" px="$1" shrink={0}>
-          <Tenant />
+        <YStack className="whose" shrink={0} pt="$2" borderTopWidth={1} borderColor="$borderColor">
           <Account />
         </YStack>
-      </YStack>
+      </Sidebar>
 
       <YStack flex={1} minW={0} minH={0} overflow="scroll">
         <Outlet />

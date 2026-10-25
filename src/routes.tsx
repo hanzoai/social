@@ -20,11 +20,11 @@ import { Root } from '~/root'
  * redirect.
  */
 export const SCREENS = [
+  { path: '/accounts', label: 'Connect', element: <Accounts /> },
+  { path: '/compose', label: 'Post', element: <Compose /> },
+  { path: '/calendar', label: 'Schedule', element: <Calendar /> },
   { path: '/', label: 'Overview', element: <Overview /> },
-  { path: '/compose', label: 'Compose', element: <Compose /> },
   { path: '/posts', label: 'Posts', element: <Posts /> },
-  { path: '/calendar', label: 'Calendar', element: <Calendar /> },
-  { path: '/accounts', label: 'Accounts', element: <Accounts /> },
   { path: '/analytics', label: 'Analytics', element: <Analytics /> },
 ] as const
 

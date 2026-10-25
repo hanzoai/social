@@ -13,7 +13,7 @@ import { Mark, tone } from '~/status'
 import { kind, rule } from '~/network'
 import { at, fromField, since, toField } from '~/time'
 import { useHttp } from '~/client'
-import { drop, edit, publish, why, type Post } from '~/social'
+import { drop, edit, why, type Post } from '~/social'
 
 /** The post's words, or an honest stand-in for a post that is only media. */
 export const said = (post: Post): string => post.content || '(no words — media only)'
@@ -63,16 +63,14 @@ export function Row({ post }: { post: Post }) {
 }
 
 /**
- * The three things a person can do to a stored post, and nothing else.
+ * What a person can do to a stored post from this screen, and nothing else.
  *
- * WHAT IS HERE IS WHAT THE PLATFORM SERVES: move it in time (`PUT`), send it now
- * (`POST …/publish`), forget it (`DELETE`). A post that has already gone out is
- * offered only the last of those — the platform has no unpublish, and a control
- * that pretended otherwise would be a lie about a post already on a network.
+ * Move it in time (`PUT`) or forget it (`DELETE`). Sending it to a live audience
+ * is not a control here. A post that has already gone out can only be deleted —
+ * the platform has no unpublish, and a control that pretended otherwise would be
+ * a lie about a post already on a network.
  *
- * A refusal is shown VERBATIM. The publish edge answers 503 naming the exact
- * credentials this deployment is missing, and paraphrasing that would throw away
- * the only part anyone can act on.
+ * A refusal is shown VERBATIM.
  */
 export function Controls({ post, again }: { post: Post; again: () => void }) {
   const http = useHttp()
@@ -128,22 +126,9 @@ export function Controls({ post, again }: { post: Post; again: () => void }) {
                 )
               }
               disabled={busy !== '' || toField(post.scheduleAt) === when}
+              loud
             >
               {busy === 'when' ? 'Saving…' : fromField(when) ? 'Reschedule' : 'Unschedule'}
-            </Act>
-            {/*
-              LOUD ONLY WHERE SOMETHING IS WRONG. Sending early is an option on
-              a queued post and the thing to do on a failed one, and a list that
-              inverts every row spends the loudest thing the palette has six
-              times on one screen — after which the failure has nothing left to
-              be louder than.
-            */}
-            <Act
-              onPress={() => void run('publish', () => publish(http!, post.id))}
-              disabled={busy !== ''}
-              loud={post.status === 'failed'}
-            >
-              {busy === 'publish' ? 'Sending…' : post.status === 'failed' ? 'Try again' : 'Publish now'}
             </Act>
           </>
         ) : null}

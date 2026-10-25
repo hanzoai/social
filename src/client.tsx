@@ -10,20 +10,27 @@
 // "nobody is signed in". `useHttp()` answers null instead and each screen says
 // so once, in its own words.
 
-import { createContext, useContext, useMemo, useState, type ReactNode } from 'react'
-import { useIam } from '@hanzo/iam/react'
+import { createContext, useContext, useMemo, type ReactNode } from 'react'
+import { useIam, useOrganizations } from '@hanzo/iam/react'
 import { AiProvider } from '@hanzo/ai/react'
 import { createAiClient, type HttpClient } from '@hanzo/ai'
 import { api } from '~/api'
-import { bearer, hasSession, org, orgs, work } from '~/token'
+import { bearer, hasSession } from '~/token'
+
+/** One organization the switcher can name. `name` is the id the gateway expects. */
+export interface TenantOrg {
+  name: string
+  displayName?: string
+}
 
 /** The tenant this browser works in, and the way to move to another. */
 export interface Tenant {
-  /** The organization every read and write is scoped to, or null when the
-   *  account belongs to several and has not picked. */
+  /** The organization every read and write is scoped to. The shared IAM hook
+   *  picks the stored selection, or the home organization when there is no
+   *  stored one, so a signed-in surface is never silently unscoped. */
   org: string | null
-  /** Every organization the token carries. One is not a choice. */
-  orgs: string[]
+  /** Every organization the session carries, in the order the IAM client reads them. */
+  orgs: TenantOrg[]
   choose: (org: string) => void
 }
 
@@ -43,13 +50,17 @@ export function useTenant(): Tenant {
 
 export function Client({ children }: { children: ReactNode }) {
   const { sdk, isAuthenticated } = useIam()
-  // The selection is REACT STATE as well as a stored key. Storage events fire
-  // in other tabs only, so a switch made here would move the key and leave this
-  // tab's client scoped to the organization it was built with.
-  const [picked, setPicked] = useState<string | null>(() => org())
-  const mine = useMemo(() => orgs(), [isAuthenticated, picked])
+  // THE SAME HOOK THE OTHER HANZO SURFACES USE. A local parser of the `orgs`
+  // claim dropped the owner fallback the IAM client keeps, so a session whose
+  // memberships live on that fallback had no switcher and sent no `X-Org-Id`.
+  // `useOrganizations` also writes `hanzo_iam_current_org`, the key every other
+  // surface reads, and its state is what this tab re-renders on — storage
+  // events fire in other tabs only.
+  const membership = useOrganizations()
 
   const account = Boolean((isAuthenticated || hasSession()) && sdk)
+  const picked = account ? membership.currentOrgId : null
+  const mine = account ? membership.organizations : []
 
   const client = useMemo(
     () =>
@@ -69,13 +80,13 @@ export function Client({ children }: { children: ReactNode }) {
   const tenant = useMemo<Tenant>(
     () => ({
       org: picked,
-      orgs: mine,
-      choose: (pick) => {
-        work(pick)
-        setPicked(pick)
-      },
+      orgs: mine.map((one) => ({
+        name: one.name,
+        displayName: one.displayName || one.name,
+      })),
+      choose: membership.switchOrg,
     }),
-    [picked, mine],
+    [picked, mine, membership.switchOrg],
   )
 
   // AiProvider as well as the transport context: @hanzo/ui's shared components
