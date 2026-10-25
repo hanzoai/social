@@ -19,7 +19,7 @@ import {
 } from 'lucide-react'
 import { Box, Text, XStack, YStack } from '@hanzo/ui'
 import { Sidebar } from '@hanzo/ui/chat'
-import { HanzoMark, OrgSwitcher, UserMenu, type OrgScope } from '@hanzo/ui/product'
+import { OrgSwitcher, UserMenu, type OrgScope } from '@hanzo/ui/product'
 import { NavLink, Outlet } from 'react-router'
 
 import { enter } from '~/enter'
@@ -146,8 +146,7 @@ export function Frame() {
   return (
     <XStack className="shell" flex={1} minW={0} minH={0}>
       <Sidebar className="rail">
-        <XStack className="brand" items="center" gap="$2" px="$2" py="$1.5" shrink={0}>
-          <HanzoMark size={18} />
+        <XStack className="brand" items="center" px="$2" py="$1.5" shrink={0}>
           <Text fontSize="$3" fontWeight="600" color="$ink" numberOfLines={1}>
             Hanzo Social
           </Text>

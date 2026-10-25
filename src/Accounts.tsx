@@ -19,6 +19,7 @@
 
 import { useState } from 'react'
 import { Text, XStack, YStack } from '@hanzo/ui'
+import { Link } from 'react-router'
 
 import { Act, Ready, Failed, Screen } from '~/page'
 import { Mark, accountTone } from '~/status'
@@ -263,8 +264,17 @@ export function Accounts() {
   return (
     <Ready>
       <Screen
-        title="Accounts"
-        says="Give a network consent once, then say which handles a post goes to."
+        title="Connect"
+        says="Connect a network, then say which handles a post goes to. This is the first step before you write or schedule."
+        beside={
+          <Link to="/compose" style={{ textDecoration: 'none' }}>
+            <XStack px="$3" py="$2" rounded="$3" borderWidth={1} borderColor="$ink" bg="$ink">
+              <Text fontSize="$2" color="$background" fontWeight="500">
+                Post
+              </Text>
+            </XStack>
+          </Link>
+        }
       >
         {networks.failed ? <Failed what="the networks" why={networks.failed} /> : null}
         {accounts.failed ? <Failed what="the accounts" why={accounts.failed} /> : null}

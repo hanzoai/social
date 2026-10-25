@@ -22,13 +22,14 @@
 import { useState } from 'react'
 import { Trash2 } from 'lucide-react'
 import { Box, Text, XStack, YStack } from '@hanzo/ui'
+import { useSearchParams } from 'react-router'
 
 import { Act, Failed, Ready, Screen } from '~/page'
 import { Mark, tone } from '~/status'
 import { MEDIA, check, kind, rule } from '~/network'
 import { fromField, now, toField } from '~/time'
 import { useHttp } from '~/client'
-import { invent, publish, useAccounts, useNetworks, why, write } from '~/social'
+import { invent, useAccounts, useNetworks, why, write } from '~/social'
 
 /** What came of sending, network by network. */
 interface Outcome {
@@ -125,7 +126,11 @@ export function Compose() {
   const [address, setAddress] = useState('')
   const [picked, setPicked] = useState<string[]>([])
   const [tab, setTab] = useState<string>(SHARED)
-  const [at, setAt] = useState('')
+  const [params] = useSearchParams()
+  const asked = params.get('at') ?? ''
+  const [at, setAt] = useState(() =>
+    /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(asked) ? asked : '',
+  )
   const [brief, setBrief] = useState('')
   const [drafting, setDrafting] = useState(false)
   const [draftFailed, setDraftFailed] = useState<string | null>(null)
@@ -163,7 +168,7 @@ export function Compose() {
 
   /**
    * Fill the boxes from a brief. Nothing is stored: the person still has to
-   * Save draft or Post now, which is the only way a word leaves this screen.
+   * Save draft or Schedule, which is the only way a word leaves this screen.
    */
   const draftFromBrief = async () => {
     const want = brief.trim()
@@ -191,8 +196,8 @@ export function Compose() {
   }
 
   /**
-   * Store one post per picked network, and — when the person asked for it to go
-   * now — publish each.
+   * Store one post per picked network as a draft, or as scheduled when a time
+   * is set. This screen does not publish to a live audience.
    *
    * Sequential rather than parallel: each network's outcome is reported on its
    * own row, and a fan-out that raced would report them in whatever order the
@@ -200,7 +205,7 @@ export function Compose() {
    * platform's 503 names exactly which credentials this deployment is missing
    * and that sentence is the whole of what a person can act on.
    */
-  const send = async (go: boolean) => {
+  const send = async () => {
     if (!http || sending || picked.length === 0 || blocked) return
     setSending(true)
     setOutcome(null)
@@ -211,34 +216,13 @@ export function Compose() {
           content: words(provider),
           channel: provider,
           media,
-          scheduleAt: go ? 0 : when,
-          status: go || !when ? 'draft' : 'scheduled',
+          scheduleAt: when,
+          status: when ? 'scheduled' : 'draft',
         })
-        if (!go) {
-          got.push({
-            provider,
-            status: post.status,
-            says: post.status === 'scheduled' ? 'Scheduled.' : 'Saved as a draft.',
-          })
-          continue
-        }
-        // A publish is addressed BY ID, so a create that answered no id has
-        // nothing to publish — and building the address anyway sends
-        // `/posts/undefined/publish`, which is a request to a route nobody
-        // serves and an error that blames the wrong step.
-        if (!post?.id) {
-          got.push({
-            provider,
-            status: 'failed',
-            says: 'The platform answered without a post id, so there is nothing to publish.',
-          })
-          continue
-        }
-        const sent = await publish(http, post.id)
         got.push({
           provider,
-          status: sent.status,
-          says: sent.error || (sent.status === 'published' ? 'Published.' : sent.status),
+          status: post.status,
+          says: post.status === 'scheduled' ? 'Scheduled.' : 'Saved as a draft.',
         })
       } catch (e) {
         got.push({ provider, status: 'failed', says: why(e) })
@@ -258,7 +242,10 @@ export function Compose() {
 
   return (
     <Ready>
-      <Screen title="Compose" says="Write it once. It is stored as one post per network.">
+      <Screen
+        title="Post"
+        says="Write it once. Save a draft, or pick a time and schedule it. Nothing is sent to a live audience from here."
+      >
         <XStack gap="$5" flexWrap="wrap" items="flex-start">
           <YStack flex={1} minW={320} gap="$3">
             <YStack gap="$2">
@@ -276,7 +263,7 @@ export function Compose() {
                   {drafting ? 'Drafting…' : 'Draft from brief'}
                 </Act>
                 <Text fontSize="$1" color="$quiet">
-                  Fills the caption. Nothing is stored or sent until you save or post.
+                  Fills the caption. Nothing is stored until you save a draft or schedule.
                 </Text>
               </XStack>
               {draftFailed ? (
@@ -448,22 +435,18 @@ export function Compose() {
 
             <XStack gap="$2" items="center" flexWrap="wrap">
               <Act
-                onPress={() => void send(true)}
+                onPress={() => void send()}
                 disabled={sending || picked.length === 0 || blocked}
                 loud
               >
-                {sending ? 'Sending…' : 'Post now'}
-              </Act>
-              <Act
-                onPress={() => void send(false)}
-                disabled={sending || picked.length === 0 || blocked}
-              >
-                {when ? 'Schedule' : 'Save draft'}
+                {sending ? 'Saving…' : when ? 'Schedule' : 'Save draft'}
               </Act>
               <Text fontSize="$1" color="$quiet">
                 {picked.length === 0
                   ? 'Pick at least one network.'
-                  : `${picked.length} post${picked.length === 1 ? '' : 's'} will be stored.`}
+                  : when
+                    ? `${picked.length} post${picked.length === 1 ? '' : 's'} will be scheduled. Open Schedule to see the day.`
+                    : `${picked.length} post${picked.length === 1 ? '' : 's'} will be saved as a draft. Set a time to schedule instead.`}
               </Text>
             </XStack>
 

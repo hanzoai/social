@@ -10,16 +10,28 @@
 import { useState } from 'react'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { Box, Text, XStack, YStack } from '@hanzo/ui'
+import { Link } from 'react-router'
 
 import { Act, Failed, Ready, Screen } from '~/page'
 import { Full } from '~/post'
 import { Mark, tone } from '~/status'
-import { day, grid } from '~/time'
+import { day, fromField, grid, now, toField } from '~/time'
 import { rule } from '~/network'
 import { useHttp } from '~/client'
 import { usePosts, type Post } from '~/social'
 
 const WEEK = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+
+/** A time on this day the composer can schedule, or nothing if the day is past. */
+function slot(key: string): string | null {
+  const morning = `${key}T09:00`
+  if (fromField(morning) > now()) return morning
+  if (key !== day(now())) return null
+  const next = new Date()
+  next.setMinutes(0, 0, 0)
+  next.setHours(next.getHours() + 1)
+  return toField(Math.floor(next.getTime() / 1000))
+}
 
 /** The day a post belongs on. */
 const falls = (post: Post): string =>
@@ -57,8 +69,8 @@ export function Calendar() {
   return (
     <Ready>
       <Screen
-        title="Calendar"
-        says="Scheduled posts sit on the day they are due; everything else on the day it last changed."
+        title="Schedule"
+        says="Scheduled posts sit on the day they are due. Write one under Post, set a time, and it lands here. Nothing is sent to a live audience from this screen."
         beside={
           <XStack items="center" gap="$2">
             <Box
@@ -97,6 +109,13 @@ export function Calendar() {
             >
               Today
             </Act>
+            <Link to="/compose" style={{ textDecoration: 'none' }}>
+              <XStack px="$3" py="$2" rounded="$3" borderWidth={1} borderColor="$ink" bg="$ink">
+                <Text fontSize="$2" color="$background" fontWeight="500">
+                  Post
+                </Text>
+              </XStack>
+            </Link>
           </XStack>
         }
       >
@@ -125,9 +144,17 @@ export function Calendar() {
                   bg={key === today ? '$hover' : 'transparent'}
                   opacity={inMonth ? 1 : 0.4}
                 >
-                  <Text fontSize="$1" color={key === today ? '$ink' : '$quiet'}>
-                    {date.getDate()}
-                  </Text>
+                  {slot(key) ? (
+                    <Link to={`/compose?at=${slot(key)}`} style={{ textDecoration: 'none' }}>
+                      <Text fontSize="$1" color={key === today ? '$ink' : '$quiet'}>
+                        {date.getDate()}
+                      </Text>
+                    </Link>
+                  ) : (
+                    <Text fontSize="$1" color={key === today ? '$ink' : '$quiet'}>
+                      {date.getDate()}
+                    </Text>
+                  )}
                   {/* The opened post inverts. That is the same spend as anywhere
                       else — attention on one thing — and it is one thing by
                       construction, because only one post is open at a time. */}
@@ -175,7 +202,7 @@ export function Calendar() {
           </YStack>
         ) : (
           <Text fontSize="$1" color="$quiet">
-            Pick a post to move it, send it, or delete it.
+            Pick a post to reschedule it or delete it. A date opens Post at that morning.
           </Text>
         )}
       </Screen>

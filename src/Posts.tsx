@@ -48,7 +48,7 @@ export function Posts() {
               says={
                 state
                   ? `Nothing in ${label.toLowerCase()}.`
-                  : 'Nothing written yet. Compose one and it appears here.'
+                  : 'Nothing written yet. Open Post, save a draft or schedule it, and it appears here.'
               }
             />
           ) : (
