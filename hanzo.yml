@@ -32,10 +32,23 @@ images:
     # network is sealed in KMS and read only by the publisher, server-side.
 
 # social.hanzo.ai is bytes: the export is the whole product and its API is
-# api.hanzo.ai. The site lane publishes the `build` gate's dist to
-# s3://hanzo-sites/hanzo/social, where the edge serves it with no pod. The image
-# lane above goes when the social Deployment does.
+# api.hanzo.ai. The site lane publishes dist to the Sites plane, where the
+# edge serves it with no pod. The image lane above goes when the social
+# Deployment does.
+#
+# `build` runs ON THE PUBLISH JOB. The test gate also produces dist, but that
+# is a different runner: the site step looks at THIS checkout, and without a
+# build here it reports "dist is not a directory" after a green test. Same
+# commands as the image, so the bytes the edge serves are the bytes the gate
+# already compiled.
 site:
   slug: social
   dir: dist
   on: [main]
+  build: |
+    set -e
+    corepack enable
+    pnpm install --frozen-lockfile
+    pnpm build
+    test -s dist/index.html
+    test -d dist/assets

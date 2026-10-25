@@ -28,7 +28,7 @@ import { Mark, tone } from '~/status'
 import { MEDIA, check, kind, rule } from '~/network'
 import { fromField, now, toField } from '~/time'
 import { useHttp } from '~/client'
-import { publish, useAccounts, useNetworks, why, write } from '~/social'
+import { invent, publish, useAccounts, useNetworks, why, write } from '~/social'
 
 /** What came of sending, network by network. */
 interface Outcome {
@@ -126,6 +126,9 @@ export function Compose() {
   const [picked, setPicked] = useState<string[]>([])
   const [tab, setTab] = useState<string>(SHARED)
   const [at, setAt] = useState('')
+  const [brief, setBrief] = useState('')
+  const [drafting, setDrafting] = useState(false)
+  const [draftFailed, setDraftFailed] = useState<string | null>(null)
   const [sending, setSending] = useState(false)
   const [outcome, setOutcome] = useState<Outcome[] | null>(null)
 
@@ -155,6 +158,28 @@ export function Compose() {
     if (on) {
       setApart(Object.fromEntries(Object.entries(apart).filter(([k]) => k !== provider)))
       if (tab === provider) setTab(SHARED)
+    }
+  }
+
+  /**
+   * Fill the boxes from a brief. Nothing is stored: the person still has to
+   * Save draft or Post now, which is the only way a word leaves this screen.
+   */
+  const draftFromBrief = async () => {
+    const want = brief.trim()
+    if (!http || drafting || !want) return
+    setDrafting(true)
+    setDraftFailed(null)
+    try {
+      const copy = await invent(http, want, picked)
+      setShared(copy.shared)
+      setApart(
+        Object.fromEntries(picked.filter((p) => copy.apart[p] !== undefined).map((p) => [p, copy.apart[p]!])),
+      )
+    } catch (e) {
+      setDraftFailed(why(e))
+    } finally {
+      setDrafting(false)
     }
   }
 
@@ -236,6 +261,31 @@ export function Compose() {
       <Screen title="Compose" says="Write it once. It is stored as one post per network.">
         <XStack gap="$5" flexWrap="wrap" items="flex-start">
           <YStack flex={1} minW={320} gap="$3">
+            <YStack gap="$2">
+              <Text fontSize="$3" fontWeight="500" color="$ink">
+                Brief
+              </Text>
+              <Words
+                value={brief}
+                onChange={setBrief}
+                placeholder="What is this post for? A sentence is enough."
+                rows={3}
+              />
+              <XStack items="center" gap="$2" flexWrap="wrap">
+                <Act onPress={() => void draftFromBrief()} disabled={drafting || !brief.trim()}>
+                  {drafting ? 'Drafting…' : 'Draft from brief'}
+                </Act>
+                <Text fontSize="$1" color="$quiet">
+                  Fills the caption. Nothing is stored or sent until you save or post.
+                </Text>
+              </XStack>
+              {draftFailed ? (
+                <Text fontSize="$1" color="$ink" fontWeight="500">
+                  {draftFailed}
+                </Text>
+              ) : null}
+            </YStack>
+
             {/* THE TABS ARE THE NETWORKS PICKED, plus the shared words they all
                 start from. A network's tab is where it stops sharing them. */}
             {picked.length ? (

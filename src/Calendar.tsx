@@ -88,7 +88,15 @@ export function Calendar() {
             >
               <ChevronRight size={15} aria-hidden />
             </Box>
-            <Act onPress={() => move(0)}>Today</Act>
+            <Act
+              onPress={() => {
+                const d = new Date()
+                setMonth({ year: d.getFullYear(), month: d.getMonth() })
+                setOpened(null)
+              }}
+            >
+              Today
+            </Act>
           </XStack>
         }
       >
