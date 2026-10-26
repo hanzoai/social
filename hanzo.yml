@@ -11,6 +11,9 @@ test:
       corepack enable
       pnpm install --frozen-lockfile
 
+  - name: postiz
+    run: node --test server/postiz.test.mjs server/http.test.mjs server/edge.test.mjs
+
   # Verbatim the build line the image runs, run before there is an image, so a
   # break arrives in a minute instead of after a full layer stack. `pnpm build`
   # is `tsc --noEmit` then `vite build`. A vite build that emits nothing still
@@ -31,10 +34,17 @@ images:
     # person is minted by hanzo.id at sign-in; every credential that names a
     # network is sealed in KMS and read only by the publisher, server-side.
 
-# social.hanzo.ai is bytes: the export is the whole product and its API is
-# api.hanzo.ai. The site lane publishes dist to the Sites plane, where the
-# edge serves it with no pod. The image lane above goes when the social
-# Deployment does.
+# Two doors. social.hanzo.ai is the Postiz drop-in (/mcp, /api/mcp,
+# /public/v1). /v1/social stays on api.hanzo.ai, which is what the frontend
+# calls. The image above is the process that serves both: Postiz paths
+# locally, and /v1 proxied to HANZO_API (default https://api.hanzo.ai).
+#
+# The site lane still publishes dist and, on every main publish, re-binds
+# social.hanzo.ai to the static site. That bind is why POST
+# https://social.hanzo.ai/mcp returns index.html. The hostname is the drop-in
+# when this image owns the name and the static bind stops. Leave the site
+# lane until that cutover: dropping it stops UI updates and still does not
+# serve MCP.
 #
 # `build` runs ON THE PUBLISH JOB. The test gate also produces dist, but that
 # is a different runner: the site step looks at THIS checkout, and without a

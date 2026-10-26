@@ -18,7 +18,8 @@ the address the client registered, and that address carries the port.
 
 `vite.config.ts` proxies `/v1` to `api.hanzo.ai` on both the dev server and the
 preview of a build, so a localhost origin reaches the gateway without failing a
-preflight. Point it elsewhere with `VITE_HANZO_API`.
+preflight. Point it elsewhere with `VITE_HANZO_API`. `pnpm start` does the same
+proxy, with `HANZO_API`.
 
 ## How it is put together
 
@@ -48,6 +49,32 @@ No credential ever reaches this code. `GET /v1/connection/:id/token`
 is the platform's one custody exit and nothing here calls it: a browser has no
 use for a provider token, and a surface holding one would be a place to leak it
 from.
+
+## Two doors
+
+Postiz is a different contract from `/v1/social`, and the two stay separate.
+
+| Door | Who uses it | Where |
+|---|---|---|
+| Postiz drop-in | Grok's "Use self-hosted", and any Postiz client | `https://social.hanzo.ai` — `/mcp`, `/api/mcp`, `/public/v1`, `/api/public/v1` |
+| Hanzo API | This app, and anything else that speaks Hanzo | `https://api.hanzo.ai/v1/social` |
+
+The frontend on `*.hanzo.ai` already calls `https://api.hanzo.ai`. It does not call Postiz paths, and those paths are not under `/v1/social`. On this process a `/v1` request, including `/v1/social`, is proxied to `HANZO_API` (default `https://api.hanzo.ai`). Postiz paths are answered here. Every other path is the app.
+
+### Use it from Postiz
+
+| Field | Value |
+|---|---|
+| Instance URL | `https://social.hanzo.ai` once this process owns that name. `http://localhost:3300` answers the same routes for a client on this machine. Postiz Cloud can only reach a public `https` origin. |
+| API key | A Hanzo API key from [console.hanzo.ai/api-keys](https://console.hanzo.ai/api-keys). |
+
+The same key is accepted as `Authorization: Bearer`, as the raw `Authorization` value, or inside `https://<origin>/mcp/<api key>`.
+
+`/mcp` and `/api/mcp` are the MCP session. `/public/v1` is the public REST API. Image generation calls `/v1/images/generations`, video calls `/v1/videos/generations`, clips are a Studio `video.edit` run, uploads are kept in the Library, provider helpers call `/v1/provider/{provider}/run`, and per-post settings are stored with `/v1/settings/social`.
+
+`pnpm start` serves a production build the same way, on port 3000.
+
+On `social.hanzo.ai`, `/mcp`, `/api/mcp`, `/public/v1`, and `/api/public/v1` are the worker `hanzo-social-postiz` (`server/edge.mjs`), which runs this same handler. The app and `/v1/social` stay on the origin. The API key is a Hanzo key, not a Postiz key.
 
 ## What it does not do
 

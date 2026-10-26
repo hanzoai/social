@@ -52,9 +52,33 @@ const spaFallback = {
   },
 }
 
+/**
+ * Postiz Cloud connects to /mcp and /api/mcp on the instance, not to the SPA.
+ * The dev server answers those paths itself and proxies only /v1.
+ */
+const postizCompat = {
+  name: 'postiz-compat',
+  configureServer(server: { middlewares: { use: Function } }) {
+    server.middlewares.use((req: import('node:http').IncomingMessage, res: import('node:http').ServerResponse, next: () => void) => {
+      import('./server/postiz.mjs').then((mod) => mod.postizMiddleware(req, res, next)).catch((error: unknown) => {
+        res.writeHead(500, { 'content-type': 'application/json' })
+        res.end(JSON.stringify({ message: error instanceof Error ? error.message : 'Postiz routes failed to load' }))
+      })
+    })
+  },
+  configurePreviewServer(server: { middlewares: { use: Function } }) {
+    server.middlewares.use((req: import('node:http').IncomingMessage, res: import('node:http').ServerResponse, next: () => void) => {
+      import('./server/postiz.mjs').then((mod) => mod.postizMiddleware(req, res, next)).catch((error: unknown) => {
+        res.writeHead(500, { 'content-type': 'application/json' })
+        res.end(JSON.stringify({ message: error instanceof Error ? error.message : 'Postiz routes failed to load' }))
+      })
+    })
+  },
+}
+
 const config = hanzo(
   {
-    plugins: [react(), spaFallback],
+    plugins: [react(), spaFallback, postizCompat],
     server: { port: PORT, allowedHosts: true, proxy },
     preview: { port: PORT, allowedHosts: true, proxy },
   },
