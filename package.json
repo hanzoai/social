@@ -15,7 +15,7 @@
     "typecheck": "tsc --noEmit",
     "preview": "vite preview",
     "start": "node server/http.mjs",
-    "test": "node --test server/postiz.test.mjs"
+    "test": "node --test server/postiz.test.mjs server/http.test.mjs"
   },
   "dependencies": {
     "@hanzo/ai": "catalog:",

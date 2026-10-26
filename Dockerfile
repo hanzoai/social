@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1.7
-# Hanzo Social — the Vite SPA built once, served by hanzoai/spa.
+# Hanzo Social — the Vite SPA, the Postiz door, and a /v1 proxy to api.hanzo.ai.
 FROM node:24-alpine AS build
 WORKDIR /build
 ENV CI=true PNPM_HOME=/pnpm PATH=$PNPM_HOME:$PATH
@@ -30,9 +30,10 @@ RUN pnpm build \
  && [ -s dist/index.html ] \
  && [ -d dist/assets ]
 
-# One process serves the SPA and the Postiz paths (/mcp, /api/mcp, /public/v1).
-# A static file server answers those paths with index.html, and a Postiz client
-# then refuses the instance. PORT defaults to 3000.
+# One process serves the SPA, the Postiz paths (/mcp, /api/mcp, /public/v1),
+# and proxies /v1 — including /v1/social — to HANZO_API. A static file server
+# answers those paths with index.html, and a Postiz client then refuses the
+# instance. PORT defaults to 3000.
 FROM node:24-alpine
 WORKDIR /app
 ENV NODE_ENV=production PORT=3000
