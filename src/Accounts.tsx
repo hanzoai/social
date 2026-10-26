@@ -21,6 +21,7 @@ import { useState } from 'react'
 import { Text, XStack, YStack } from '@hanzo/ui'
 import { Link } from 'react-router'
 
+import { cardCopy, catalogState } from '~/catalog'
 import { Act, Ready, Failed, Screen } from '~/page'
 import { Mark, accountTone } from '~/status'
 import { rule } from '~/network'
@@ -36,8 +37,8 @@ import {
   useNetworks,
   why,
   type Account,
-  type Connection,
   type Network,
+  type Standing,
 } from '~/social'
 
 /** The handles on one network, and the way to add another. */
@@ -129,12 +130,15 @@ function Targets({
  *  and the handles a publish would reach. */
 function One({
   network,
-  connection,
+  standing,
+  catalog,
   rows,
   again,
 }: {
   network: Network
-  connection: Connection | undefined
+  standing: Standing | undefined
+  /** loading, failed, or answered — never inferred from a missing connection. */
+  catalog: 'loading' | 'failed' | 'ready'
   rows: Account[]
   again: () => void
 }) {
@@ -142,7 +146,19 @@ function One({
   const [busy, setBusy] = useState(false)
   const [failed, setFailed] = useState<string | null>(null)
   const it = rule(network.provider)
+  // A connection from a read that has not answered is not a connection. The
+  // card would otherwise describe a loading catalog as a network the registry
+  // does not contain.
+  const connection = catalog === 'ready' ? standing?.connection : undefined
   const on = Boolean(connection?.connected)
+  const copy = cardCopy({
+    name: it.name,
+    provider: network.provider,
+    catalog,
+    connection,
+    missingCredentials: network.missingCredentials,
+    detail: standing?.failed,
+  })
 
   const start = async () => {
     if (!http || busy) return
@@ -186,9 +202,11 @@ function One({
       </XStack>
 
       <YStack gap="$1">
-        <Text fontSize="$1" color="$soft">
-          {connection?.description ?? 'This network is not in the connector catalog.'}
-        </Text>
+        {copy.caption ? (
+          <Text fontSize="$1" color="$soft">
+            {copy.caption}
+          </Text>
+        ) : null}
         {on && connection?.connection ? (
           <Text fontSize="$1" color="$quiet">
             {connection.connection.account || 'account connected'}
@@ -208,12 +226,11 @@ function One({
           <Act onPress={() => void start()} disabled={busy} loud>
             {busy ? 'Opening…' : `Connect ${it.name}`}
           </Act>
-        ) : (
+        ) : copy.needs ? (
           <Text fontSize="$1" color="$quiet">
-            This deployment holds no app credentials for {it.name}, so there is
-            nothing to consent to yet.
+            {copy.needs}
           </Text>
-        )}
+        ) : null}
       </XStack>
 
       {/*
@@ -221,12 +238,12 @@ function One({
         own — and names the environment variables it is missing. Only the NAMES;
         a value never crosses this wire. It is for whoever runs the deployment,
         so it reads quiet rather than loud: the person on this screen cannot set
-        an environment variable.
+        an environment variable. Omitted when `needs` already named this same
+        set, which is the case once the two planes agree.
       */}
-      {network.missingCredentials?.length ? (
+      {copy.publishing ? (
         <Text fontSize="$1" color="$quiet">
-          Publishing to {it.name} also needs {network.missingCredentials.join(', ')} set
-          on the deployment.
+          {copy.publishing}
         </Text>
       ) : null}
 
@@ -251,9 +268,12 @@ export function Accounts() {
   const networks = useNetworks(http)
   const accounts = useAccounts(http)
   const all = networks.it ?? []
+  // The social list is still out. Holding the catalog read keeps "no answer
+  // yet" distinct from "the registry came back without these ids".
   const connections = useConnections(
     http,
     all.map((n) => n.provider),
+    networks.it === null && !networks.failed,
   )
 
   const again = () => {
@@ -281,15 +301,19 @@ export function Accounts() {
         {connections.failed ? <Failed what="the connections" why={connections.failed} /> : null}
 
         <YStack gap="$3">
-          {all.map((network) => (
-            <One
-              key={network.provider}
-              network={network}
-              connection={(connections.it ?? []).find((c) => c.id === network.provider)}
-              rows={(accounts.it ?? []).filter((a) => a.provider === network.provider)}
-              again={again}
-            />
-          ))}
+          {all.map((network) => {
+            const standing = (connections.it ?? []).find((c) => c.id === network.provider)
+            return (
+              <One
+                key={network.provider}
+                network={network}
+                standing={standing}
+                catalog={catalogState(connections.it !== null, Boolean(connections.failed), standing)}
+                rows={(accounts.it ?? []).filter((a) => a.provider === network.provider)}
+                again={again}
+              />
+            )
+          })}
         </YStack>
       </Screen>
     </Ready>

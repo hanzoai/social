@@ -24,6 +24,8 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { HttpClient } from '@hanzo/ai'
 
+import { providerPath, readConnections, settleConnections, type CatalogRow } from '~/catalog'
+
 // ── what the platform answers ────────────────────────────────────────────────
 
 /** A publish target: one network, one handle. */
@@ -144,6 +146,12 @@ function useRead<T>(
   http: HttpClient | null,
   get: (http: HttpClient) => Promise<T>,
   deps: unknown[],
+  /**
+   * Do not ask yet. The Connect screen learns which ids to read from
+   * `/v1/social/providers`; asking with an empty list would record an empty
+   * answer, and an empty answer is what "not in the catalog" is decided from.
+   */
+  hold = false,
 ): Read<T> {
   const [it, setIt] = useState<T | null>(null)
   const [failed, setFailed] = useState<string | null>(null)
@@ -155,7 +163,7 @@ function useRead<T>(
   const fetchIt = useCallback(get, deps)
 
   useEffect(() => {
-    if (!http) return
+    if (!http || hold) return
     let live = true
     setFailed(null)
     fetchIt(http)
@@ -164,7 +172,7 @@ function useRead<T>(
     return () => {
       live = false
     }
-  }, [http, fetchIt, turn])
+  }, [http, fetchIt, turn, hold])
 
   return { it, failed, again: () => setTurn((t) => t + 1) }
 }
@@ -205,25 +213,44 @@ export function usePosts(http: HttpClient | null, status?: string): Read<Post[]>
 }
 
 /**
- * The org's credential standing, network by network: GET /v1/provider.
+ * One network's row in the connector catalog.
  *
- * The catalog carries every connector the platform knows — Slack, GitHub, the
- * rest — so it is narrowed to the networks the social API will actually publish
- * to. A card for a connector no post can name is a control wired to nothing.
+ * `failed` is that id's own refusal. A 404 is not a failure: the row is
+ * present and `connection` is absent, which is "not in the catalog".
+ */
+export type Standing = CatalogRow<Connection>
+
+/**
+ * The org's credential standing, network by network.
+ *
+ * One `GET /v1/provider/:id` per network the social API named, in parallel.
+ * The list route answers the whole registry and takes no filter — about 755
+ * connectors, most of a megabyte — and the console's Integrations page is the
+ * caller that wants all of them. This screen wants seven. An id the registry
+ * does not have is a 404 and stays a missing row; it is not dropped into the
+ * same bucket as a read that never came back.
+ *
+ * `hold` while the social list itself has not answered. Asking with no ids
+ * would resolve to an empty catalog, and an empty catalog is the sentence
+ * "not in the catalog".
  */
 export function useConnections(
   http: HttpClient | null,
   networks: string[],
-): Read<Connection[]> {
+  hold = false,
+): Read<Standing[]> {
   const only = networks.join(',')
   return useRead(
     http,
     async (h) => {
-      const all = await h.collection<Connection>('providers', { path: '/v1/provider' })
-      const want = new Set(only ? only.split(',') : [])
-      return all.filter((one) => want.has(one.id))
+      const ids = only ? only.split(',') : []
+      const rows = await readConnections(ids, (id) =>
+        h.json<Connection>({ path: providerPath(id) }),
+      )
+      return settleConnections(rows, why)
     },
     [only],
+    hold,
   )
 }
 
