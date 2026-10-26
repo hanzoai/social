@@ -66,7 +66,7 @@ The frontend on `*.hanzo.ai` already calls `https://api.hanzo.ai`. It does not c
 | Field | Value |
 |---|---|
 | Instance URL | `https://social.hanzo.ai` once this process owns that name. `http://localhost:3300` answers the same routes for a client on this machine. Postiz Cloud can only reach a public `https` origin. |
-| API key | A Hanzo API key from [console.hanzo.ai/api-keys](https://console.hanzo.ai/api-keys). |
+| API key | A Hanzo API key from [platform.hanzo.ai/api-keys](https://platform.hanzo.ai/api-keys). |
 
 The same key is accepted as `Authorization: Bearer`, as the raw `Authorization` value, or inside `https://<origin>/mcp/<api key>`.
 
