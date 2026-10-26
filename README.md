@@ -49,6 +49,21 @@ is the platform's one custody exit and nothing here calls it: a browser has no
 use for a provider token, and a surface holding one would be a place to leak it
 from.
 
+## Use it from Postiz
+
+Grok's "Use self-hosted" form talks to this app as a Postiz instance.
+
+| Field | Value |
+|---|---|
+| Instance URL | The public `https` origin of this process. `http://localhost:3300` answers the same routes for a client on this machine. Postiz Cloud can only reach a public `https` origin. |
+| API key | A Hanzo API key from [console.hanzo.ai/api-keys](https://console.hanzo.ai/api-keys). |
+
+The same key is accepted as `Authorization: Bearer`, as the raw `Authorization` value, or inside `https://<origin>/mcp/<api key>`.
+
+`/mcp` and `/api/mcp` are the MCP session. `/public/v1` is the public REST API. Image generation calls `/v1/images/generations`, video calls `/v1/videos/generations`, clips are a Studio `video.edit` run, uploads are kept in the Library, provider helpers call `/v1/provider/{provider}/run`, and per-post settings are stored with `/v1/settings/social`.
+
+`pnpm start` serves a production build the same way, on port 3000. The static site at `social.hanzo.ai` still answers every path with the SPA, so that hostname is not the instance until the social Deployment (this image) is what the name points at.
+
 ## What it does not do
 
 The platform records no engagement — no views, likes or reach — and no endpoint

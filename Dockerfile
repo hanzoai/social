@@ -30,11 +30,13 @@ RUN pnpm build \
  && [ -s dist/index.html ] \
  && [ -d dist/assets ]
 
-# hanzoai/spa, not hanzoai/static, and not a webserver of our own: this is a
-# client-routed SPA, so it needs index.html served for every path.
-# hanzoai/static defaults to `Content-Security-Policy: default-src 'none'`,
-# which blocks the bundle the page loads and leaves a blank screen.
-# Defaults: PORT=3000, ROOT=/public.
-FROM ghcr.io/hanzoai/spa:1.4.11
-COPY --from=build /build/dist /public
+# One process serves the SPA and the Postiz paths (/mcp, /api/mcp, /public/v1).
+# A static file server answers those paths with index.html, and a Postiz client
+# then refuses the instance. PORT defaults to 3000.
+FROM node:24-alpine
+WORKDIR /app
+ENV NODE_ENV=production PORT=3000
+COPY --from=build /build/dist ./dist
+COPY server ./server
 EXPOSE 3000
+CMD ["node", "server/http.mjs"]
