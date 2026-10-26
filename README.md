@@ -52,7 +52,7 @@ from.
 
 ## Two doors
 
-The native API is what agents should call. Postiz is a second contract for a client that already speaks it. The two stay separate, and the docs say the same thing: [Social on docs.hanzo.ai](https://docs.hanzo.ai/docs/projects/hanzoai/social).
+The native API is what agents should call. Postiz is a second contract for a client that already speaks it. The two stay separate. The catalog pages are the [API](https://docs.hanzo.ai/docs/openapi/social), the [MCP tool](https://docs.hanzo.ai/docs/mcp-tools/social), and the [CLI](https://docs.hanzo.ai/docs/cli/social).
 
 | Door | Who uses it | Where |
 |---|---|---|
