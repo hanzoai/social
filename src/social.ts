@@ -24,6 +24,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { HttpClient } from '@hanzo/ai'
 
+import {
+  AUDIENCE_PRODUCT,
+  readAudiences,
+  writeAudiences,
+  type Audience,
+} from '~/audience'
 import { providerPath, readConnections, settleConnections, type CatalogRow } from '~/catalog'
 
 // ── what the platform answers ────────────────────────────────────────────────
@@ -191,6 +197,52 @@ export function useNetworks(http: HttpClient | null): Read<Network[]> {
 /** The org's publish targets: GET /v1/social/accounts. */
 export function useAccounts(http: HttpClient | null): Read<Account[]> {
   return useRead(http, (h) => h.collection<Account>('data', { path: '/v1/social/accounts' }), [])
+}
+
+interface SettingsView {
+  config?: unknown
+}
+
+/** Which stored account is personal and which is the organization's.
+ *  GET /v1/settings/social-audiences. A product never written answers an
+ *  empty config, not a 404. */
+export function useAudiences(http: HttpClient | null): Read<Record<string, Audience>> {
+  return useRead(
+    http,
+    async (h) => {
+      const view = await h.json<SettingsView>({ path: `/v1/settings/${AUDIENCE_PRODUCT}` })
+      return readAudiences(view?.config)
+    },
+    [],
+  )
+}
+
+async function putAudiences(
+  http: HttpClient,
+  change: (accounts: Record<string, Audience>) => void,
+): Promise<void> {
+  const view = await http.json<SettingsView>({ path: `/v1/settings/${AUDIENCE_PRODUCT}` })
+  const accounts = readAudiences(view?.config)
+  change(accounts)
+  await http.json({
+    method: 'PUT',
+    path: `/v1/settings/${AUDIENCE_PRODUCT}`,
+    body: { config: writeAudiences(view?.config, accounts) },
+  })
+}
+
+/** Remember the kind of one account. The account row itself cannot hold it. */
+export function saveAudience(http: HttpClient, id: string, audience: Audience): Promise<void> {
+  return putAudiences(http, (accounts) => {
+    accounts[id] = audience
+  })
+}
+
+/** Drop a kind when its account is gone. A missing id is not an error. */
+export function forgetAudience(http: HttpClient, id: string): Promise<void> {
+  return putAudiences(http, (accounts) => {
+    delete accounts[id]
+  })
 }
 
 /**

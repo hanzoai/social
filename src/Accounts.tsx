@@ -21,6 +21,7 @@ import { useState } from 'react'
 import { Text, XStack, YStack } from '@hanzo/ui'
 import { Link } from 'react-router'
 
+import { audiencesFor, isAudience, whereLine, type Audience } from '~/audience'
 import { cardCopy, catalogState } from '~/catalog'
 import { Act, Ready, Failed, Screen } from '~/page'
 import { Mark, accountTone } from '~/status'
@@ -32,7 +33,10 @@ import {
   connect,
   disconnect,
   dropAccount,
+  forgetAudience,
+  saveAudience,
   useAccounts,
+  useAudiences,
   useConnections,
   useNetworks,
   why,
@@ -41,20 +45,37 @@ import {
   type Standing,
 } from '~/social'
 
-/** The handles on one network, and the way to add another. */
+const field = {
+  minWidth: 0,
+  background: 'transparent',
+  border: '1px solid var(--border)',
+  borderRadius: 8,
+  padding: '6px 10px',
+  outline: 'none',
+  color: 'inherit',
+  font: 'inherit',
+  fontSize: 13,
+} as const
+
+/** The accounts on one network, and the way to add another.
+ *  Several are normal: a personal profile and the organization's own. */
 function Targets({
   provider,
   rows,
+  audiences,
   again,
 }: {
   provider: string
   rows: Account[]
+  audiences: Record<string, Audience>
   again: () => void
 }) {
   const http = useHttp()
   const [handle, setHandle] = useState('')
+  const [audience, setAudience] = useState<Audience | ''>('')
   const [busy, setBusy] = useState(false)
   const [failed, setFailed] = useState<string | null>(null)
+  const choices = audiencesFor(provider)
 
   const run = async (go: () => Promise<unknown>) => {
     if (!http || busy) return
@@ -62,7 +83,6 @@ function Targets({
     setFailed(null)
     try {
       await go()
-      setHandle('')
       again()
     } catch (e) {
       setFailed(why(e))
@@ -71,49 +91,94 @@ function Targets({
     }
   }
 
+  const add = () => {
+    const named = handle.trim()
+    if (!http || !named || !isAudience(audience)) return
+    const kind = audience
+    void run(async () => {
+      const created = await addAccount(http, { provider, handle: named })
+      // The account exists even if remembering its kind fails, so the form
+      // must not still offer to create it a second time, and the row has to
+      // show up before that failure is reported.
+      setHandle('')
+      setAudience('')
+      try {
+        await saveAudience(http, created.id, kind)
+      } catch (e) {
+        again()
+        throw e
+      }
+    })
+  }
+
   return (
     <YStack gap="$2">
-      {rows.map((row) => (
-        <XStack key={row.id} items="center" gap="$3">
-          <Text fontSize="$2" color="$ink" flex={1} minW={0} numberOfLines={1}>
-            {row.handle}
-          </Text>
-          <Mark of={accountTone(row.status)} says={row.status} />
-          <Text fontSize="$1" color="$quiet">
-            {since(row.createdAt)}
-          </Text>
-          <Act onPress={() => void run(() => dropAccount(http!, row.id))} disabled={busy}>
-            Remove
-          </Act>
-        </XStack>
-      ))}
+      {rows.map((row) => {
+        const kind = audiences[row.id]
+        return (
+          <XStack key={row.id} items="center" gap="$3">
+            <Text fontSize="$2" color="$ink" flex={1} minW={0} numberOfLines={1}>
+              {row.handle}
+            </Text>
+            <select
+              aria-label={`Kind of ${row.handle || 'this account'}`}
+              value={kind ?? ''}
+              disabled={busy}
+              onChange={(e) => {
+                const next = e.target.value
+                if (!http || !isAudience(next)) return
+                void run(() => saveAudience(http, row.id, next))
+              }}
+              style={field}
+            >
+              <option value="">Which account</option>
+              {choices.map((choice) => (
+                <option key={choice.id} value={choice.id}>
+                  {choice.label}
+                </option>
+              ))}
+            </select>
+            <Mark of={accountTone(row.status)} says={row.status} />
+            <Text fontSize="$1" color="$quiet">
+              {since(row.createdAt)}
+            </Text>
+            <Act
+              onPress={() =>
+                void run(async () => {
+                  await dropAccount(http!, row.id)
+                  await forgetAudience(http!, row.id)
+                })
+              }
+              disabled={busy}
+            >
+              Remove
+            </Act>
+          </XStack>
+        )
+      })}
       <XStack gap="$2">
         <input
           value={handle}
           onChange={(e) => setHandle(e.target.value)}
-          onKeyDown={(e) =>
-            e.key === 'Enter' &&
-            handle.trim() &&
-            void run(() => addAccount(http!, { provider, handle: handle.trim() }))
-          }
-          placeholder="The handle on this network"
-          style={{
-            flex: 1,
-            minWidth: 0,
-            background: 'transparent',
-            border: '1px solid var(--border)',
-            borderRadius: 8,
-            padding: '6px 10px',
-            outline: 'none',
-            color: 'inherit',
-            font: 'inherit',
-            fontSize: 13,
-          }}
+          onKeyDown={(e) => e.key === 'Enter' && handle.trim() && audience && add()}
+          placeholder="Another handle on this network"
+          aria-label="Handle"
+          style={{ ...field, flex: 1 }}
         />
-        <Act
-          onPress={() => void run(() => addAccount(http!, { provider, handle: handle.trim() }))}
-          disabled={busy || !handle.trim()}
+        <select
+          aria-label="Kind of account to add"
+          value={audience}
+          onChange={(e) => setAudience(isAudience(e.target.value) ? e.target.value : '')}
+          style={field}
         >
+          <option value="">Which account</option>
+          {choices.map((choice) => (
+            <option key={choice.id} value={choice.id}>
+              {choice.label}
+            </option>
+          ))}
+        </select>
+        <Act onPress={add} disabled={busy || !handle.trim() || !audience}>
           {busy ? 'Saving…' : 'Add'}
         </Act>
       </XStack>
@@ -133,6 +198,7 @@ function One({
   standing,
   catalog,
   rows,
+  audiences,
   again,
 }: {
   network: Network
@@ -140,6 +206,7 @@ function One({
   /** loading, failed, or answered — never inferred from a missing connection. */
   catalog: 'loading' | 'failed' | 'ready'
   rows: Account[]
+  audiences: Record<string, Audience>
   again: () => void
 }) {
   const http = useHttp()
@@ -249,9 +316,9 @@ function One({
 
       <YStack gap="$2" pt="$2" borderTopWidth={1} borderColor="$borderColor">
         <Text fontSize="$2" color="$soft">
-          Where posts go — {rows.length} handle{rows.length === 1 ? '' : 's'}
+          {whereLine(network.provider, rows, audiences)}
         </Text>
-        <Targets provider={network.provider} rows={rows} again={again} />
+        <Targets provider={network.provider} rows={rows} audiences={audiences} again={again} />
       </YStack>
 
       {failed ? (
@@ -267,6 +334,7 @@ export function Accounts() {
   const http = useHttp()
   const networks = useNetworks(http)
   const accounts = useAccounts(http)
+  const audiences = useAudiences(http)
   const all = networks.it ?? []
   // The social list is still out. Holding the catalog read keeps "no answer
   // yet" distinct from "the registry came back without these ids".
@@ -279,13 +347,14 @@ export function Accounts() {
   const again = () => {
     accounts.again()
     connections.again()
+    audiences.again()
   }
 
   return (
     <Ready>
       <Screen
         title="Connect"
-        says="Connect a network, then say which handles a post goes to. This is the first step before you write or schedule."
+        says="Connect a network, then say which accounts a post goes to. An organization can list several on one network — a personal profile and a company one."
         beside={
           <Link to="/compose" style={{ textDecoration: 'none' }}>
             <XStack px="$3" py="$2" rounded="$3" borderWidth={1} borderColor="$ink" bg="$ink">
@@ -298,6 +367,7 @@ export function Accounts() {
       >
         {networks.failed ? <Failed what="the networks" why={networks.failed} /> : null}
         {accounts.failed ? <Failed what="the accounts" why={accounts.failed} /> : null}
+        {audiences.failed ? <Failed what="which accounts are personal or company" why={audiences.failed} /> : null}
         {connections.failed ? <Failed what="the connections" why={connections.failed} /> : null}
 
         <YStack gap="$3">
@@ -310,6 +380,7 @@ export function Accounts() {
                 standing={standing}
                 catalog={catalogState(connections.it !== null, Boolean(connections.failed), standing)}
                 rows={(accounts.it ?? []).filter((a) => a.provider === network.provider)}
+                audiences={audiences.it ?? {}}
                 again={again}
               />
             )
