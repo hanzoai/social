@@ -116,7 +116,7 @@ function Targets({
       {rows.map((row) => {
         const kind = audiences[row.id]
         return (
-          <XStack key={row.id} items="center" gap="$3">
+          <XStack key={row.id} items="center" gap="$3" flexWrap="wrap">
             <Text fontSize="$2" color="$ink" flex={1} minW={0} numberOfLines={1}>
               {row.handle}
             </Text>
@@ -156,7 +156,7 @@ function Targets({
           </XStack>
         )
       })}
-      <XStack gap="$2">
+      <XStack gap="$2" flexWrap="wrap">
         <input
           value={handle}
           onChange={(e) => setHandle(e.target.value)}

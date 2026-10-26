@@ -31,6 +31,12 @@ import {
   type Audience,
 } from '~/audience'
 import { providerPath, readConnections, settleConnections, type CatalogRow } from '~/catalog'
+import {
+  credentialsUnshipped,
+  parseCredentials,
+  type OrgApps,
+  type OrgAppWrite,
+} from '~/credentials'
 
 // ── what the platform answers ────────────────────────────────────────────────
 
@@ -243,6 +249,41 @@ export function forgetAudience(http: HttpClient, id: string): Promise<void> {
   return putAudiences(http, (accounts) => {
     delete accounts[id]
   })
+}
+
+/**
+ * The org's own developer apps: GET /v1/social/credentials.
+ *
+ * A 404 or 501 is the route not being on this deployment, which is an answer,
+ * not a failure — the Keys screen uses it to stay off the rail. Any other
+ * refusal is a failure of a route that does exist.
+ */
+export function useOrgApps(http: HttpClient | null): Read<OrgApps> {
+  return useRead(
+    http,
+    async (h) => {
+      try {
+        const body = await h.json<unknown>({ path: '/v1/social/credentials' })
+        return { unshipped: false, apps: parseCredentials(body) }
+      } catch (e) {
+        if (credentialsUnshipped(e)) return { unshipped: true, apps: [] }
+        throw e
+      }
+    },
+    [],
+  )
+}
+
+/**
+ * Write the apps the person edited: PUT /v1/social/credentials.
+ *
+ * Only those providers are in the body. A secret is included only when they
+ * typed one or asked to clear it — see `credentialWrite`.
+ */
+export function saveOrgApps(http: HttpClient, apps: OrgAppWrite[]): Promise<void> {
+  return http
+    .raw({ method: 'PUT', path: '/v1/social/credentials', body: { apps } })
+    .then(() => undefined)
 }
 
 /**
