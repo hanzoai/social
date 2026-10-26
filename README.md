@@ -52,20 +52,22 @@ from.
 
 ## Two doors
 
-Postiz is a different contract from `/v1/social`, and the two stay separate.
+The native API is what agents should call. Postiz is a second contract for a client that already speaks it. The two stay separate, and the docs say the same thing: [Social on docs.hanzo.ai](https://docs.hanzo.ai/docs/projects/hanzoai/social).
 
 | Door | Who uses it | Where |
 |---|---|---|
-| Postiz drop-in | Grok's "Use self-hosted", and any Postiz client | `https://social.hanzo.ai` — `/mcp`, `/api/mcp`, `/public/v1`, `/api/public/v1` |
-| Hanzo API | This app, and anything else that speaks Hanzo | `https://api.hanzo.ai/v1/social` |
+| Hanzo API | This app, MCP, the CLI, the SDKs | [`https://api.hanzo.ai/v1/social`](https://docs.hanzo.ai/docs/openapi/social). MCP tool [`social`](https://docs.hanzo.ai/docs/mcp-tools/social) at `https://api.hanzo.ai/v1/mcp`. CLI [`hanzo social`](https://docs.hanzo.ai/docs/cli/social). |
+| Postiz drop-in | Grok's "Use self-hosted", and any Postiz client moving onto Hanzo | `https://social.hanzo.ai` — `/mcp`, `/api/mcp`, `/public/v1`, `/api/public/v1` |
 
 The frontend on `*.hanzo.ai` already calls `https://api.hanzo.ai`. It does not call Postiz paths, and those paths are not under `/v1/social`. On this process a `/v1` request, including `/v1/social`, is proxied to `HANZO_API` (default `https://api.hanzo.ai`). Postiz paths are answered here. Every other path is the app.
 
 ### Use it from Postiz
 
+An install that already runs Postiz keeps that client. The instance URL is this host, and the key is a Hanzo key.
+
 | Field | Value |
 |---|---|
-| Instance URL | `https://social.hanzo.ai` once this process owns that name. `http://localhost:3300` answers the same routes for a client on this machine. Postiz Cloud can only reach a public `https` origin. |
+| Instance URL | `https://social.hanzo.ai`. `http://localhost:3300` answers the same routes for a client on this machine. Postiz Cloud can only reach a public `https` origin. |
 | API key | A Hanzo API key from [platform.hanzo.ai/api-keys](https://platform.hanzo.ai/api-keys). |
 
 The same key is accepted as `Authorization: Bearer`, as the raw `Authorization` value, or inside `https://<origin>/mcp/<api key>`.

@@ -34,17 +34,17 @@ images:
     # person is minted by hanzo.id at sign-in; every credential that names a
     # network is sealed in KMS and read only by the publisher, server-side.
 
-# Two doors. social.hanzo.ai is the Postiz drop-in (/mcp, /api/mcp,
-# /public/v1). /v1/social stays on api.hanzo.ai, which is what the frontend
-# calls. The image above is the process that serves both: Postiz paths
-# locally, and /v1 proxied to HANZO_API (default https://api.hanzo.ai).
+# Two doors. The native API is /v1/social on api.hanzo.ai (MCP tool `social`,
+# CLI `hanzo social`). social.hanzo.ai is the Postiz drop-in for a client that
+# already speaks Postiz: /mcp, /api/mcp, /public/v1, /api/public/v1. The worker
+# hanzo-social-postiz serves those paths. The image above serves both when it
+# owns the process: Postiz paths locally, and /v1 proxied to HANZO_API
+# (default https://api.hanzo.ai). The frontend calls api.hanzo.ai.
 #
 # The site lane still publishes dist and, on every main publish, re-binds
-# social.hanzo.ai to the static site. That bind is why POST
-# https://social.hanzo.ai/mcp returns index.html. The hostname is the drop-in
-# when this image owns the name and the static bind stops. Leave the site
-# lane until that cutover: dropping it stops UI updates and still does not
-# serve MCP.
+# social.hanzo.ai. The worker route stays in front of that proxied record, so
+# the Postiz paths keep answering JSON. Leave the site lane: it is what
+# updates the app.
 #
 # `build` runs ON THE PUBLISH JOB. The test gate also produces dist, but that
 # is a different runner: the site step looks at THIS checkout, and without a
