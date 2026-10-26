@@ -74,7 +74,7 @@ The same key is accepted as `Authorization: Bearer`, as the raw `Authorization` 
 
 `pnpm start` serves a production build the same way, on port 3000.
 
-`social.hanzo.ai` is still the static site. Every publish of `main` binds that name to the Sites plane, which answers `/mcp` with `index.html`. The name is the drop-in when this image owns it and that static bind stops.
+On `social.hanzo.ai`, `/mcp`, `/api/mcp`, `/public/v1`, and `/api/public/v1` are the worker `hanzo-social-postiz` (`server/edge.mjs`), which runs this same handler. The app and `/v1/social` stay on the origin. The API key is a Hanzo key, not a Postiz key.
 
 ## What it does not do
 

@@ -12,7 +12,7 @@ test:
       pnpm install --frozen-lockfile
 
   - name: postiz
-    run: node --test server/postiz.test.mjs server/http.test.mjs
+    run: node --test server/postiz.test.mjs server/http.test.mjs server/edge.test.mjs
 
   # Verbatim the build line the image runs, run before there is an image, so a
   # break arrives in a minute instead of after a full layer stack. `pnpm build`
