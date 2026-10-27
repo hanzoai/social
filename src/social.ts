@@ -43,9 +43,13 @@ import {
 /** A publish target: one network, one handle. */
 export interface Account {
   id: string
-  /** x, facebook, instagram, linkedin, tiktok, youtube or threads. */
+  /** The network: x, facebook, instagram, linkedin, tiktok, youtube, threads,
+   *  bluesky, mastodon, pinterest, reddit, telegram-bot or discord-webhook. */
   provider: string
   handle: string
+  /** The platform id the sealed credential is kept under. Absent for a handle
+   *  typed in by hand, which has no consent behind it and cannot be posted to. */
+  externalId?: string
   /** connected, disconnected or error. Only a connected account is a target. */
   status: string
   createdAt: number
@@ -92,22 +96,41 @@ export interface Summary {
   scheduled: number
 }
 
+/** One input of a connector that takes a credential instead of a consent. */
+export interface ConnectorField {
+  name: string
+  label: string
+  /** Masked on entry, sealed on save, never read back. */
+  secret: boolean
+  required: boolean
+  help?: string
+  /** What an empty input stands for. */
+  default?: string
+}
+
 /** A network's connector, and this org's standing with it. */
 export interface Connection {
   id: string
   name: string
   description: string
   category: string
-  /** Whether the DEPLOYMENT holds this connector's app credentials. */
+  /** Whether a person can connect it now: the deployment holds the app for a
+   *  consent, or the connector takes a credential and needs no app at all. */
   available: boolean
-  /** Whether THIS ORG has given consent. */
+  /** Whether THIS ORG has connected at least one account. */
   connected: boolean
+  /** `oauth` is a consent at the network's own site; `credential` is a form. */
+  kind?: string
+  /** The form of a credential connector. */
+  fields?: ConnectorField[]
   connection?: {
     account: string
     externalId: string
     scopes: string[]
     connectedAt: string
   }
+  /** Every account connected, not only the first. */
+  accounts?: { account: string; externalId: string; label?: string; kind?: string }[]
 }
 
 /**
@@ -319,7 +342,7 @@ export type Standing = CatalogRow<Connection>
  * One `GET /v1/provider/:id` per network the social API named, in parallel.
  * The list route answers the whole registry and takes no filter — about 755
  * connectors, most of a megabyte — and the console's Integrations page is the
- * caller that wants all of them. This screen wants seven. An id the registry
+ * caller that wants all of them. This screen wants the networks a post can name. An id the registry
  * does not have is a 404 and stays a missing row; it is not dropped into the
  * same bucket as a read that never came back.
  *
@@ -437,29 +460,59 @@ export function dropAccount(http: HttpClient, id: string): Promise<unknown> {
   return http.raw({ method: 'DELETE', path: `/v1/social/accounts/${encodeURIComponent(id)}` }).then(() => undefined)
 }
 
+/** What `connect` answers: the network's consent address for the browser to
+ *  follow, or `connected` when a credential was taken and verified. */
+export interface Connected {
+  authorizeUrl?: string
+  connected?: boolean
+  account?: string
+}
+
 /**
  * Begin the org's consent for one network: POST /v1/provider/:provider/connect.
  *
- * The body carries no `token` key, and that absence is what selects the
- * three-legged flow over sealing a credential directly — the platform answers
- * the network's own consent URL for the browser to follow. A deployment without
- * the network's app credentials answers 503 here, which is why the card offers
- * this only where `available` is true.
+ * With no `fields` the body carries no `token` key, and that absence is what
+ * selects the three-legged flow over sealing a credential directly — the
+ * platform answers the network's own consent URL for the browser to follow. A
+ * deployment without the network's app credentials answers 503 here, which is
+ * why the card offers this only where `available` is true.
+ *
+ * With `fields` — Bluesky's handle and app password, Mastodon's server and
+ * token, a Telegram bot, a Discord webhook — the platform verifies them with
+ * the network and seals them, and answers `connected`. Nothing is stored for a
+ * credential the network refuses. `back` is the page the consent returns to.
  */
-export function connect(http: HttpClient, provider: string): Promise<{ authorizeUrl?: string }> {
-  return http.json<{ authorizeUrl?: string }>({
+export function connect(
+  http: HttpClient,
+  provider: string,
+  how: { fields?: Record<string, string>; back?: string } = {},
+): Promise<Connected> {
+  const body: Record<string, unknown> = {}
+  if (how.fields) body.fields = how.fields
+  if (how.back) body.return = how.back
+  return http.json<Connected>({
     method: 'POST',
     path: `/v1/provider/${encodeURIComponent(provider)}/connect`,
-    body: {},
+    body,
   })
 }
 
-/** Revoke and forget the org's credential: POST /v1/provider/:provider/disconnect. */
-export function disconnect(http: HttpClient, provider: string): Promise<{ disconnected: boolean }> {
+/**
+ * Revoke and forget the org's credential: POST /v1/provider/:provider/disconnect.
+ *
+ * With an `account` — the platform id the account lists — only that account
+ * goes and the org's others stay; the platform also takes it off the list this
+ * app shows. Without one, every account of the network goes.
+ */
+export function disconnect(
+  http: HttpClient,
+  provider: string,
+  account?: string,
+): Promise<{ disconnected: boolean }> {
   return http.json<{ disconnected: boolean }>({
     method: 'POST',
     path: `/v1/provider/${encodeURIComponent(provider)}/disconnect`,
-    body: {},
+    body: account ? { account } : {},
   })
 }
 
@@ -483,7 +536,7 @@ export interface Copy {
  * still has to show the words.
  */
 export async function invent(http: HttpClient, brief: string, networks: string[]): Promise<Copy> {
-  const listed = networks.length ? networks.join(', ') : 'x, facebook, instagram, linkedin, tiktok, youtube, threads'
+  const listed = networks.length ? networks.join(', ') : 'x, facebook, instagram, linkedin, tiktok, youtube, threads, bluesky, mastodon, pinterest, reddit, telegram-bot, discord-webhook'
   const got = await http.json<{
     choices?: { message?: { content?: string | null } }[]
   }>({

@@ -16,7 +16,7 @@
 // has: the top of the ramp as a fill, with the ground as the ink on it. That is
 // why a network this deployment holds no credentials for reads `quiet` and not
 // `act` — the missing item is a deployment's environment variable, which the
-// person reading the screen cannot supply. Inverting all seven networks would
+// person reading the screen cannot supply. Inverting every network would
 // spend the one loud thing on a row nobody can act on, and then a failed post
 // has nothing left to be louder than.
 

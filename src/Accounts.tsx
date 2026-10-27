@@ -1,35 +1,34 @@
-// Every network, with the two separate things it needs before a post can go out.
+// Every network, and the accounts an organization has on it — one list, one place.
 //
-// THE CONSENT is the org's credential for the network — the OAuth the person
-// gives once, sealed into KMS. `GET /v1/provider` reports whether this org
-// has it and whether this deployment could even ask for it;
-// `POST /v1/provider/:provider/connect` starts it and answers the network's
-// own consent URL.
+// A network is connected one of two ways (connect.ts): a consent at the
+// network's own site, which opens in a window beside this screen, or a form
+// for a credential the person holds — a Bluesky app password, a Mastodon
+// token, a Telegram bot, a Discord webhook — which the network verifies before
+// anything is kept. Either way the account lands in the same list under the
+// network's name, and Remove ends that one account and leaves the others.
 //
-// THE TARGETS are the handles a publish fans out to — `/v1/social/accounts`.
+// A network whose developer app the deployment does not hold cannot be
+// consented to, and says so: it needs the owner's credentials. The
+// organization can bring its own app on Keys.
 //
-// They are separately true and the screen keeps them apart, because a network
-// with consent and no target publishes nothing, a network with a target and no
-// consent publishes nothing, and a screen that merged them could not say which
-// was missing.
-//
-// NO CREDENTIAL IS ON THIS SCREEN. The consent happens at the network's own
-// site; what comes back here is an account label and the scopes granted. The
-// token itself never leaves KMS.
+// NO CREDENTIAL IS READ BACK ON THIS SCREEN. A form's fields are sent once and
+// sealed; what comes back is an account name and the scopes granted. The token
+// itself never leaves KMS.
 
 import { useState } from 'react'
 import { Text, XStack, YStack } from '@hanzo/ui'
 import { Link } from 'react-router'
 
 import { audiencesFor, isAudience, whereLine, type Audience } from '~/audience'
-import { cardCopy, catalogState } from '~/catalog'
+import { cardCopy, catalogState, takesApp } from '~/catalog'
+import { connectLabel, formOf, returnSays, standing as stand, way, type Return } from '~/connect'
+import { openConsent, sendConsent, useReturn } from '~/handoff'
 import { Act, Ready, Failed, Screen } from '~/page'
 import { Mark, accountTone } from '~/status'
 import { rule } from '~/network'
 import { since } from '~/time'
 import { useHttp } from '~/client'
 import {
-  addAccount,
   connect,
   disconnect,
   dropAccount,
@@ -41,6 +40,7 @@ import {
   useNetworks,
   why,
   type Account,
+  type ConnectorField,
   type Network,
   type Standing,
 } from '~/social'
@@ -57,9 +57,9 @@ const field = {
   fontSize: 13,
 } as const
 
-/** The accounts on one network, and the way to add another.
- *  Several are normal: a personal profile and the organization's own. */
-function Targets({
+/** The accounts on one network. Several are normal: a personal profile and the
+ *  organization's own. */
+function Rows({
   provider,
   rows,
   audiences,
@@ -71,8 +71,6 @@ function Targets({
   again: () => void
 }) {
   const http = useHttp()
-  const [handle, setHandle] = useState('')
-  const [audience, setAudience] = useState<Audience | ''>('')
   const [busy, setBusy] = useState(false)
   const [failed, setFailed] = useState<string | null>(null)
   const choices = audiencesFor(provider)
@@ -91,24 +89,12 @@ function Targets({
     }
   }
 
-  const add = () => {
-    const named = handle.trim()
-    if (!http || !named || !isAudience(audience)) return
-    const kind = audience
-    void run(async () => {
-      const created = await addAccount(http, { provider, handle: named })
-      // The account exists even if remembering its kind fails, so the form
-      // must not still offer to create it a second time, and the row has to
-      // show up before that failure is reported.
-      setHandle('')
-      setAudience('')
-      try {
-        await saveAudience(http, created.id, kind)
-      } catch (e) {
-        again()
-        throw e
-      }
-    })
+  if (rows.length === 0) {
+    return (
+      <Text fontSize="$1" color="$quiet">
+        No account connected yet.
+      </Text>
+    )
   }
 
   return (
@@ -117,7 +103,7 @@ function Targets({
         const kind = audiences[row.id]
         return (
           <XStack key={row.id} items="center" gap="$3" flexWrap="wrap">
-            <Text fontSize="$2" color="$ink" flex={1} minW={0} numberOfLines={1}>
+            <Text fontSize="$2" color="$ink" flex={1} minW={140} numberOfLines={1}>
               {row.handle}
             </Text>
             <select
@@ -145,7 +131,11 @@ function Targets({
             <Act
               onPress={() =>
                 void run(async () => {
-                  await dropAccount(http!, row.id)
+                  // An account with a consent behind it is ended at the platform,
+                  // which also takes it off this list. One typed in by hand has no
+                  // consent, so only its row goes.
+                  if (row.externalId) await disconnect(http!, provider, row.externalId)
+                  else await dropAccount(http!, row.id)
                   await forgetAudience(http!, row.id)
                 })
               }
@@ -156,32 +146,6 @@ function Targets({
           </XStack>
         )
       })}
-      <XStack gap="$2" flexWrap="wrap">
-        <input
-          value={handle}
-          onChange={(e) => setHandle(e.target.value)}
-          onKeyDown={(e) => e.key === 'Enter' && handle.trim() && audience && add()}
-          placeholder="Another handle on this network"
-          aria-label="Handle"
-          style={{ ...field, flex: 1 }}
-        />
-        <select
-          aria-label="Kind of account to add"
-          value={audience}
-          onChange={(e) => setAudience(isAudience(e.target.value) ? e.target.value : '')}
-          style={field}
-        >
-          <option value="">Which account</option>
-          {choices.map((choice) => (
-            <option key={choice.id} value={choice.id}>
-              {choice.label}
-            </option>
-          ))}
-        </select>
-        <Act onPress={add} disabled={busy || !handle.trim() || !audience}>
-          {busy ? 'Saving…' : 'Add'}
-        </Act>
-      </XStack>
       {failed ? (
         <Text fontSize="$1" color="$ink" fontWeight="500">
           {failed}
@@ -191,18 +155,72 @@ function Targets({
   )
 }
 
-/** One network: what this deployment can do, what this org has consented to,
- *  and the handles a publish would reach. */
+/** The form of a connector that takes a credential. */
+function Credential({
+  name,
+  fields,
+  busy,
+  onSubmit,
+}: {
+  name: string
+  fields: ConnectorField[]
+  busy: boolean
+  onSubmit: (body: Record<string, string>) => void
+}) {
+  const [values, setValues] = useState<Record<string, string>>({})
+  const form = formOf(fields, values)
+  const ready = form.missing.length === 0
+
+  return (
+    <YStack gap="$3">
+      {fields.map((f) => (
+        <YStack key={f.name} gap="$1">
+          <Text fontSize="$1" color="$soft">
+            {f.label}
+            {f.required ? '' : ' (optional)'}
+          </Text>
+          <input
+            aria-label={`${name} ${f.label}`}
+            type={f.secret ? 'password' : 'text'}
+            value={values[f.name] ?? ''}
+            autoComplete={f.secret ? 'new-password' : 'off'}
+            spellCheck={false}
+            autoCapitalize="off"
+            placeholder={f.default ?? ''}
+            onChange={(e) => setValues({ ...values, [f.name]: e.target.value })}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && ready && !busy) onSubmit(form.body)
+            }}
+            style={{ ...field, width: '100%' }}
+          />
+          {f.help ? (
+            <Text fontSize="$1" color="$quiet">
+              {f.help}
+            </Text>
+          ) : null}
+        </YStack>
+      ))}
+      <XStack>
+        <Act onPress={() => onSubmit(form.body)} disabled={busy || !ready} loud>
+          {busy ? 'Checking…' : `Connect ${name}`}
+        </Act>
+      </XStack>
+    </YStack>
+  )
+}
+
+/** One network: what it is, what this deployment can do, the accounts on it,
+ *  and the way to add another. */
 function One({
   network,
-  standing,
+  row,
   catalog,
   rows,
   audiences,
   again,
 }: {
   network: Network
-  standing: Standing | undefined
+  row: Standing | undefined
   /** loading, failed, or answered — never inferred from a missing connection. */
   catalog: 'loading' | 'failed' | 'ready'
   rows: Account[]
@@ -211,46 +229,57 @@ function One({
 }) {
   const http = useHttp()
   const [busy, setBusy] = useState(false)
+  const [adding, setAdding] = useState(false)
   const [failed, setFailed] = useState<string | null>(null)
   const it = rule(network.provider)
   // A connection from a read that has not answered is not a connection. The
   // card would otherwise describe a loading catalog as a network the registry
   // does not contain.
-  const connection = catalog === 'ready' ? standing?.connection : undefined
-  const on = Boolean(connection?.connected)
+  const connection = catalog === 'ready' ? row?.connection : undefined
+  const how = way(connection)
+  const count = Math.max(rows.length, connection?.accounts?.length ?? 0)
+  const mark = stand(how, count)
   const copy = cardCopy({
     name: it.name,
     provider: network.provider,
     catalog,
     connection,
     missingCredentials: network.missingCredentials,
-    detail: standing?.failed,
+    detail: row?.failed,
   })
 
-  const start = async () => {
+  const consent = async () => {
     if (!http || busy) return
     setBusy(true)
     setFailed(null)
+    // The window opens in the click, before the request: one opened after an
+    // await is one the browser takes for a popup nobody asked for.
+    const win = openConsent()
     try {
-      const { authorizeUrl } = await connect(http, network.provider)
-      // The network's own consent screen. A full navigation rather than a popup:
-      // several of these refuse to render in a frame or a window opened by
-      // script, and the return address is this app's own origin.
-      if (authorizeUrl) window.location.assign(authorizeUrl)
-      else setFailed('The platform did not answer a consent address for this network.')
+      const { authorizeUrl } = await connect(http, network.provider, {
+        back: `${window.location.origin}/accounts`,
+      })
+      if (!authorizeUrl) {
+        win?.close()
+        setFailed('The platform did not answer a consent address for this network.')
+        return
+      }
+      sendConsent(win, authorizeUrl)
     } catch (e) {
+      win?.close()
       setFailed(why(e))
     } finally {
       setBusy(false)
     }
   }
 
-  const stop = async () => {
+  const submit = async (fields: Record<string, string>) => {
     if (!http || busy) return
     setBusy(true)
     setFailed(null)
     try {
-      await disconnect(http, network.provider)
+      await connect(http, network.provider, { fields })
+      setAdding(false)
       again()
     } catch (e) {
       setFailed(why(e))
@@ -261,69 +290,79 @@ function One({
 
   return (
     <YStack gap="$3" p="$4" rounded="$3" borderWidth={1} borderColor="$borderColor">
-      <XStack items="center" gap="$3">
-        <Text fontSize="$3" fontWeight="500" color="$ink" flex={1}>
+      <XStack items="center" gap="$3" flexWrap="wrap">
+        <Text fontSize="$3" fontWeight="500" color="$ink" flex={1} minW={120}>
           {it.name}
         </Text>
-        <Mark of={on ? 'up' : 'quiet'} says={on ? 'connected' : 'not connected'} />
+        <Mark of={mark.tone} says={mark.says} />
       </XStack>
 
-      <YStack gap="$1">
-        {copy.caption ? (
-          <Text fontSize="$1" color="$soft">
-            {copy.caption}
-          </Text>
-        ) : null}
-        {on && connection?.connection ? (
-          <Text fontSize="$1" color="$quiet">
-            {connection.connection.account || 'account connected'}
-            {connection.connection.scopes.length
-              ? ` · ${connection.connection.scopes.join(', ')}`
-              : ''}
-          </Text>
-        ) : null}
-      </YStack>
-
-      <XStack gap="$2" items="center" flexWrap="wrap">
-        {on ? (
-          <Act onPress={() => void stop()} disabled={busy}>
-            {busy ? 'Disconnecting…' : 'Disconnect'}
-          </Act>
-        ) : connection?.available ? (
-          <Act onPress={() => void start()} disabled={busy} loud>
-            {busy ? 'Opening…' : `Connect ${it.name}`}
-          </Act>
-        ) : copy.needs ? (
-          <Text fontSize="$1" color="$quiet">
-            {copy.needs}
-          </Text>
-        ) : null}
-      </XStack>
-
-      {/*
-        The publish edge reads a second set of credentials — the social plane's
-        own — and names the environment variables it is missing. Only the NAMES;
-        a value never crosses this wire. It is for whoever runs the deployment,
-        so it reads quiet rather than loud: the person on this screen cannot set
-        an environment variable. Omitted when `needs` already named this same
-        set, which is the case once the two planes agree.
-      */}
-      {copy.publishing ? (
-        <Text fontSize="$1" color="$quiet">
-          {copy.publishing}
+      {copy.caption ? (
+        <Text fontSize="$1" color="$soft">
+          {copy.caption}
         </Text>
       ) : null}
 
+      <Rows provider={network.provider} rows={rows} audiences={audiences} again={again} />
+
       <YStack gap="$2" pt="$2" borderTopWidth={1} borderColor="$borderColor">
-        <Text fontSize="$2" color="$soft">
-          {whereLine(network.provider, rows, audiences)}
-        </Text>
-        <Targets provider={network.provider} rows={rows} audiences={audiences} again={again} />
+        {how === 'consent' ? (
+          <XStack gap="$2" items="center" flexWrap="wrap">
+            <Act onPress={() => void consent()} disabled={busy} loud={count === 0}>
+              {busy ? 'Opening…' : connectLabel(it.name, count)}
+            </Act>
+          </XStack>
+        ) : null}
+
+        {how === 'form' && connection?.fields ? (
+          count > 0 && !adding ? (
+            <XStack>
+              <Act onPress={() => setAdding(true)}>{connectLabel(it.name, count)}</Act>
+            </XStack>
+          ) : (
+            <Credential name={it.name} fields={connection.fields} busy={busy} onSubmit={(b) => void submit(b)} />
+          )
+        ) : null}
+
+        {how === 'owner' && copy.needs ? (
+          <YStack gap="$1">
+            <Text fontSize="$1" color="$quiet">
+              {copy.needs}
+            </Text>
+            {takesApp(network.provider) ? (
+              <Link to="/settings" style={{ textDecoration: 'none' }}>
+                <Text fontSize="$1" color="$soft">
+                  Or add this organization's own {it.name} app on Keys.
+                </Text>
+              </Link>
+            ) : null}
+          </YStack>
+        ) : null}
+
+        {/*
+          The publish edge reads a second set of credentials — the social plane's
+          own — and names the environment variables it is missing. Only the NAMES;
+          a value never crosses this wire. It is for whoever runs the deployment,
+          so it reads quiet rather than loud: the person on this screen cannot set
+          an environment variable. Omitted when `needs` already named this same
+          set, which is the case once the two planes agree.
+        */}
+        {copy.publishing ? (
+          <Text fontSize="$1" color="$quiet">
+            {copy.publishing}
+          </Text>
+        ) : null}
+
+        {failed ? (
+          <Text fontSize="$1" color="$ink" fontWeight="500">
+            {failed}
+          </Text>
+        ) : null}
       </YStack>
 
-      {failed ? (
-        <Text fontSize="$1" color="$ink" fontWeight="500">
-          {failed}
+      {rows.length > 0 ? (
+        <Text fontSize="$1" color="$quiet">
+          {whereLine(network.provider, rows, audiences)}
         </Text>
       ) : null}
     </YStack>
@@ -343,12 +382,19 @@ export function Accounts() {
     all.map((n) => n.provider),
     networks.it === null && !networks.failed,
   )
+  const [notice, setNotice] = useState<string | null>(null)
 
   const again = () => {
     accounts.again()
     connections.again()
     audiences.again()
   }
+
+  // A consent came back: say how it went, and read everything again.
+  useReturn((back: Return) => {
+    setNotice(returnSays(back, (id) => rule(id).name))
+    again()
+  })
 
   return (
     <Ready>
@@ -365,6 +411,22 @@ export function Accounts() {
           </Link>
         }
       >
+        {notice ? (
+          <XStack
+            items="center"
+            gap="$3"
+            p="$3"
+            rounded="$3"
+            borderWidth={1}
+            borderColor="$borderColor"
+            role="status"
+          >
+            <Text fontSize="$2" color="$ink" flex={1}>
+              {notice}
+            </Text>
+            <Act onPress={() => setNotice(null)}>Dismiss</Act>
+          </XStack>
+        ) : null}
         {networks.failed ? <Failed what="the networks" why={networks.failed} /> : null}
         {accounts.failed ? <Failed what="the accounts" why={accounts.failed} /> : null}
         {audiences.failed ? <Failed what="which accounts are personal or company" why={audiences.failed} /> : null}
@@ -372,13 +434,13 @@ export function Accounts() {
 
         <YStack gap="$3">
           {all.map((network) => {
-            const standing = (connections.it ?? []).find((c) => c.id === network.provider)
+            const row = (connections.it ?? []).find((c) => c.id === network.provider)
             return (
               <One
                 key={network.provider}
                 network={network}
-                standing={standing}
-                catalog={catalogState(connections.it !== null, Boolean(connections.failed), standing)}
+                row={row}
+                catalog={catalogState(connections.it !== null, Boolean(connections.failed), row)}
                 rows={(accounts.it ?? []).filter((a) => a.provider === network.provider)}
                 audiences={audiences.it ?? {}}
                 again={again}
@@ -386,6 +448,10 @@ export function Accounts() {
             )
           })}
         </YStack>
+
+        <Text fontSize="$1" color="$quiet">
+          Hacker News has no posting API, so it is not offered here.
+        </Text>
       </Screen>
     </Ready>
   )

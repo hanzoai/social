@@ -12,6 +12,7 @@
 import { useState } from 'react'
 import { Text, XStack, YStack } from '@hanzo/ui'
 
+import { takesApp } from '~/catalog'
 import { credentialWrite, maskId, maskSecret, type OrgApp } from '~/credentials'
 import { useHttp } from '~/client'
 import { rule } from '~/network'
@@ -166,7 +167,7 @@ export function Credentials() {
           </Text>
         ) : apps.it ? (
           <YStack gap="$3">
-            {(networks.it ?? []).map((network) => (
+            {(networks.it ?? []).filter((network) => takesApp(network.provider)).map((network) => (
               <AppCard
                 key={network.provider}
                 provider={network.provider}
