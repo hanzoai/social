@@ -11,6 +11,7 @@ import { useIam } from '@hanzo/iam/react'
 import {
   BarChart3,
   CalendarDays,
+  KeyRound,
   LayoutDashboard,
   PenLine,
   Radio,
@@ -22,9 +23,11 @@ import { Sidebar } from '@hanzo/ui/chat'
 import { OrgSwitcher, UserMenu, type OrgScope } from '@hanzo/ui/product'
 import { NavLink, Outlet } from 'react-router'
 
+import { useHttp, useTenant } from '~/client'
+import { credentialsLive } from '~/credentials'
 import { enter } from '~/enter'
 import { SCREENS } from '~/routes'
-import { useTenant } from '~/client'
+import { useOrgApps } from '~/social'
 
 const ICONS: Record<(typeof SCREENS)[number]['path'], LucideIcon> = {
   '/': LayoutDashboard,
@@ -32,6 +35,7 @@ const ICONS: Record<(typeof SCREENS)[number]['path'], LucideIcon> = {
   '/posts': ScrollText,
   '/calendar': CalendarDays,
   '/accounts': Radio,
+  '/settings': KeyRound,
   '/analytics': BarChart3,
 }
 
@@ -143,6 +147,11 @@ function Account() {
 }
 
 export function Frame() {
+  const apps = useOrgApps(useHttp())
+  const screens = SCREENS.filter(
+    (screen) => screen.path !== '/settings' || credentialsLive(apps.it, Boolean(apps.failed)),
+  )
+
   return (
     <XStack className="shell" flex={1} minW={0} minH={0}>
       <Sidebar className="rail">
@@ -155,7 +164,7 @@ export function Frame() {
         <Tenant />
 
         <YStack className="ways" flex={1} minH={0} overflow="scroll" gap="$1">
-          {SCREENS.map(({ path, label }) => {
+          {screens.map(({ path, label }) => {
             const Icon = ICONS[path]
             return (
               <NavLink key={path} to={path} end={path === '/'} style={{ textDecoration: 'none' }}>

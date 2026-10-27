@@ -24,6 +24,20 @@
 import { useCallback, useEffect, useState } from 'react'
 import type { HttpClient } from '@hanzo/ai'
 
+import {
+  AUDIENCE_PRODUCT,
+  readAudiences,
+  writeAudiences,
+  type Audience,
+} from '~/audience'
+import { providerPath, readConnections, settleConnections, type CatalogRow } from '~/catalog'
+import {
+  credentialsUnshipped,
+  parseCredentials,
+  type OrgApps,
+  type OrgAppWrite,
+} from '~/credentials'
+
 // ── what the platform answers ────────────────────────────────────────────────
 
 /** A publish target: one network, one handle. */
@@ -144,6 +158,12 @@ function useRead<T>(
   http: HttpClient | null,
   get: (http: HttpClient) => Promise<T>,
   deps: unknown[],
+  /**
+   * Do not ask yet. The Connect screen learns which ids to read from
+   * `/v1/social/providers`; asking with an empty list would record an empty
+   * answer, and an empty answer is what "not in the catalog" is decided from.
+   */
+  hold = false,
 ): Read<T> {
   const [it, setIt] = useState<T | null>(null)
   const [failed, setFailed] = useState<string | null>(null)
@@ -155,7 +175,7 @@ function useRead<T>(
   const fetchIt = useCallback(get, deps)
 
   useEffect(() => {
-    if (!http) return
+    if (!http || hold) return
     let live = true
     setFailed(null)
     fetchIt(http)
@@ -164,7 +184,7 @@ function useRead<T>(
     return () => {
       live = false
     }
-  }, [http, fetchIt, turn])
+  }, [http, fetchIt, turn, hold])
 
   return { it, failed, again: () => setTurn((t) => t + 1) }
 }
@@ -183,6 +203,87 @@ export function useNetworks(http: HttpClient | null): Read<Network[]> {
 /** The org's publish targets: GET /v1/social/accounts. */
 export function useAccounts(http: HttpClient | null): Read<Account[]> {
   return useRead(http, (h) => h.collection<Account>('data', { path: '/v1/social/accounts' }), [])
+}
+
+interface SettingsView {
+  config?: unknown
+}
+
+/** Which stored account is personal and which is the organization's.
+ *  GET /v1/settings/social-audiences. A product never written answers an
+ *  empty config, not a 404. */
+export function useAudiences(http: HttpClient | null): Read<Record<string, Audience>> {
+  return useRead(
+    http,
+    async (h) => {
+      const view = await h.json<SettingsView>({ path: `/v1/settings/${AUDIENCE_PRODUCT}` })
+      return readAudiences(view?.config)
+    },
+    [],
+  )
+}
+
+async function putAudiences(
+  http: HttpClient,
+  change: (accounts: Record<string, Audience>) => void,
+): Promise<void> {
+  const view = await http.json<SettingsView>({ path: `/v1/settings/${AUDIENCE_PRODUCT}` })
+  const accounts = readAudiences(view?.config)
+  change(accounts)
+  await http.json({
+    method: 'PUT',
+    path: `/v1/settings/${AUDIENCE_PRODUCT}`,
+    body: { config: writeAudiences(view?.config, accounts) },
+  })
+}
+
+/** Remember the kind of one account. The account row itself cannot hold it. */
+export function saveAudience(http: HttpClient, id: string, audience: Audience): Promise<void> {
+  return putAudiences(http, (accounts) => {
+    accounts[id] = audience
+  })
+}
+
+/** Drop a kind when its account is gone. A missing id is not an error. */
+export function forgetAudience(http: HttpClient, id: string): Promise<void> {
+  return putAudiences(http, (accounts) => {
+    delete accounts[id]
+  })
+}
+
+/**
+ * The org's own developer apps: GET /v1/social/credentials.
+ *
+ * A 404 or 501 is the route not being on this deployment, which is an answer,
+ * not a failure — the Keys screen uses it to stay off the rail. Any other
+ * refusal is a failure of a route that does exist.
+ */
+export function useOrgApps(http: HttpClient | null): Read<OrgApps> {
+  return useRead(
+    http,
+    async (h) => {
+      try {
+        const body = await h.json<unknown>({ path: '/v1/social/credentials' })
+        return { unshipped: false, apps: parseCredentials(body) }
+      } catch (e) {
+        if (credentialsUnshipped(e)) return { unshipped: true, apps: [] }
+        throw e
+      }
+    },
+    [],
+  )
+}
+
+/**
+ * Write the apps the person edited: PUT /v1/social/credentials.
+ *
+ * Only those providers are in the body. A secret is included only when they
+ * typed one or asked to clear it — see `credentialWrite`.
+ */
+export function saveOrgApps(http: HttpClient, apps: OrgAppWrite[]): Promise<void> {
+  return http
+    .raw({ method: 'PUT', path: '/v1/social/credentials', body: { apps } })
+    .then(() => undefined)
 }
 
 /**
@@ -205,25 +306,44 @@ export function usePosts(http: HttpClient | null, status?: string): Read<Post[]>
 }
 
 /**
- * The org's credential standing, network by network: GET /v1/provider.
+ * One network's row in the connector catalog.
  *
- * The catalog carries every connector the platform knows — Slack, GitHub, the
- * rest — so it is narrowed to the networks the social API will actually publish
- * to. A card for a connector no post can name is a control wired to nothing.
+ * `failed` is that id's own refusal. A 404 is not a failure: the row is
+ * present and `connection` is absent, which is "not in the catalog".
+ */
+export type Standing = CatalogRow<Connection>
+
+/**
+ * The org's credential standing, network by network.
+ *
+ * One `GET /v1/provider/:id` per network the social API named, in parallel.
+ * The list route answers the whole registry and takes no filter — about 755
+ * connectors, most of a megabyte — and the console's Integrations page is the
+ * caller that wants all of them. This screen wants seven. An id the registry
+ * does not have is a 404 and stays a missing row; it is not dropped into the
+ * same bucket as a read that never came back.
+ *
+ * `hold` while the social list itself has not answered. Asking with no ids
+ * would resolve to an empty catalog, and an empty catalog is the sentence
+ * "not in the catalog".
  */
 export function useConnections(
   http: HttpClient | null,
   networks: string[],
-): Read<Connection[]> {
+  hold = false,
+): Read<Standing[]> {
   const only = networks.join(',')
   return useRead(
     http,
     async (h) => {
-      const all = await h.collection<Connection>('providers', { path: '/v1/provider' })
-      const want = new Set(only ? only.split(',') : [])
-      return all.filter((one) => want.has(one.id))
+      const ids = only ? only.split(',') : []
+      const rows = await readConnections(ids, (id) =>
+        h.json<Connection>({ path: providerPath(id) }),
+      )
+      return settleConnections(rows, why)
     },
     [only],
+    hold,
   )
 }
 

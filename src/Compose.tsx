@@ -26,10 +26,11 @@ import { useSearchParams } from 'react-router'
 
 import { Act, Failed, Ready, Screen } from '~/page'
 import { Mark, tone } from '~/status'
+import { accountLine, audienceLabel } from '~/audience'
 import { MEDIA, check, kind, rule } from '~/network'
 import { fromField, now, toField } from '~/time'
 import { useHttp } from '~/client'
-import { invent, useAccounts, useNetworks, why, write } from '~/social'
+import { invent, useAccounts, useAudiences, useNetworks, why, write } from '~/social'
 
 /** What came of sending, network by network. */
 interface Outcome {
@@ -116,6 +117,7 @@ export function Compose() {
   const http = useHttp()
   const networks = useNetworks(http)
   const accounts = useAccounts(http)
+  const audiences = useAudiences(http)
 
   const [shared, setShared] = useState('')
   /** The networks written separately. A key present means this network has been
@@ -146,8 +148,15 @@ export function Compose() {
   // A connected account is what a publish fans out to, so the composer counts
   // them per network — a picked network with none stores a post with nowhere
   // to go, and says so rather than letting it be discovered later.
-  const targets = (provider: string) =>
-    (accounts.it ?? []).filter((a) => a.provider === provider && a.status === 'connected').length
+  const connected = (provider: string) =>
+    (accounts.it ?? []).filter((a) => a.provider === provider && a.status === 'connected')
+  const targets = (provider: string) => connected(provider).length
+  const book = audiences.it ?? {}
+  const kinds = (provider: string) =>
+    accountLine(
+      targets(provider),
+      connected(provider).map((row) => audienceLabel(provider, book[row.id])),
+    )
 
   const complaints = Object.fromEntries(
     picked.map((p) => [p, check(p, words(p), media)]),
@@ -514,8 +523,7 @@ export function Compose() {
                           {r.name}
                         </Text>
                         <Text fontSize="$1" color="$quiet">
-                          {targets(n.provider)} account
-                          {targets(n.provider) === 1 ? '' : 's'}
+                          {kinds(n.provider)}
                         </Text>
                       </XStack>
                       <Text fontSize="$1" color="$quiet" text="left">

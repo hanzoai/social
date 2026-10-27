@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router'
 
 import { Accounts } from '~/Accounts'
+import { Credentials } from '~/Credentials'
 import { Analytics } from '~/Analytics'
 import { Calendar } from '~/Calendar'
 import { Callback } from '~/callback'
@@ -21,6 +22,7 @@ import { Root } from '~/root'
  */
 export const SCREENS = [
   { path: '/accounts', label: 'Connect', element: <Accounts /> },
+  { path: '/settings', label: 'Keys', element: <Credentials /> },
   { path: '/compose', label: 'Post', element: <Compose /> },
   { path: '/calendar', label: 'Schedule', element: <Calendar /> },
   { path: '/', label: 'Overview', element: <Overview /> },
