@@ -3,8 +3,16 @@
 Write once. Publish to every account your organization owns — now, or at a time
 you pick.
 
-Seven networks: X, Facebook, Instagram, LinkedIn, TikTok, YouTube, Threads. Text,
-photos and video on every one of them that takes video, which is all seven.
+Thirteen networks: X, Facebook, Instagram, LinkedIn, TikTok, YouTube, Threads,
+Bluesky, Mastodon, Pinterest, Reddit, Telegram and Discord. Text, photos and
+video on every one that takes them. Hacker News has no posting API, so it is not
+here.
+
+Nine connect by consent, in a window beside the screen: X, Facebook, Instagram,
+LinkedIn, TikTok, YouTube, Threads, Pinterest and Reddit. Four connect with a
+credential the person holds, which the network verifies before anything is kept:
+a Bluesky app password, a Mastodon access token, a Telegram bot, a Discord
+webhook. Either way the account joins the same list, and Remove ends that one.
 
 ## Run it
 

@@ -13,10 +13,11 @@
 // from a publish that fails later. A network can change its own rules, and when
 // one does the correction is this table.
 //
-// Bluesky is not here because the platform does not carry it: the social API's
-// channel vocabulary is x, facebook, instagram, linkedin, tiktok, youtube and
-// threads, and a post created with any other channel is refused. A network this
-// app drew but could not post to would be a control wired to nothing.
+// The networks are the platform's vocabulary: x, facebook, instagram, linkedin,
+// tiktok, youtube, threads, bluesky, mastodon, pinterest, reddit, telegram-bot
+// and discord-webhook. A post created with any other channel is refused, and a
+// network this app drew but could not post to would be a control wired to
+// nothing.
 
 /** The platform's own cap on how many media URLs one post may carry. */
 export const MEDIA = 10
@@ -43,9 +44,10 @@ export interface Rule {
 /**
  * Each network's own limits.
  *
- * Every one of these takes video — which is why the composer treats video as
+ * Most of these take video — which is why the composer treats video as
  * ordinary content rather than a second kind of post — and two of them take
- * nothing else: on TikTok and YouTube the video IS the post.
+ * nothing else: on TikTok and YouTube the video IS the post. Bluesky and
+ * Pinterest take photos here and no video.
  *
  * `mix: false` is the rule that catches most people out. LinkedIn, TikTok and
  * YouTube all accept photos and all accept video, but never in one post: attach
@@ -60,6 +62,12 @@ const RULES: Record<string, Rule> = {
   tiktok: { name: 'TikTok', text: 2200, needs: 'media', videos: 1, images: MEDIA, mix: false },
   youtube: { name: 'YouTube', text: 5000, needs: 'video', videos: 1, images: 0, mix: false },
   threads: { name: 'Threads', text: 500, needs: 'nothing', videos: 1, images: MEDIA, mix: true },
+  bluesky: { name: 'Bluesky', text: 300, needs: 'nothing', videos: 0, images: 4, mix: false },
+  mastodon: { name: 'Mastodon', text: 500, needs: 'nothing', videos: 1, images: 4, mix: false },
+  pinterest: { name: 'Pinterest', text: 800, needs: 'media', videos: 0, images: 5, mix: false },
+  reddit: { name: 'Reddit', text: 40000, needs: 'nothing', videos: 1, images: 1, mix: false },
+  'telegram-bot': { name: 'Telegram', text: 4096, needs: 'nothing', videos: MEDIA, images: MEDIA, mix: true },
+  'discord-webhook': { name: 'Discord', text: 2000, needs: 'nothing', videos: MEDIA, images: MEDIA, mix: true },
 }
 
 /**

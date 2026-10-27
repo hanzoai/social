@@ -21,8 +21,10 @@ export type CatalogState = 'loading' | 'failed' | 'ready'
  * operator to set variables Connect does not read.
  *
  * A network this table does not name falls back to the social read. The
- * table is the seven networks this surface connects; it is not a second
- * catalog.
+ * table is the networks that take a developer app, which is also the set the
+ * Keys screen offers; the networks that take the organization's own credential
+ * (Bluesky, Mastodon, Telegram, Discord) need nothing from a deployment and are
+ * not in it. It is not a second catalog.
  */
 export const CONNECT_CREDENTIALS: Record<string, readonly string[]> = {
   x: ['X_CLIENT_ID', 'X_CLIENT_SECRET'],
@@ -32,6 +34,8 @@ export const CONNECT_CREDENTIALS: Record<string, readonly string[]> = {
   tiktok: ['TIKTOK_CLIENT_ID', 'TIKTOK_CLIENT_SECRET'],
   youtube: ['YOUTUBE_CLIENT_ID', 'YOUTUBE_CLIENT_SECRET'],
   threads: ['THREADS_CLIENT_ID', 'THREADS_CLIENT_SECRET'],
+  pinterest: ['PINTEREST_CLIENT_ID', 'PINTEREST_CLIENT_SECRET'],
+  reddit: ['REDDIT_CLIENT_ID', 'REDDIT_CLIENT_SECRET'],
 }
 
 /** The three lines under a network's name. Null means that line is absent. */
@@ -76,6 +80,11 @@ function sameNames(a: readonly string[], b: readonly string[]): boolean {
  * A missing description is a quiet pitch, not evidence the network is absent —
  * absence is `catalog === 'ready'` and no connection.
  */
+/** Whether a network takes a developer app, so the Keys screen offers it. */
+export function takesApp(provider: string): boolean {
+  return provider in CONNECT_CREDENTIALS
+}
+
 export function cardCopy(input: {
   name: string
   provider: string
