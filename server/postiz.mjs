@@ -25,6 +25,12 @@ const RULES = {
   tiktok: { name: 'TikTok', text: 2200, needs: 'a video, or images, never both in one post', images: 10, videos: 1, mix: false },
   youtube: { name: 'YouTube', text: 5000, needs: 'one video', images: 0, videos: 1, mix: false },
   threads: { name: 'Threads', text: 500, needs: 'text, images, or one video', images: 10, videos: 1, mix: true },
+  bluesky: { name: 'Bluesky', text: 300, needs: 'text, or text with up to 4 images', images: 4, videos: 0, mix: false },
+  mastodon: { name: 'Mastodon', text: 500, needs: 'text, up to 4 images, or one video', images: 4, videos: 1, mix: false },
+  pinterest: { name: 'Pinterest', text: 800, needs: 'at least one image, up to 5', images: 5, videos: 0, mix: false },
+  reddit: { name: 'Reddit', text: 40000, needs: 'text, or one link', images: 1, videos: 1, mix: false },
+  'telegram-bot': { name: 'Telegram', text: 4096, needs: 'text, images, or videos', images: 10, videos: 10, mix: true },
+  'discord-webhook': { name: 'Discord', text: 2000, needs: 'text, images, or videos', images: 10, videos: 10, mix: true },
 }
 
 const IMAGE_MODEL = process.env.HANZO_IMAGE_MODEL || 'zen3-image'
@@ -46,7 +52,7 @@ const TOOLS = [
   ),
   tool(
     'integrationSchema',
-    'Posting rules for one platform before integrationSchedulePostTool. platform is x, facebook, instagram, linkedin, tiktok, youtube, or threads.',
+    'Posting rules for one platform before integrationSchedulePostTool. platform is x, facebook, instagram, linkedin, tiktok, youtube, threads, bluesky, mastodon, pinterest, reddit, telegram-bot, or discord-webhook.',
     {
       type: 'object',
       properties: {

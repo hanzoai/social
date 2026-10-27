@@ -11,7 +11,7 @@ import {
   settleConnections,
 } from '../src/catalog.ts'
 
-const NETWORKS = ['x', 'facebook', 'instagram', 'linkedin', 'tiktok', 'youtube', 'threads']
+const NETWORKS = ['x', 'facebook', 'instagram', 'linkedin', 'tiktok', 'youtube', 'threads', 'pinterest', 'reddit']
 
 test('catalog state is loading, failed, or answered — never inferred from a missing row alone', () => {
   assert.equal(catalogState(false, false, undefined), 'loading')
@@ -180,7 +180,7 @@ test('an unknown network with no social names keeps the credential sentence and 
   assert.equal(copy.publishing, null)
 })
 
-test('connect credentials cover the seven networks and no others', () => {
+test('connect credentials cover the nine networks that take an app and no others', () => {
   assert.deepEqual(Object.keys(CONNECT_CREDENTIALS), NETWORKS)
   for (const id of NETWORKS) assert.equal(CONNECT_CREDENTIALS[id].length, 2)
 })
@@ -225,7 +225,7 @@ test('a 404 is absence and any other refusal stays on that id', async () => {
   assert.equal(settled[2].connection, undefined)
 })
 
-test('every id failing is one catalog failure, not seven absences', () => {
+test('every id failing is one catalog failure, not an absence per network', () => {
   const error = Object.assign(new Error('unauthorized'), { status: 401 })
   assert.throws(
     () =>
