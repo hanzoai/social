@@ -1,7 +1,7 @@
 import { createBrowserRouter } from 'react-router'
 
 import { Accounts } from '~/Accounts'
-import { Credentials } from '~/Credentials'
+import { Credentials } from '~/CredentialsView'
 import { Analytics } from '~/Analytics'
 import { Calendar } from '~/Calendar'
 import { Callback } from '~/callback'
