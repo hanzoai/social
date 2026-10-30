@@ -34,6 +34,7 @@ catalog:
   '@hanzo/ui': 8.27.12
   '@hanzo/vite': 0.1.4
   '@hanzogui/next-theme': 8.3.5
+  '@playwright/test': 1.63.0
   '@types/node': 26.5.0
   '@types/react': 19.2.18
   '@types/react-dom': 19.2.7

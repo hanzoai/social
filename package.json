@@ -13,6 +13,8 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "typecheck": "tsc --noEmit",
+    "e2e": "playwright test",
+    "e2e:headed": "playwright test --headed",
     "preview": "vite preview",
     "start": "node server/http.mjs",
     "test": "node --test server/postiz.test.mjs server/http.test.mjs server/edge.test.mjs server/catalog.test.mjs server/audience.test.mjs server/credentials.test.mjs"
@@ -34,6 +36,7 @@
   },
   "devDependencies": {
     "@hanzo/vite": "catalog:",
+    "@playwright/test": "catalog:",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
