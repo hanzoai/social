@@ -5,6 +5,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 import test from 'node:test'
 
+import { isAgentPath } from './agent.mjs'
 import { createHandler, isApiPath } from './http.mjs'
 import { isPostizPath } from './postiz.mjs'
 
@@ -26,6 +27,10 @@ test('Postiz paths stay off /v1/social', () => {
   assert.equal(isApiPath('/v1'), true)
   assert.equal(isApiPath('/v1social'), false)
   assert.equal(isPostizPath('/'), false)
+  assert.equal(isAgentPath('/v1/social/mcp'), true)
+  assert.equal(isApiPath('/v1/social/mcp'), false)
+  assert.equal(isPostizPath('/v1/social/mcp'), false)
+  assert.equal(isAgentPath('/mcp'), false)
 })
 
 test('this process proxies /v1 and answers Postiz and the app itself', async () => {
@@ -82,6 +87,16 @@ test('this process proxies /v1 and answers Postiz and the app itself', async () 
     assert.equal(mcp.headers.get('content-type'), 'application/json; charset=utf-8')
     const refused = await mcp.json()
     assert.match(refused.message, /rejected this API key/)
+
+    const agent = await fetch(`http://127.0.0.1:${port}/v1/social/mcp`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' }),
+    })
+    assert.equal(agent.status, 200)
+    const listed = await agent.json()
+    assert.equal(listed.result.tools[0].name, 'social')
+    assert.ok(listed.result.tools[0].inputSchema.properties.op.enum.includes('schedule_social_post'))
 
     const page = await fetch(`http://127.0.0.1:${port}/posts`)
     assert.equal(page.status, 200)

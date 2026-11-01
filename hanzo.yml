@@ -12,7 +12,7 @@ test:
       pnpm install --frozen-lockfile
 
   - name: postiz
-    run: node --test server/postiz.test.mjs server/http.test.mjs server/edge.test.mjs server/catalog.test.mjs server/audience.test.mjs server/credentials.test.mjs
+    run: node --test server/postiz.test.mjs server/http.test.mjs server/edge.test.mjs server/catalog.test.mjs server/audience.test.mjs server/credentials.test.mjs server/agent.test.mjs
 
   # Verbatim the build line the image runs, run before there is an image, so a
   # break arrives in a minute instead of after a full layer stack. `pnpm build`
@@ -37,8 +37,9 @@ images:
 # Two doors. The native API is /v1/social on api.hanzo.ai (MCP tool `social`,
 # CLI `hanzo social`). social.hanzo.ai is the Postiz drop-in for a client that
 # already speaks Postiz: /mcp, /api/mcp, /public/v1, /api/public/v1. The worker
-# hanzo-social-postiz serves those paths. The image above serves both when it
-# owns the process: Postiz paths locally, and /v1 proxied to HANZO_API
+# hanzo-social-postiz serves those paths and POST /v1/social/mcp, the native
+# agent tool. The image above serves both when it owns the process: Postiz
+# paths locally, and /v1 proxied to HANZO_API
 # (default https://api.hanzo.ai). The frontend calls api.hanzo.ai.
 #
 # The site lane still publishes dist and, on every main publish, re-binds

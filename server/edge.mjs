@@ -1,20 +1,23 @@
 // Cloudflare entry for the Postiz door on social.hanzo.ai.
 //
-// The hostname's DNS still points at the static origin. A route sends only
-// /mcp, /api/mcp, /public/v1, and /api/public/v1 here. Everything else stays
-// on that origin, including the app and /v1/social.
+// The hostname's DNS still points at the static origin. Routes send /mcp,
+// /api/mcp, /public/v1, /api/public/v1, and /v1/social/mcp here. Everything
+// else stays on that origin, including the app and the rest of /v1/social.
 
+import { handleAgent, isAgentPath } from './agent.mjs'
 import { handlePostiz, isPostizPath } from './postiz.mjs'
 
 export async function handleEdgeRequest(request) {
   const url = new URL(request.url)
-  if (!isPostizPath(url.pathname)) return fetch(request)
+  const agent = isAgentPath(url.pathname)
+  if (!agent && !isPostizPath(url.pathname)) return fetch(request)
 
   const payload = new Uint8Array(await request.arrayBuffer())
   const req = nodeRequest(request, url, payload)
   const res = nodeResponse()
   try {
-    await handlePostiz(req, res)
+    if (agent) await handleAgent(req, res)
+    else await handlePostiz(req, res)
   } catch (error) {
     if (!res.headersSent) {
       res.writeHead(500, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' })
@@ -38,7 +41,7 @@ function nodeRequest(request, url, payload) {
     })
   }
   return {
-    url: url.pathname + url.search,
+    url: url.href,
     method: request.method,
     headers: { authorization: request.headers.get('authorization') || '' },
     on(event, fn) {

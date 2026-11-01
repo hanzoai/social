@@ -95,6 +95,25 @@ export function hanzoClient(token, fetchImpl = fetch, base = hanzoBase()) {
     accounts() {
       return call('GET', '/v1/social/accounts?limit=1000')
     },
+    account(id) {
+      return call('GET', `/v1/social/accounts/${encodeURIComponent(id)}`)
+    },
+    createAccount(body) {
+      return call('POST', '/v1/social/accounts', body)
+    },
+    setAccount(id, body) {
+      return call('PUT', `/v1/social/accounts/${encodeURIComponent(id)}`, body)
+    },
+    deleteAccount(id) {
+      return call('DELETE', `/v1/social/accounts/${encodeURIComponent(id)}`)
+    },
+    /** Apps this org has sealed. The secret is not in the response. */
+    credentials() {
+      return call('GET', '/v1/social/credentials')
+    },
+    providers() {
+      return call('GET', '/v1/social/providers')
+    },
     posts() {
       return call('GET', '/v1/social/posts?limit=1000')
     },
@@ -103,6 +122,9 @@ export function hanzoClient(token, fetchImpl = fetch, base = hanzoBase()) {
     },
     createPost(body) {
       return call('POST', '/v1/social/posts', body)
+    },
+    setPost(id, body) {
+      return call('PUT', `/v1/social/posts/${encodeURIComponent(id)}`, body)
     },
     publish(id) {
       return call('POST', `/v1/social/posts/${encodeURIComponent(id)}/publish`)

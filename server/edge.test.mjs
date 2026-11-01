@@ -16,3 +16,18 @@ test('the edge answers Postiz with JSON instead of the SPA', async () => {
   const body = await response.json()
   assert.match(body.message, /rejected this API key/)
 })
+
+test('the edge lists native agent operations without a key', async () => {
+  const response = await handleEdgeRequest(
+    new Request('https://social.hanzo.ai/v1/social/mcp', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'tools/list' }),
+    }),
+  )
+  assert.equal(response.status, 200)
+  const body = await response.json()
+  const social = body.result.tools.find((tool) => tool.name === 'social')
+  assert.ok(social.inputSchema.properties.op.enum.includes('generate_social_image'))
+  assert.ok(social.inputSchema.properties.op.enum.includes('clip_social_video'))
+})

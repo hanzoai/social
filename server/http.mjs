@@ -5,10 +5,10 @@
 //   Hanzo clients   — /v1, including /v1/social, proxied to HANZO_API
 // Everything else is the app.
 //
-// social.hanzo.ai is the hostname meant for the Postiz door. The frontend on
-// *.hanzo.ai calls https://api.hanzo.ai for /v1/social and does not use these
-// Postiz paths. The static site still owns the hostname until this process
-// does, and until then /mcp there is the SPA document.
+// social.hanzo.ai serves both doors. Postiz clients use /mcp. Native agents
+// use POST /v1/social/mcp, the same `social` tool as api.hanzo.ai/v1/mcp, with
+// the scheduling, media, image, video, and clipping operations included.
+// The rest of /v1, including /v1/social/accounts and /v1/social/posts, is proxied.
 
 import { createServer, request as httpRequest } from 'node:http'
 import { request as httpsRequest } from 'node:https'
@@ -16,6 +16,7 @@ import { createReadStream, existsSync, realpathSync, statSync } from 'node:fs'
 import { extname, join, normalize } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 
+import { handleAgent, isAgentPath } from './agent.mjs'
 import { isPostizPath, postizMiddleware } from './postiz.mjs'
 
 const defaultRoot = fileURLToPath(new URL('../dist', import.meta.url))
@@ -43,9 +44,10 @@ const hop = new Set([
   'upgrade',
 ])
 
-/** True for the Hanzo API (/v1/social and the rest of /v1), never for Postiz. */
+/** True for the Hanzo API (/v1/social and the rest of /v1), never for Postiz or the agent MCP. */
 export function isApiPath(url) {
   const path = (url || '/').split('?')[0]
+  if (isAgentPath(path)) return false
   return path === '/v1' || path.startsWith('/v1/')
 }
 
@@ -135,6 +137,14 @@ export function createHandler(options = {}) {
   const root = options.root || defaultRoot
   const upstream = options.upstream || process.env.HANZO_API || 'https://api.hanzo.ai'
   return (req, res) => {
+    if (isAgentPath(req.url)) {
+      handleAgent(req, res).catch((error) => {
+        if (res.headersSent) return
+        res.writeHead(500, { 'content-type': 'application/json; charset=utf-8', 'cache-control': 'no-store' })
+        res.end(JSON.stringify({ message: error instanceof Error ? error.message : 'request failed' }))
+      })
+      return
+    }
     if (isPostizPath(req.url)) {
       postizMiddleware(req, res, () => {})
       return

@@ -78,6 +78,12 @@ The same key is accepted as `Authorization: Bearer`, as the raw `Authorization` 
 
 On `social.hanzo.ai`, `/mcp`, `/api/mcp`, `/public/v1`, and `/api/public/v1` are the worker `hanzo-social-postiz` (`server/edge.mjs`), which runs this same handler. The app and `/v1/social` stay on the origin. The API key is a Hanzo key, not a Postiz key.
 
+### Native agent MCP
+
+`POST /v1/social/mcp` is the native tool, the same shape as `social` on `https://api.hanzo.ai/v1/mcp`: name an operation in `op`, pass its arguments in `input`, and call `describe` for that operation's schema. `tools/list` needs no key. `tools/call` needs the Hanzo key.
+
+The catalog on `api.hanzo.ai` carries the account and post records. This path carries those and the agent operations: channels, groups, platform rules, provider actions, draft or scheduled or immediate posts, settings, the media library, image generation, video generation, and clipping. App secrets are not a tool. `list_social_credentials` reports the public app id and whether a secret is sealed.
+
 ## What it does not do
 
 The platform records no engagement — no views, likes or reach — and no endpoint
