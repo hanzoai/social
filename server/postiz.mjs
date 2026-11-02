@@ -33,7 +33,7 @@ const SETTINGS_PRODUCT = 'social'
 
 const PROTOCOL = '2025-03-26'
 
-const TOOLS = [
+export const TOOLS = [
   tool(
     'integrationList',
     'List connected social accounts. Optionally pass a group id from groupList; the only group is "workspace".',
@@ -314,7 +314,7 @@ async function method(name, params, ctx, url) {
   if (name === 'tools/call') {
     const toolName = params?.name
     const args = params?.arguments || {}
-    const output = await callTool(toolName, args, ctx, url)
+    const output = await callPostizTool(toolName, args, ctx, url)
     const text = JSON.stringify(output)
     return {
       content: [{ type: 'text', text }],
@@ -325,7 +325,7 @@ async function method(name, params, ctx, url) {
   throw new Error(`Unknown method ${name}`)
 }
 
-async function callTool(name, args, ctx, url) {
+export async function callPostizTool(name, args, ctx, url) {
   const { hanzo } = ctx
   switch (name) {
     case 'integrationList':
