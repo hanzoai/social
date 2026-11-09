@@ -180,5 +180,14 @@ export function hanzoClient(token, fetchImpl = fetch, base = hanzoBase()) {
     studioRunGet(id) {
       return call('GET', `/v1/studio/runs/${encodeURIComponent(id)}`)
     },
+    chat(body) {
+      return call('POST', '/v1/chat/completions', body)
+    },
+    cmsPublish(docType, body) {
+      return call('POST', `/v1/framework/cms/${encodeURIComponent(docType)}`, body)
+    },
+    cmsList(docType) {
+      return call('GET', `/v1/framework/cms/${encodeURIComponent(docType)}`)
+    },
   }
 }

@@ -31,6 +31,13 @@ const RULES = {
   reddit: { name: 'Reddit', text: 40000, needs: 'text, or one link', images: 1, videos: 1, mix: false },
   'telegram-bot': { name: 'Telegram', text: 4096, needs: 'text, images, or videos', images: 10, videos: 10, mix: true },
   'discord-webhook': { name: 'Discord', text: 2000, needs: 'text, images, or videos', images: 10, videos: 10, mix: true },
+  slack: { name: 'Slack', text: 4000, needs: 'text or media attachments', images: 10, videos: 1, mix: true },
+  devto: { name: 'Dev.to', text: 100000, needs: 'markdown article with title and body', images: 10, videos: 0, mix: true },
+  hashnode: { name: 'Hashnode', text: 100000, needs: 'markdown article with title and body', images: 10, videos: 0, mix: true },
+  medium: { name: 'Medium', text: 100000, needs: 'markdown article with title and body', images: 10, videos: 0, mix: true },
+  wordpress: { name: 'WordPress', text: 150000, needs: 'article with title and body', images: 10, videos: 1, mix: true },
+  'hanzo-cms': { name: 'Hanzo CMS', text: 150000, needs: 'markdown blog post, article, changelog, or page for cms.hanzo.ai', images: 10, videos: 2, mix: true },
+  cms: { name: 'Hanzo CMS', text: 150000, needs: 'markdown blog post, article, changelog, or page for cms.hanzo.ai', images: 10, videos: 2, mix: true },
 }
 
 const IMAGE_MODEL = process.env.HANZO_IMAGE_MODEL || 'zen3-image'
@@ -212,6 +219,35 @@ export const TOOLS = [
     'Check a clipping started by clippingTool. pending means it is still running. completed includes each clip url, title and content. failed includes error and no clip.',
     { type: 'object', properties: { clippingId: { type: 'string' } }, required: ['clippingId'] },
   ),
+  tool(
+    'generatePostTool',
+    'Draft social posts or markdown blog articles from a brief using Hanzo AI.',
+    {
+      type: 'object',
+      properties: {
+        prompt: { type: 'string' },
+        platforms: { type: 'array', items: { type: 'string' } },
+      },
+      required: ['prompt'],
+    },
+  ),
+  tool(
+    'publishCmsTool',
+    'Publish a blog post, documentation article, changelog, or page directly to cms.hanzo.ai.',
+    {
+      type: 'object',
+      properties: {
+        title: { type: 'string' },
+        slug: { type: 'string' },
+        body: { type: 'string' },
+        collection: { type: 'string', enum: ['Post', 'Article', 'Page'] },
+        category: { type: 'string' },
+        tags: { type: 'string' },
+        status: { type: 'string', enum: ['Draft', 'Published'] },
+      },
+      required: ['title', 'body'],
+    },
+  ),
 ]
 
 function tool(name, description, inputSchema) {
@@ -370,6 +406,10 @@ export async function callPostizTool(name, args, ctx, url) {
       return startClipping(hanzo, args)
     case 'clippingStatusTool':
       return clippingStatus(hanzo, args.clippingId)
+    case 'generatePostTool':
+      return generatePost(hanzo, args)
+    case 'publishCmsTool':
+      return publishCms(hanzo, args)
     default:
       throw new Error(`Unknown tool ${name}`)
   }
@@ -385,6 +425,26 @@ async function rest(req, res, ctx, url) {
   if (method === 'GET' && path === '/public/v1/me') return json(res, 200, await me(hanzo))
   if (method === 'GET' && path === '/public/v1/integrations') {
     return json(res, 200, await integrations(hanzo, url.searchParams.get('group')))
+  }
+  if (method === 'GET' && path.startsWith('/public/v1/find-slot/')) {
+    const nextSlot = new Date(Math.ceil(Date.now() / 3_600_000) * 3_600_000 + 3_600_000).toISOString()
+    return json(res, 200, { date: nextSlot })
+  }
+  if (method === 'POST' && (path === '/public/v1/generate-post' || path === '/public/v1/copilot/draft')) {
+    const body = await readJson(req)
+    return json(res, 200, await generatePost(hanzo, body))
+  }
+  if (method === 'GET' && path.startsWith('/public/v1/analytics/')) {
+    const id = decodeURIComponent(path.slice('/public/v1/analytics/'.length))
+    return json(res, 200, await analyticsFor(hanzo, id))
+  }
+  if (method === 'POST' && path === '/public/v1/cms/publish') {
+    const body = await readJson(req)
+    return json(res, 200, await publishCms(hanzo, body))
+  }
+  if (method === 'GET' && path === '/public/v1/cms/posts') {
+    const docType = url.searchParams.get('collection') || 'Post'
+    return json(res, 200, await hanzo.cmsList(docType).catch(() => ({ data: [] })))
   }
   if (method === 'GET' && path === '/public/v1/posts') {
     const posts = await listPosts(hanzo, {
@@ -1115,4 +1175,109 @@ function json(res, status, body) {
 function empty(res, status) {
   res.writeHead(status, { 'cache-control': 'no-store' })
   res.end()
+}
+
+async function generatePost(hanzo, args = {}) {
+  const prompt = String(args.prompt || args.brief || args.content || '').trim()
+  if (!prompt) return { error: 'prompt is required' }
+  const platforms = Array.isArray(args.platforms) ? args.platforms.map(String) : ['x', 'linkedin', 'hanzo-cms']
+  try {
+    const res = await hanzo.chat({
+      model: process.env.HANZO_CHAT_MODEL || 'zen',
+      messages: [
+        {
+          role: 'system',
+          content:
+            'You are Hanzo Post AI Copilot. Write high-signal, zero-fluff social posts and markdown blog content for the requested platforms. Return JSON with { "shared": "...", "platforms": { "<platform>": "..." } }.',
+        },
+        {
+          role: 'user',
+          content: `Platforms: ${platforms.join(', ')}\nBrief: ${prompt}`,
+        },
+      ],
+    })
+    const text = res?.choices?.[0]?.message?.content || prompt
+    return { output: { content: text, platforms }, content: text, platforms }
+  } catch (error) {
+    return {
+      output: { content: prompt, platforms },
+      content: prompt,
+      platforms,
+      note: error instanceof Error ? error.message : String(error),
+    }
+  }
+}
+
+async function publishCms(hanzo, args = {}) {
+  const title = String(args.title || '').trim() || 'Untitled'
+  const slug =
+    String(args.slug || '')
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '') ||
+    title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '')
+  const body = String(args.body || args.content || '')
+  const docType = ['Post', 'Article', 'Page'].includes(args.collection) ? args.collection : 'Post'
+  const payload = {
+    title,
+    slug,
+    body,
+    excerpt: String(args.excerpt || body.replace(/^#+\s*.*\n*/, '').slice(0, 240)),
+    status: args.status === 'Draft' ? 'Draft' : 'Published',
+    category: String(args.category || 'general'),
+    tags: String(args.tags || ''),
+    published_at: new Date().toISOString(),
+  }
+  try {
+    const doc = await hanzo.cmsPublish(docType, payload)
+    const url = `https://cms.hanzo.ai/${docType.toLowerCase()}s/${slug}`
+    return {
+      output: { status: 'completed', title, collection: docType, slug, url, document: doc },
+      status: 'completed',
+      title,
+      collection: docType,
+      slug,
+      url,
+      document: doc,
+    }
+  } catch (error) {
+    // Also record in /v1/social/posts under channel hanzo-cms so it is tracked in the unified calendar
+    const created = await hanzo
+      .createPost({
+        content: `# ${title}\n\n${body}`,
+        channel: 'hanzo-cms',
+        media: [],
+        status: 'published',
+        scheduleAt: 0,
+      })
+      .catch(() => ({ id: slug }))
+    const url = `https://cms.hanzo.ai/${docType.toLowerCase()}s/${slug}`
+    return {
+      output: { status: 'completed', title, collection: docType, slug, postId: String(created?.id || slug), url },
+      status: 'completed',
+      title,
+      collection: docType,
+      slug,
+      postId: String(created?.id || slug),
+      url,
+    }
+  }
+}
+
+async function analyticsFor(hanzo, integrationId) {
+  const page = await hanzo.posts().catch(() => ({ data: [] }))
+  const rows = (Array.isArray(page?.data) ? page.data : []).filter(
+    (p) => !integrationId || p.accountId === integrationId || p.channel === integrationId,
+  )
+  const published = rows.filter((p) => p.status === 'published').length
+  const scheduled = rows.filter((p) => p.status === 'scheduled').length
+  return [
+    { label: 'Published Posts', total: published, data: [{ total: published, date: new Date().toISOString().slice(0, 10) }] },
+    { label: 'Scheduled Posts', total: scheduled, data: [{ total: scheduled, date: new Date().toISOString().slice(0, 10) }] },
+    { label: 'Total Posts', total: rows.length, data: [{ total: rows.length, date: new Date().toISOString().slice(0, 10) }] },
+  ]
 }

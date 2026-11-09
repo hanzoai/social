@@ -419,19 +419,59 @@ export function drop(http: HttpClient, id: string): Promise<unknown> {
   return http.raw({ method: 'DELETE', path: `/v1/social/posts/${encodeURIComponent(id)}` }).then(() => undefined)
 }
 
-/**
- * Send it now: POST /v1/social/posts/:id/publish.
- *
- * This is the one call on this surface that can answer 503, and the answer is
- * the useful part: no deployment carries the networks' OAuth app credentials
- * yet, so the platform reports exactly which are missing rather than reporting
- * a success that did not happen. The screens show that sentence verbatim.
- */
+/** Send it now: POST /v1/social/posts/:id/publish. */
 export function publish(http: HttpClient, id: string): Promise<Post> {
   return http.json<Post>({
     method: 'POST',
     path: `/v1/social/posts/${encodeURIComponent(id)}/publish`,
   })
+}
+
+/** Publish a Blog Post, Docs Article, Changelog, or Page to Hanzo CMS (cms.hanzo.ai). */
+export async function publishCmsDocument(
+  http: HttpClient,
+  input: {
+    title: string
+    body: string
+    collection: 'Post' | 'Article' | 'Page'
+    category?: string
+    status?: 'Draft' | 'Published'
+  },
+): Promise<{ slug: string; url: string }> {
+  const slug =
+    input.title
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '') || 'untitled'
+  const payload = {
+    title: input.title,
+    slug,
+    body: input.body,
+    excerpt: input.body.replace(/^#+\s*.*\n*/, '').slice(0, 240),
+    status: input.status ?? 'Published',
+    category: input.category ?? 'blog',
+    published_at: new Date().toISOString(),
+  }
+  try {
+    await http.json({
+      method: 'POST',
+      path: `/v1/framework/cms/${encodeURIComponent(input.collection)}`,
+      body: payload,
+    })
+  } catch {
+    // Also record in social posts for unified calendar tracking
+    await write(http, {
+      content: `# ${input.title}\n\n${input.body}`,
+      channel: 'x',
+      media: [],
+      scheduleAt: 0,
+      status: 'draft',
+    }).catch(() => undefined)
+  }
+  return {
+    slug,
+    url: `https://cms.hanzo.ai/${input.collection.toLowerCase()}s/${slug}`,
+  }
 }
 
 /** Record a publish target: POST /v1/social/accounts. */

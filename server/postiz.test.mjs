@@ -169,6 +169,18 @@ function hanzo() {
           outputs: [{ id: 'clip_1', name: 'Opening', url: 'https://library.example/clip.mp4', kind: 'video' }],
         })
       }
+      if (path === '/v1/chat/completions' && method === 'POST') {
+        return json(200, {
+          choices: [{ message: { content: 'AI drafted post content' } }],
+        })
+      }
+      if (path === '/v1/framework/cms/Post' && method === 'POST') {
+        const body = JSON.parse(init.body)
+        return json(201, { name: 'cms_1', ...body })
+      }
+      if (path === '/v1/framework/cms/Post' && method === 'GET') {
+        return json(200, { data: [{ name: 'cms_1', title: 'Hello CMS', slug: 'hello-cms' }] })
+      }
       return json(404, { detail: `no mock for ${method} ${path}` })
     },
   }
@@ -269,6 +281,8 @@ test('tools/list exposes the Postiz tools a self-hosted connection requires', as
       'mediaStatusTool',
       'clippingTool',
       'clippingStatusTool',
+      'generatePostTool',
+      'publishCmsTool',
     ]) {
       assert.ok(names.includes(required), required)
     }
@@ -551,6 +565,39 @@ test('image, video, library, provider actions, settings, and clipping call Hanzo
     assert.equal(clips.body.result.structuredContent.clips[0].url, 'https://library.example/clip.mp4')
     assert.equal(mock.posts.at(-1).status, 'draft')
     assert.deepEqual(mock.posts.at(-1).media, ['https://library.example/clip.mp4'])
+
+    const drafted = await rpc(port, KEY, {
+      jsonrpc: '2.0',
+      id: 22,
+      method: 'tools/call',
+      params: { name: 'generatePostTool', arguments: { prompt: 'Announce Hanzo Post', platform: 'x' } },
+    })
+    assert.equal(drafted.body.result.structuredContent.output.content, 'AI drafted post content')
+
+    const cmsPublished = await rpc(port, KEY, {
+      jsonrpc: '2.0',
+      id: 23,
+      method: 'tools/call',
+      params: {
+        name: 'publishCmsTool',
+        arguments: { title: 'Hello CMS', content: 'Body text', collection: 'Post', status: 'published' },
+      },
+    })
+    assert.equal(cmsPublished.body.result.structuredContent.output.title, 'Hello CMS')
+
+    const slotRes = await fetch(`http://127.0.0.1:${port}/public/v1/find-slot/acct_x`, {
+      headers: { authorization: KEY },
+    })
+    assert.equal(slotRes.status, 200)
+    const slotJson = await slotRes.json()
+    assert.ok(slotJson.date)
+
+    const cmsListRes = await fetch(`http://127.0.0.1:${port}/public/v1/cms/posts?collection=Post`, {
+      headers: { authorization: KEY },
+    })
+    assert.equal(cmsListRes.status, 200)
+    const cmsListJson = await cmsListRes.json()
+    assert.equal(cmsListJson.data[0].title, 'Hello CMS')
   } finally {
     server.close()
   }

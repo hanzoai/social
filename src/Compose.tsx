@@ -30,7 +30,7 @@ import { accountLine, audienceLabel } from '~/audience'
 import { MEDIA, check, kind, rule } from '~/network'
 import { fromField, now, toField } from '~/time'
 import { useHttp } from '~/client'
-import { invent, useAccounts, useAudiences, useNetworks, why, write } from '~/social'
+import { invent, publish, publishCmsDocument, useAccounts, useAudiences, useNetworks, why, write } from '~/social'
 
 /** What came of sending, network by network. */
 interface Outcome {
@@ -138,6 +138,10 @@ export function Compose() {
   const [draftFailed, setDraftFailed] = useState<string | null>(null)
   const [sending, setSending] = useState(false)
   const [outcome, setOutcome] = useState<Outcome[] | null>(null)
+  const [cmsTitle, setCmsTitle] = useState('')
+  const [cmsCollection, setCmsCollection] = useState<'Post' | 'Article' | 'Page'>('Post')
+  const [cmsBusy, setCmsBusy] = useState(false)
+  const [cmsResult, setCmsResult] = useState<string | null>(null)
 
   const when = fromField(at)
   const all = networks.it ?? []
@@ -214,7 +218,7 @@ export function Compose() {
    * platform's 503 names exactly which credentials this deployment is missing
    * and that sentence is the whole of what a person can act on.
    */
-  const send = async () => {
+  const send = async (immediate = false) => {
     if (!http || sending || picked.length === 0 || blocked) return
     setSending(true)
     setOutcome(null)
@@ -225,14 +229,23 @@ export function Compose() {
           content: words(provider),
           channel: provider,
           media,
-          scheduleAt: when,
-          status: when ? 'scheduled' : 'draft',
+          scheduleAt: immediate ? 0 : when,
+          status: immediate ? 'draft' : when ? 'scheduled' : 'draft',
         })
-        got.push({
-          provider,
-          status: post.status,
-          says: post.status === 'scheduled' ? 'Scheduled.' : 'Saved as a draft.',
-        })
+        if (immediate) {
+          const sent = await publish(http, post.id)
+          got.push({
+            provider,
+            status: sent.status,
+            says: sent.status === 'published' ? 'Published live.' : 'Queued for publish.',
+          })
+        } else {
+          got.push({
+            provider,
+            status: post.status,
+            says: post.status === 'scheduled' ? 'Scheduled.' : 'Saved as a draft.',
+          })
+        }
       } catch (e) {
         got.push({ provider, status: 'failed', says: why(e) })
       }
@@ -241,6 +254,27 @@ export function Compose() {
     setSending(false)
     // The words stay. A fan-out where one network refused is one somebody is
     // about to retry, and clearing the box would take the post with it.
+  }
+
+  const sendCms = async () => {
+    const body = shared.trim()
+    const title = cmsTitle.trim() || body.split('\n')[0]?.slice(0, 80) || 'Untitled'
+    if (!http || cmsBusy || !body) return
+    setCmsBusy(true)
+    setCmsResult(null)
+    try {
+      const doc = await publishCmsDocument(http, {
+        title,
+        body,
+        collection: cmsCollection,
+        status: 'Published',
+      })
+      setCmsResult(`Published ${cmsCollection} "${title}" (${doc.slug}) to cms.hanzo.ai`)
+    } catch (e) {
+      setCmsResult(`CMS publish failed: ${why(e)}`)
+    } finally {
+      setCmsBusy(false)
+    }
   }
 
   const showing = tab && picked.includes(tab) ? tab : SHARED
@@ -444,20 +478,89 @@ export function Compose() {
 
             <XStack gap="$2" items="center" flexWrap="wrap">
               <Act
-                onPress={() => void send()}
+                onPress={() => void send(false)}
                 disabled={sending || picked.length === 0 || blocked}
                 loud
               >
                 {sending ? 'Saving…' : when ? 'Schedule' : 'Save draft'}
               </Act>
+              {!when ? (
+                <Act
+                  onPress={() => void send(true)}
+                  disabled={sending || picked.length === 0 || blocked}
+                >
+                  {sending ? 'Publishing…' : 'Publish now'}
+                </Act>
+              ) : null}
               <Text fontSize="$1" color="$quiet">
                 {picked.length === 0
                   ? 'Pick at least one network.'
                   : when
                     ? `${picked.length} post${picked.length === 1 ? '' : 's'} will be scheduled. Open Schedule to see the day.`
-                    : `${picked.length} post${picked.length === 1 ? '' : 's'} will be saved as a draft. Set a time to schedule instead.`}
+                    : `${picked.length} post${picked.length === 1 ? '' : 's'} will be saved as a draft, or published immediately.`}
               </Text>
             </XStack>
+
+            <YStack
+              gap="$2"
+              p="$3"
+              rounded="$3"
+              borderWidth={1}
+              borderColor="$borderColor"
+            >
+              <Text fontSize="$3" fontWeight="500" color="$ink">
+                Publish to Hanzo CMS (cms.hanzo.ai)
+              </Text>
+              <Text fontSize="$1" color="$quiet">
+                Publish the shared post body directly to cms.hanzo.ai as a Blog Post, Docs Article, or Marketing Page.
+              </Text>
+              <XStack gap="$2" flexWrap="wrap" items="center">
+                <input
+                  value={cmsTitle}
+                  onChange={(e) => setCmsTitle(e.target.value)}
+                  placeholder="Title (optional — defaults to first line)"
+                  style={{
+                    flex: 1,
+                    minWidth: 200,
+                    background: 'transparent',
+                    border: '1px solid var(--border)',
+                    borderRadius: 8,
+                    padding: '8px 12px',
+                    outline: 'none',
+                    color: 'inherit',
+                    font: 'inherit',
+                    fontSize: 13,
+                  }}
+                />
+                <select
+                  value={cmsCollection}
+                  onChange={(e) => setCmsCollection(e.target.value as 'Post' | 'Article' | 'Page')}
+                  style={{
+                    background: 'transparent',
+                    border: '1px solid var(--border)',
+                    borderRadius: 8,
+                    padding: '8px 12px',
+                    outline: 'none',
+                    color: 'inherit',
+                    font: 'inherit',
+                    fontSize: 13,
+                    colorScheme: 'dark light',
+                  }}
+                >
+                  <option value="Post">Blog Post (posts)</option>
+                  <option value="Article">Docs / KB Article (articles)</option>
+                  <option value="Page">Marketing Page (pages)</option>
+                </select>
+                <Act onPress={() => void sendCms()} disabled={cmsBusy || !shared.trim()}>
+                  {cmsBusy ? 'Publishing…' : 'Publish to CMS'}
+                </Act>
+              </XStack>
+              {cmsResult ? (
+                <Text fontSize="$1" color="$ink" fontWeight="500">
+                  {cmsResult}
+                </Text>
+              ) : null}
+            </YStack>
 
             {outcome ? (
               <YStack gap="$2">

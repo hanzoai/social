@@ -197,7 +197,26 @@ export function Frame() {
           })}
         </YStack>
 
-        <YStack className="whose" shrink={0} pt="$2" borderTopWidth={1} borderColor="$borderColor">
+        <YStack className="whose" shrink={0} pt="$2" gap="$1" borderTopWidth={1} borderColor="$borderColor">
+          <XStack px="$2" py="$1" gap="$2" flexWrap="wrap">
+            {[
+              { label: 'Post', href: 'https://post.hanzo.ai' },
+              { label: 'CMS', href: 'https://cms.hanzo.ai' },
+              { label: 'CRM', href: 'https://crm.hanzo.ai' },
+              { label: 'Team', href: 'https://hanzo.team' },
+              { label: 'Platform', href: 'https://platform.hanzo.ai' },
+            ].map((item) => (
+              <a
+                key={item.href}
+                href={item.href}
+                style={{ textDecoration: 'none' }}
+              >
+                <Text fontSize="$1" color="$quiet">
+                  {item.label} ↗
+                </Text>
+              </a>
+            ))}
+          </XStack>
           <Account />
         </YStack>
       </Sidebar>

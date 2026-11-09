@@ -68,6 +68,13 @@ const RULES: Record<string, Rule> = {
   reddit: { name: 'Reddit', text: 40000, needs: 'nothing', videos: 1, images: 1, mix: false },
   'telegram-bot': { name: 'Telegram', text: 4096, needs: 'nothing', videos: MEDIA, images: MEDIA, mix: true },
   'discord-webhook': { name: 'Discord', text: 2000, needs: 'nothing', videos: MEDIA, images: MEDIA, mix: true },
+  slack: { name: 'Slack', text: 4000, needs: 'nothing', videos: 1, images: MEDIA, mix: true },
+  devto: { name: 'Dev.to', text: 100000, needs: 'nothing', videos: 0, images: MEDIA, mix: true },
+  hashnode: { name: 'Hashnode', text: 100000, needs: 'nothing', videos: 0, images: MEDIA, mix: true },
+  medium: { name: 'Medium', text: 100000, needs: 'nothing', videos: 0, images: MEDIA, mix: true },
+  wordpress: { name: 'WordPress', text: 150000, needs: 'nothing', videos: 1, images: MEDIA, mix: true },
+  'hanzo-cms': { name: 'Hanzo CMS', text: 150000, needs: 'nothing', videos: 2, images: MEDIA, mix: true },
+  cms: { name: 'Hanzo CMS', text: 150000, needs: 'nothing', videos: 2, images: MEDIA, mix: true },
 }
 
 /**
