@@ -1,6 +1,4 @@
 node_modules
 dist
-test-results
 *.tsbuildinfo
 .env*.local
-LLM.md
