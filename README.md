@@ -14,20 +14,29 @@ credential the person holds, which the network verifies before anything is kept:
 a Bluesky app password, a Mastodon access token, a Telegram bot, a Discord
 webhook. Either way the account joins the same list, and Remove ends that one.
 
-## Run it
+## Run, build & verify
 
-```
+```bash
 pnpm install
-pnpm dev        # http://localhost:3300
+pnpm dev        # hanzo serve --port 3300 (dev server + SSE live reload + /v1 proxy)
+pnpm build      # tsc --noEmit && hanzo serve build (outputs dist/)
+pnpm preview    # hanzo serve preview --port 3300
+pnpm test       # server unit tests (node --test)
+pnpm e2e        # native headless Chromium CDP + server/http.mjs E2E suite
 ```
 
-The port is pinned because it is half of a redirect: IAM returns the browser to
-the address the client registered, and that address carries the port.
+No Vite and no Playwright are used anywhere in this repository. Local dev,
+TypeScript/TSX/CSS bundling, SPA history fallback, live reload (`/__hanzo_hmr`),
+and `/v1` reverse proxying are provided natively by `hanzo serve` (`hanzoai/cli`).
+End-to-end browser verification runs directly over raw Chrome DevTools Protocol
+(CDP) WebSockets + `fetch` in `e2e/social.e2e.mjs`.
 
-`vite.config.ts` proxies `/v1` to `api.hanzo.ai` on both the dev server and the
-preview of a build, so a localhost origin reaches the gateway without failing a
-preflight. Point it elsewhere with `VITE_HANZO_API`. `pnpm start` does the same
-proxy, with `HANZO_API`.
+The port is pinned to `3300` because it is half of an OIDC redirect: IAM returns
+the browser to the address the client registered, and that address carries the
+port. `hanzo serve` proxies `/v1`, `/mcp`, and `/api` to `HANZO_API` (default
+`https://api.hanzo.ai`, or `http://localhost:3690` when local `hanzo up` is
+running). `pnpm start` runs the production server (`node server/http.mjs`) on
+port `3000`.
 
 ## How it is put together
 
@@ -39,6 +48,7 @@ proxy, with `HANZO_API`.
 | `src/client.tsx` | The platform client, and the organization it speaks for |
 | `src/page.tsx` | The heading, the signed-out gate, the way a refusal reads |
 | `src/post.tsx` | One post, as every pane shows it |
+| `e2e/social.e2e.mjs` | Native CDP WebSocket + `server/http.mjs` end-to-end suite |
 
 Six screens, one per address: Overview, Compose, Posts, Calendar, Accounts,
 Analytics. `src/routes.tsx` is the table, and the sidebar reads the same one.
@@ -51,7 +61,8 @@ them side by side:
 - **`/v1/provider`** — the organization's *credential* for a network. The
   OAuth consent a person gives once, sealed into KMS. `Connect` leads here.
 - **`/v1/social`** — the *accounts* a post fans out to, and the posts
-  themselves.
+  themselves (served natively in Go on `hanzo.ai/zip` with unified OpenAPI 3.1,
+  Streamable-HTTP MCP, and typed client SDKs).
 
 No credential ever reaches this code. `GET /v1/connection/:id/token`
 is the platform's one custody exit and nothing here calls it: a browser has no
@@ -90,12 +101,9 @@ On `social.hanzo.ai`, `/mcp`, `/api/mcp`, `/public/v1`, and `/api/public/v1` are
 
 `POST /v1/social/mcp` is the native tool, the same shape as `social` on `https://api.hanzo.ai/v1/mcp`: name an operation in `op`, pass its arguments in `input`, and call `describe` for that operation's schema. `tools/list` needs no key. `tools/call` needs the Hanzo key.
 
-The catalog on `api.hanzo.ai` carries the account and post records. This path carries those and the agent operations: channels, groups, platform rules, provider actions, draft or scheduled or immediate posts, settings, the media library, image generation, video generation, and clipping. App secrets are not a tool. `list_social_credentials` reports the public app id and whether a secret is sealed.
-
 ## What it does not do
 
 The platform records no engagement — no views, likes or reach — and no endpoint
-serves any, so the Analytics screen measures delivery and says so. Bluesky is
-not here because the platform's channel vocabulary does not carry it. Media is
+serves any, so the Analytics screen measures delivery and says so. Media is
 given as an address rather than uploaded, because a presigned URL expires and a
 network fetches the media when the post goes out.

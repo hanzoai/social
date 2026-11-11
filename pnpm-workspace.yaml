@@ -1,5 +1,5 @@
-# What may run its own install script. Vite's bundler is the only one, and a
-# placeholder here is an install that stops to ask.
+# What may run its own install script. esbuild's binary postinstall is the only
+# one, and a placeholder here is an install that stops to ask.
 allowBuilds:
   esbuild: true
 
@@ -32,13 +32,11 @@ catalog:
   '@hanzo/gui': 8.3.5
   '@hanzo/iam': 0.21.18
   '@hanzo/ui': 8.27.12
-  '@hanzo/vite': 0.1.4
   '@hanzogui/next-theme': 8.3.5
-  '@playwright/test': 1.63.0
   '@types/node': 26.5.0
   '@types/react': 19.2.18
   '@types/react-dom': 19.2.7
-  '@vitejs/plugin-react': ^6.1.1
+  esbuild: ^0.27.7
   lucide-react: ^1.42.0
   next-themes: ^0.4.6
   react: 19.2.8
@@ -47,4 +45,3 @@ catalog:
   react-native-web: ^0.21.2
   react-router: ^8.3.1
   typescript: 7.0.2
-  vite: ^8.2.2
